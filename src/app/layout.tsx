@@ -1,10 +1,10 @@
-import { GeistSans } from "geist/font/sans"
-import type { Metadata } from "next"
-import { ThemeProvider } from "next-themes"
-import { NuqsAdapter } from "nuqs/adapters/next/app"
-import React from "react"
-import "./globals.css"
-import { siteConfig } from "./siteConfig"
+import { GeistSans } from "geist/font/sans";
+import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import React from "react";
+import "./globals.css";
+import { siteConfig } from "./siteConfig";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://yoururl.com"),
@@ -29,12 +29,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -47,10 +47,10 @@ export default function RootLayout({
           attribute="class"
         >
           <NuqsAdapter>
-            <div>{children}</div>
+            <div className="mx-auto w-full">{children}</div>
           </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
