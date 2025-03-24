@@ -17,7 +17,7 @@ export default function Login() {
     setLoading(true)
     setTimeout(() => {
       console.log("Form submitted")
-      router.push("/reports")
+      router.push("/home")
     }, 1200)
   }
 

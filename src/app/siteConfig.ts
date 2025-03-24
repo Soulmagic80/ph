@@ -1,10 +1,9 @@
 export const siteConfig = {
-  name: "Insights",
-  url: "https://insights.tremor.so",
-  description: "The only reporting and audit dashboard you will ever need.",
+  name: "PortfolioHunt",
+  url: "http://localhost:3000",
+  description: "A platform for designers to showcase their portfolios",
   baseLinks: {
-    reports: "/reports",
-    transactions: "/transactions",
+    home: "/",
     settings: {
       audit: "/settings/audit",
       users: "/settings/users",

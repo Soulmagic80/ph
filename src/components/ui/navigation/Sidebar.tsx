@@ -9,8 +9,6 @@ import { UserProfileMobile } from "./UserProfile"
 import { Button } from "@/components/Button"
 
 const navigation = [
-  { name: "Reports", href: siteConfig.baseLinks.reports },
-  { name: "Transactions", href: siteConfig.baseLinks.transactions },
   { name: "Settings", href: siteConfig.baseLinks.settings.audit },
 ] as const
 

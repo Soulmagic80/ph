@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <Link
-        href={siteConfig.baseLinks.reports}
+        href={siteConfig.baseLinks.home}
         aria-label="Go to Insights home page"
       >
         <div className="relative flex items-center justify-center rounded-lg bg-white p-3 shadow-lg ring-1 ring-black/5">

@@ -17,12 +17,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navigation = [
-  { name: "Reports", href: siteConfig.baseLinks.reports, icon: BarChartBig },
-  {
-    name: "Transactions",
-    href: siteConfig.baseLinks.transactions,
-    icon: Table2,
-  },
+
   {
     name: "Settings",
     href: siteConfig.baseLinks.settings.audit,

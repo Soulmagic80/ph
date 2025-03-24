@@ -16,7 +16,7 @@ import MobileSidebar from "./MobileSidebar"
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile"
 
 const navigation = [
-  { name: "Reports", href: siteConfig.baseLinks.reports, icon: BarChartBig },
+
   {
     name: "Transactions",
     href: siteConfig.baseLinks.transactions,

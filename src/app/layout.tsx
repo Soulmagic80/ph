@@ -5,7 +5,6 @@ import { NuqsAdapter } from "nuqs/adapters/next/app"
 import React from "react"
 import "./globals.css"
 import { siteConfig } from "./siteConfig"
-import { AuthProvider } from "@/components/providers/AuthProvider" // ✅ neu
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://yoururl.com"),
@@ -42,17 +41,15 @@ export default function RootLayout({
       <body
         className={`${GeistSans.className} overflow-x-hidden overflow-y-scroll scroll-auto bg-gray-50 antialiased selection:bg-blue-100 selection:text-blue-700 dark:bg-gray-950`}
       >
-        <AuthProvider>
-          <ThemeProvider
-            defaultTheme="system"
-            disableTransitionOnChange
-            attribute="class"
-          >
-            <NuqsAdapter>
-              <div>{children}</div>
-            </NuqsAdapter>
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider
+          defaultTheme="system"
+          disableTransitionOnChange
+          attribute="class"
+        >
+          <NuqsAdapter>
+            <div>{children}</div>
+          </NuqsAdapter>
+        </ThemeProvider>
       </body>
     </html>
   )
