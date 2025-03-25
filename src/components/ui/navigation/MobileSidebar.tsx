@@ -100,7 +100,7 @@ export default function MobileSidebar() {
           {!isLoggedIn && (
             <div className="border-t pt-4 mt-4">
               <Link href="/login">
-                <Button variant="secondary" size="sm" className="w-full">
+                <Button variant="secondary" className="w-full">
                   Sign In
                 </Button>
               </Link>
