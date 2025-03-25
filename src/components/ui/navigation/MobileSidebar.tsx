@@ -4,13 +4,12 @@ import { Button } from "@/components/Button";
 import {
   Drawer,
   DrawerBody,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/Drawer";
-import { cx } from "@/lib/utils";
+import { cx, focusRing } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, Settings2 } from "lucide-react";
@@ -62,48 +61,51 @@ export default function MobileSidebar() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="ghost" aria-label="open sidebar" className="md:hidden">
+        <Button variant="ghost" aria-label="open sidebar" className="md:hidden p-1.5">
           <Menu className="size-6 shrink-0 text-gray-600 dark:text-gray-400" aria-hidden="true" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="sm:max-w-lg">
         <DrawerHeader>
           <DrawerTitle>Menu</DrawerTitle>
-          <DrawerClose asChild>
-            <Button variant="ghost">Close</Button>
-          </DrawerClose>
+
         </DrawerHeader>
         <DrawerBody>
-          <nav className="flex flex-col gap-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cx(
-                  isActive(item.href)
-                    ? "text-blue-600 dark:text-blue-400"
-                    : "text-gray-700 dark:text-gray-300",
-                  "flex items-center gap-2 text-sm font-medium hover:text-blue-600 dark:hover:text-white"
-                )}
-              >
-                <item.icon className="size-5" />
-                {item.name}
-              </Link>
-            ))}
+          <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-10">
+            <div>
+            <span className="block h-7 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
+            Platform
+          </span>
+              <ul role="list" className="mt-1 space-y-1.5">
+                {navigation.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className={cx(
+                        isActive(item.href)
+                          ? "text-blue-600 dark:text-blue-500"
+                          : "text-gray-600 hover:text-gray-900 dark:text-gray-400 hover:dark:text-gray-50",
+                        "flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-base font-medium transition hover:bg-gray-100 sm:text-sm hover:dark:bg-gray-900",
+                        focusRing,
+                      )}
+                    >
+                      <item.icon className="size-5 shrink-0" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
-          <div className="border-t pt-4 mt-4">
-            {isLoggedIn ? (
-              <Button variant="secondary" size="sm" className="w-full" onClick={handleLogout}>
-                Sign Out
-              </Button>
-            ) : (
+          {!isLoggedIn && (
+            <div className="border-t pt-4 mt-4">
               <Link href="/login">
                 <Button variant="secondary" size="sm" className="w-full">
                   Sign In
                 </Button>
               </Link>
-            )}
-          </div>
+            </div>
+          )}
         </DrawerBody>
       </DrawerContent>
     </Drawer>

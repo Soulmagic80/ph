@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { siteConfig } from "@/app/siteConfig"
+import { siteConfig } from "@/app/siteConfig";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,30 +13,35 @@ import {
   DropdownMenuSubMenu,
   DropdownMenuSubMenuContent,
   DropdownMenuSubMenuTrigger,
-  DropdownMenuTrigger,
-} from "@/components/DropdownMenu"
-import { ArrowUpRight, Monitor, Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-import * as React from "react"
+  DropdownMenuTrigger, // Hinzugefügt
+} from "@/components/DropdownMenu";
+import { ArrowUpRight, Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import * as React from "react";
 
 export type DropdownUserProfileProps = {
-  children: React.ReactNode
-  align?: "center" | "start" | "end"
-}
+  children: React.ReactNode;
+  align?: "center" | "start" | "end";
+  handleLogout: () => void;
+  userEmail: string;
+};
 
 export function DropdownUserProfile({
   children,
   align = "start",
+  handleLogout,
+  userEmail,
 }: DropdownUserProfileProps) {
-  const [mounted, setMounted] = React.useState(false)
-  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false);
+  const { theme, setTheme } = useTheme();
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
-    return null
+    return null;
   }
+
   return (
     <>
       <DropdownMenu>
@@ -45,7 +50,7 @@ export function DropdownUserProfile({
           align={align}
           className="!min-w-[calc(var(--radix-dropdown-menu-trigger-width))]"
         >
-          <DropdownMenuLabel>emma.stone@acme.com</DropdownMenuLabel>
+          <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuSubMenu>
               <DropdownMenuSubMenuTrigger>Theme</DropdownMenuSubMenuTrigger>
@@ -53,7 +58,7 @@ export function DropdownUserProfile({
                 <DropdownMenuRadioGroup
                   value={theme}
                   onValueChange={(value) => {
-                    setTheme(value)
+                    setTheme(value);
                   }}
                 >
                   <DropdownMenuRadioItem
@@ -110,14 +115,12 @@ export function DropdownUserProfile({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <a href={siteConfig.baseLinks.login} className="w-full">
-                Sign out
-              </a>
+            <DropdownMenuItem onClick={handleLogout}>
+              Sign out
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
-  )
+  );
 }

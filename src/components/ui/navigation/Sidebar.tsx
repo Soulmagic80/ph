@@ -8,6 +8,7 @@ import { cx } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
 import MobileSidebar from "./MobileSidebar";
+import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
 import { Button } from "@/components/Button";
 
 const navigation = [
@@ -19,7 +20,6 @@ export function Sidebar() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,20 +27,9 @@ export function Sidebar() {
       if (userData.user) {
         setIsLoggedIn(true);
         setUser(userData.user);
-
-        const { data: files, error } = await supabase.storage
-          .from("avatars")
-          .list(userData.user.id, { limit: 1, search: "avatar" });
-        if (!error && files && files.length > 0) {
-          const avatarExt = files[0].name.split(".").pop();
-          setAvatarUrl(
-            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${userData.user.id}/avatar.${avatarExt}`
-          );
-        }
       } else {
         setIsLoggedIn(false);
         setUser(null);
-        setAvatarUrl(null);
       }
     };
     fetchUserData();
@@ -49,22 +38,9 @@ export function Sidebar() {
       if (session?.user) {
         setIsLoggedIn(true);
         setUser(session.user);
-
-        supabase.storage
-          .from("avatars")
-          .list(session.user.id, { limit: 1, search: "avatar" })
-          .then(({ data: files, error }) => {
-            if (!error && files && files.length > 0) {
-              const avatarExt = files[0].name.split(".").pop();
-              setAvatarUrl(
-                `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${session.user.id}/avatar.${avatarExt}`
-              );
-            }
-          });
       } else {
         setIsLoggedIn(false);
         setUser(null);
-        setAvatarUrl(null);
       }
     });
 
@@ -77,29 +53,7 @@ export function Sidebar() {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
     setUser(null);
-    setAvatarUrl(null);
     router.push("/login");
-  };
-
-  const Avatar = () => {
-    if (avatarUrl) {
-      return (
-        <Image
-          src={avatarUrl}
-          alt="User Avatar"
-          width={32}
-          height={32}
-          className="rounded-full border-2 border-black"
-          onError={() => setAvatarUrl(null)}
-        />
-      );
-    }
-    const initial = user?.email ? user.email.charAt(0).toUpperCase() : "U";
-    return (
-      <div className="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center bg-gray-200">
-        <span className="text-gray-800 font-bold text-lg">{initial}</span>
-      </div>
-    );
   };
 
   const isActive = (itemHref: string) => {
@@ -137,18 +91,13 @@ export function Sidebar() {
           ))}
         </div>
 
-        {/* Sign In Button / Avatar (nur ab md) */}
+        {/* Sign In Button / User Profile (nur ab md) */}
         <div className="hidden md:block">
           {isLoggedIn ? (
-            <div className="flex items-center gap-2">
-              <Avatar />
-              <Button variant="secondary" size="sm" onClick={handleLogout}>
-                Sign Out
-              </Button>
-            </div>
+            <UserProfileDesktop handleLogout={handleLogout} userEmail={user?.email || "Unknown"} />
           ) : (
             <Link href="/login">
-              <Button variant="secondary" size="sm">
+              <Button variant="secondary">
                 Sign In
               </Button>
             </Link>
@@ -156,22 +105,11 @@ export function Sidebar() {
         </div>
 
         {/* User (nur unter md) */}
-        <div className="md:hidden">
-          {isLoggedIn ? (
-            <div className="flex items-center gap-2">
-              <Avatar />
-              <Button variant="secondary" size="sm" onClick={handleLogout}>
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <Link href="/login">
-              <Button variant="secondary" size="sm">
-                Sign In
-              </Button>
-            </Link>
-          )}
-        </div>
+        {isLoggedIn && (
+          <div className="md:hidden">
+            <UserProfileMobile handleLogout={handleLogout} userEmail={user?.email || "Unknown"} />
+          </div>
+        )}
 
         {/* Burger */}
         <div className="md:hidden">
