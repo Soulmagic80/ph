@@ -19,14 +19,11 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [isCollapsed, setIsCollapsed] = React.useState(false)
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed)
-  }
+
   const pathname = usePathname()
   return (
     <div className="mx-auto w-full">
-      <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      <Sidebar/>
       <div
         className={cx(
           "w-full",
