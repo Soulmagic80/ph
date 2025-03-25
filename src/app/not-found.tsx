@@ -35,7 +35,7 @@ export default function NotFound() {
         Sorry, we could not find the page you are looking for.
       </p>
       <Button asChild className="group mt-8" variant="light">
-        <Link href={siteConfig.baseLinks.reports}>Go to the home page</Link>
+        <Link href={siteConfig.baseLinks.home}>Go to the home page</Link>
       </Button>
     </div>
   )
