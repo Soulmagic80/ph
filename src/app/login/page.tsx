@@ -62,7 +62,7 @@ export default function Login() {
           />
         </div>
         <div className="mt-6 flex flex-col">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
+          <h1 className="text-lg text-center font-semibold text-gray-900 dark:text-gray-50">
             Log in to Portfoliohunt
           </h1>
         </div>
