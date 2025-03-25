@@ -5,6 +5,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import React from "react";
 import "./globals.css";
 import { siteConfig } from "./siteConfig";
+import { AuthProvider } from "@/components/AuthProvider";
+import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://yoururl.com"),
@@ -31,11 +33,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const initialIsLoggedIn = !!sessionData.session;
+  const initialUserEmail = sessionData.session?.user?.email || "Unknown";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -47,7 +53,11 @@ export default function RootLayout({
           attribute="class"
         >
           <NuqsAdapter>
-            <div className="mx-auto w-full">{children}</div>
+            <AuthProvider initialIsLoggedIn={initialIsLoggedIn} initialUserEmail={initialUserEmail}>
+              <div className="mx-auto w-full">
+                {children}
+              </div>
+            </AuthProvider>
           </NuqsAdapter>
         </ThemeProvider>
       </body>
