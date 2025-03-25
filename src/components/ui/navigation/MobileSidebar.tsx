@@ -1,6 +1,6 @@
-// ✅ MobileSidebar.tsx
-import { siteConfig } from "@/app/siteConfig"
-import { Button } from "@/components/Button"
+"use client";
+import { siteConfig } from "@/app/siteConfig";
+import { Button } from "@/components/Button";
 import {
   Drawer,
   DrawerBody,
@@ -9,38 +9,75 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/Drawer"
-import { cx, focusRing } from "@/lib/utils"
-
-import { BarChartBig, Compass, Menu, Settings2, Table2 } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "@/components/Drawer";
+import { cx } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { usePathname, useRouter } from "next/navigation";
+import { BarChartBig, Compass, Menu, Settings2, Table2 } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { User } from "@supabase/supabase-js";
 
 const navigation = [
-
   {
     name: "Settings",
     href: siteConfig.baseLinks.settings.audit,
     icon: Settings2,
   },
-] as const
+] as const;
 
 export default function MobileSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        setIsLoggedIn(true);
+        setUser(userData.user);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    };
+    fetchUserData();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setUser(session.user);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setUser(null);
+    router.push("/login");
+  };
+
   const isActive = (itemHref: string) => {
     if (itemHref === siteConfig.baseLinks.settings.audit) {
-      return pathname.startsWith("/settings")
+      return pathname.startsWith("/settings");
     }
-    return pathname === itemHref || pathname.startsWith(itemHref)
-  }
+    return pathname === itemHref || pathname.startsWith(itemHref);
+  };
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button
-          variant="ghost"
-          aria-label="open sidebar"
-          className="md:hidden"
-        >
+        <Button variant="ghost" aria-label="open sidebar" className="md:hidden">
           <Menu className="size-6 shrink-0 text-gray-600 dark:text-gray-400" aria-hidden="true" />
         </Button>
       </DrawerTrigger>
@@ -70,12 +107,20 @@ export default function MobileSidebar() {
             ))}
           </nav>
           <div className="border-t pt-4 mt-4">
-            <Button variant="secondary" size="sm" className="w-full">
-              Sign In
-            </Button>
+            {isLoggedIn ? (
+              <Button variant="secondary" size="sm" className="w-full" onClick={handleLogout}>
+                Sign Out
+              </Button>
+            ) : (
+              <Link href="/login">
+                <Button variant="secondary" size="sm" className="w-full">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </DrawerBody>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

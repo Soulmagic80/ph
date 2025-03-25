@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 import PortfolioCard from "@/components/PortfolioCard";
-import { Portfolio } from "../types";
+import { Portfolio } from "@/types";
 import { User } from "@supabase/supabase-js";
 import { Title } from "@tremor/react";
 
