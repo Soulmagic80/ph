@@ -13,7 +13,7 @@ import {
 import { cx } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChartBig, Compass, Menu, Settings2, Table2 } from "lucide-react";
+import { Menu, Settings2} from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
