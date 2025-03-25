@@ -13,10 +13,9 @@ import {
 import { cx } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, Settings2} from "lucide-react";
+import { Menu, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { User } from "@supabase/supabase-js";
 
 const navigation = [
   {
@@ -30,29 +29,16 @@ export default function MobileSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: userData } = await supabase.auth.getUser();
-      if (userData.user) {
-        setIsLoggedIn(true);
-        setUser(userData.user);
-      } else {
-        setIsLoggedIn(false);
-        setUser(null);
-      }
+      setIsLoggedIn(!!userData.user);
     };
     fetchUserData();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        setIsLoggedIn(true);
-        setUser(session.user);
-      } else {
-        setIsLoggedIn(false);
-        setUser(null);
-      }
+      setIsLoggedIn(!!session?.user);
     });
 
     return () => {
@@ -63,7 +49,6 @@ export default function MobileSidebar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsLoggedIn(false);
-    setUser(null);
     router.push("/login");
   };
 

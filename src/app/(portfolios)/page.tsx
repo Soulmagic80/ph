@@ -175,7 +175,7 @@ export default function Home() {
       </div>
 
       {/* Portfolio-Listen */}
-      <div className="pt-4 pb-10 grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-6">
+      <div className="p-4 pb-10 grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-6">
         {portfolios.map((p) => (
           <PortfolioCard
             key={p.id}
