@@ -11,7 +11,7 @@ import {
 } from "@/components/Drawer";
 import { cx, focusRing } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Menu, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -26,17 +26,23 @@ const navigation = [
 
 export default function MobileSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const { data: userData } = await supabase.auth.getUser();
-      setIsLoggedIn(!!userData.user);
+      try {
+        const { data: userData, error } = await supabase.auth.getUser();
+        if (error) throw error;
+        setIsLoggedIn(!!userData.user);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch user data");
+        setIsLoggedIn(false);
+      }
     };
     fetchUserData();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
       setIsLoggedIn(!!session?.user);
     });
 
@@ -45,18 +51,20 @@ export default function MobileSidebar() {
     };
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
-    router.push("/login");
-  };
-
   const isActive = (itemHref: string) => {
     if (itemHref === siteConfig.baseLinks.settings.audit) {
       return pathname.startsWith("/settings");
     }
     return pathname === itemHref || pathname.startsWith(itemHref);
   };
+
+  if (isLoggedIn === null) {
+    return (
+      <Button variant="ghost" aria-label="open sidebar" className="md:hidden p-1.5">
+        <Menu className="size-6 shrink-0 text-gray-600 dark:text-gray-400" aria-hidden="true" />
+      </Button>
+    );
+  }
 
   return (
     <Drawer>
@@ -68,14 +76,17 @@ export default function MobileSidebar() {
       <DrawerContent className="sm:max-w-lg">
         <DrawerHeader>
           <DrawerTitle>Menu</DrawerTitle>
-
-        </DrawerHeader>
-        <DrawerBody>
-          <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-10">
-            <div>
-            <span className="block h-7 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
+          <span className="block h-7 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
             Platform
           </span>
+        </DrawerHeader>
+        <DrawerBody>
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-10">
+            <div>
+              <span className="block h-6 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
+                SETUP
+              </span>
               <ul role="list" className="mt-1 space-y-1.5">
                 {navigation.map((item) => (
                   <li key={item.name}>
