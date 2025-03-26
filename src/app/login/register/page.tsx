@@ -6,37 +6,43 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { RiGoogleFill } from "@remixicon/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setMessage(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`,
+      },
     });
 
     if (error) {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push("/");
-      router.refresh();
+      setMessage("A confirmation email has been sent to your email address. Please verify your email to continue.");
+      setLoading(false);
+      setTimeout(() => router.push("/"), 3000);
     }
   };
 
-  const handleOAuthLogin = async (provider: "github" | "google") => {
+  const handleOAuthSignUp = async (provider: "github" | "google") => {
     setLoading(true);
     setError(null);
 
@@ -58,23 +64,30 @@ export default function Login() {
       <div className="flex w-full flex-col items-center sm:max-w-sm">
         <div className="mt-6 flex flex-col">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
-            Log in to Portfoliohunt
+            Sign up for Portfoliohunt
           </h1>
           <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-            Don’t have an account?{" "}
+            Already have an account?{" "}
             <Link
-              href="/login/register"
+              href="/login"
               className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
             >
-              Sign up
+              Log in
             </Link>
           </p>
         </div>
         <div className="mt-10 w-full">
-          <form onSubmit={handleEmailLogin} className="flex w-full flex-col gap-y-6">
+
+  
+          <form onSubmit={handleSignUp} className="flex w-full flex-col gap-y-6">
             {error && (
               <div className="text-red-500 text-sm">
                 {error}
+              </div>
+            )}
+            {message && (
+              <div className="text-green-500 text-sm">
+                {message}
               </div>
             )}
             <div className="flex flex-col gap-y-4">
@@ -87,7 +100,7 @@ export default function Login() {
                   autoComplete="email"
                   name="email"
                   id="email-form-item"
-                  placeholder="emily.ross@acme.ch"
+                  placeholder="name@provider.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -99,10 +112,10 @@ export default function Login() {
                 </Label>
                 <Input
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   name="password"
                   id="password-form-item"
-                  placeholder="Password"
+                  placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -110,7 +123,7 @@ export default function Login() {
               </div>
             </div>
             <Button type="submit" isLoading={loading}>
-              {loading ? "" : "Continue"}
+              {loading ? "" : "Sign Up"}
             </Button>
           </form>
           <Divider className="my-6">or</Divider>
@@ -118,26 +131,16 @@ export default function Login() {
             <Button
               variant="secondary"
               className="mt-2 w-full sm:mt-0"
-              onClick={() => handleOAuthLogin("google")}
+              onClick={() => handleOAuthSignUp("google")}
               disabled={loading}
             >
               <span className="inline-flex items-center gap-2">
                 <RiGoogleFill className="size-4" aria-hidden="true" />
-                Login with Google
+                Sign up with Google
               </span>
             </Button>
           </div>
         </div>
-        <Divider />
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          Forgot your password?{" "}
-          <Link
-            href="/login/forgot-password"
-            className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
-          >
-            Reset password
-          </Link>
-        </p>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import React from "react";
 import "./globals.css";
 import { siteConfig } from "./siteConfig";
 import { AuthProvider } from "@/components/AuthProvider";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://yoururl.com"),
@@ -38,9 +38,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const initialIsLoggedIn = !!sessionData.session;
-  const initialUserEmail = sessionData.session?.user?.email || "Unknown";
+  const supabase = createSupabaseServerClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  const initialIsLoggedIn = !!session;
+  const initialUserEmail = session?.user?.email || "Unknown";
 
   return (
     <html lang="en" suppressHydrationWarning>

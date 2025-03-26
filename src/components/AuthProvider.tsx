@@ -1,6 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+
+// Erstelle den AuthContext
+export const AuthContext = createContext<{
+  isLoggedIn: boolean;
+  userEmail: string;
+}>({
+  isLoggedIn: false,
+  userEmail: "Unknown",
+});
 
 export function AuthProvider({ children, initialIsLoggedIn, initialUserEmail }: { children: React.ReactNode; initialIsLoggedIn: boolean; initialUserEmail: string }) {
   const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn);
@@ -18,8 +27,8 @@ export function AuthProvider({ children, initialIsLoggedIn, initialUserEmail }: 
   }, []);
 
   return (
-    <div data-is-logged-in={isLoggedIn} data-user-email={userEmail}>
+    <AuthContext.Provider value={{ isLoggedIn, userEmail }}>
       {children}
-    </div>
+    </AuthContext.Provider>
   );
 }

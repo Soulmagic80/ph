@@ -13,6 +13,8 @@ import { cx, focusRing } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Menu, Settings2 } from "lucide-react";
 import Link from "next/link";
+import { useContext } from "react";
+import { AuthContext } from "@/components/AuthProvider";
 
 const navigation = [
   {
@@ -24,7 +26,7 @@ const navigation = [
 
 export default function MobileSidebar() {
   const pathname = usePathname();
-  const isLoggedIn = typeof window !== "undefined" && document.querySelector("[data-is-logged-in]")?.getAttribute("data-is-logged-in") === "true";
+  const { isLoggedIn } = useContext(AuthContext);
 
   const isActive = (itemHref: string) => {
     if (itemHref === siteConfig.baseLinks.settings.audit) {

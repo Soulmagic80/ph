@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import MobileSidebar from "./MobileSidebar";
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
 import { Button } from "@/components/Button";
+import { AuthContext } from "@/components/AuthProvider";
 
 const navigation = [
   { name: "Settings", href: siteConfig.baseLinks.settings.audit },
@@ -17,8 +18,7 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isLoggedIn = typeof window !== "undefined" && document.querySelector("[data-is-logged-in]")?.getAttribute("data-is-logged-in") === "true";
-  const userEmail = typeof window !== "undefined" && document.querySelector("[data-user-email]")?.getAttribute("data-user-email") || "Unknown";
+  const { isLoggedIn, userEmail } = useContext(AuthContext);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogout = async () => {
@@ -26,6 +26,7 @@ export function Sidebar() {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       router.push("/");
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "Failed to sign out");
     }
