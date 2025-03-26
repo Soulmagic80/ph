@@ -164,7 +164,7 @@ export default function Home() {
     <main className="w-full mx-auto bg-white dark:bg-gray-925">
       <div className="w-full h-[380px] flex flex-col items-center justify-center gap-2">
         <p className="pb-4 text-[12px] text-blue-500 uppercase font-medium leading-[150%] tracking-[0.03em] mt-4 mb-4 max-w-[540px]">
-          A new home for portfolios
+          A new home for digital portfolios
         </p>
         <h1 className="text-4xl font-bold max-w-[700px] text-center text-balance tracking-[-0.03em] leading-[120%]">
           Challenge the best, get valuable feedback, improve, and help others.
