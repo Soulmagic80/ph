@@ -1,6 +1,7 @@
 {
   "name": "template-insights",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -55,8 +56,8 @@
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "eslint": "^9.23.0",
-    "eslint-config-next": "^15.2.4",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.23",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
