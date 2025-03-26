@@ -21,7 +21,7 @@ export default function HowtoPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Best Practices</h2>
                     <p className="text-gray-600">
-                        Discover tips and tricks to make the most of our platform's features.
+                        Discover tips and tricks to make the most of our platform&apos;s features.
                     </p>
                 </Card>
             </div>
