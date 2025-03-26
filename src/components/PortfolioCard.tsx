@@ -1,9 +1,9 @@
 "use client";
+import { User } from "@supabase/supabase-js";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Portfolio } from "../types";
-import { User } from "@supabase/supabase-js";
 
 interface PortfolioCardProps {
   portfolio: Portfolio;

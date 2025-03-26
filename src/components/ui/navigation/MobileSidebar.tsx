@@ -1,5 +1,5 @@
 "use client";
-import { siteConfig } from "@/app/siteConfig";
+import { AuthContext } from "@/components/AuthProvider";
 import { Button } from "@/components/Button";
 import {
   Drawer,
@@ -10,17 +10,16 @@ import {
   DrawerTrigger,
 } from "@/components/Drawer";
 import { cx, focusRing } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import { Menu, Settings2 } from "lucide-react";
+import { BookOpen, Menu } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useContext } from "react";
-import { AuthContext } from "@/components/AuthProvider";
 
 const navigation = [
   {
-    name: "Settings",
-    href: siteConfig.baseLinks.settings.audit,
-    icon: Settings2,
+    name: "HowTo",
+    href: "/howto",
+    icon: BookOpen,
   },
 ] as const;
 
@@ -29,9 +28,6 @@ export default function MobileSidebar() {
   const { isLoggedIn } = useContext(AuthContext);
 
   const isActive = (itemHref: string) => {
-    if (itemHref === siteConfig.baseLinks.settings.audit) {
-      return pathname.startsWith("/settings");
-    }
     return pathname === itemHref || pathname.startsWith(itemHref);
   };
 
@@ -45,15 +41,12 @@ export default function MobileSidebar() {
       <DrawerContent className="sm:max-w-lg">
         <DrawerHeader>
           <DrawerTitle>Menu</DrawerTitle>
-          <span className="block h-7 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
-            Platform
-          </span>
         </DrawerHeader>
         <DrawerBody>
           <nav aria-label="core mobile navigation links" className="flex flex-1 flex-col space-y-10">
             <div>
               <span className="block h-6 text-xs font-medium leading-6 text-gray-500 transition-opacity dark:text-gray-400">
-                SETUP
+                Portfoliohunt
               </span>
               <ul role="list" className="mt-1 space-y-1.5">
                 {navigation.map((item) => (

@@ -1,18 +1,18 @@
 "use client";
-import { useState, useContext } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { siteConfig } from "@/app/siteConfig";
-import { cx } from "@/lib/utils";
+import { AuthContext } from "@/components/AuthProvider";
+import { Button } from "@/components/Button";
 import { supabase } from "@/lib/supabase";
+import { cx } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
-import { Button } from "@/components/Button";
-import { AuthContext } from "@/components/AuthProvider";
 
 const navigation = [
-  { name: "Settings", href: siteConfig.baseLinks.settings.audit },
+  { name: "HowTo", href: "/howto" },
 ] as const;
 
 export function Sidebar() {
@@ -33,8 +33,8 @@ export function Sidebar() {
   };
 
   const isActive = (itemHref: string) => {
-    if (itemHref === siteConfig.baseLinks.settings.audit) {
-      return pathname.startsWith("/settings");
+    if (itemHref === siteConfig.baseLinks.user.profile) {
+      return pathname.startsWith("/user");
     }
     return pathname === itemHref || pathname.startsWith(itemHref);
   };
