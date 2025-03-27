@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +12,7 @@ import {
   DropdownMenuSubMenu,
   DropdownMenuSubMenuContent,
   DropdownMenuSubMenuTrigger,
-  DropdownMenuTrigger, // Hinzugefügt
+  DropdownMenuTrigger,
 } from "@/components/DropdownMenu";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -97,14 +96,8 @@ export function DropdownUserProfile({
                 Account
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Edit Profile
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
             <DropdownMenuItem onClick={handleLogout}>
-              Sign out
+              Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
