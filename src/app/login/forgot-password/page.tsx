@@ -42,7 +42,7 @@ export default function ForgotPassword() {
     <div className="flex min-h-dvh items-center justify-center p-4 sm:p-6">
       <div className="flex w-full flex-col items-start sm:max-w-sm">
 
-        <div className="mt-6 flex flex-col text-center">
+        <div className="mt-6 flex flex-col text-left">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
             Reset your password
           </h1>
