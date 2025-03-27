@@ -3,9 +3,9 @@
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ export default function ForgotPassword() {
     <div className="flex min-h-dvh items-center justify-center p-4 sm:p-6">
       <div className="flex w-full flex-col items-start sm:max-w-sm">
 
-        <div className="mt-6 flex flex-col">
+        <div className="mt-6 flex flex-col text-center">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
             Reset your password
           </h1>

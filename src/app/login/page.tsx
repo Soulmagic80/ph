@@ -1,67 +1,67 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/Button";
-import { Divider } from "@/components/Divider";
-import { Input } from "@/components/Input";
-import { Label } from "@/components/Label";
-import { RiGoogleFill } from "@remixicon/react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { supabase } from "@/lib/supabase";
-import Link from "next/link";
+import { Button } from "@/components/Button"
+import { Divider } from "@/components/Divider"
+import { Input } from "@/components/Input"
+import { Label } from "@/components/Label"
+import { supabase } from "@/lib/supabase"
+import { RiGoogleFill } from "@remixicon/react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import React, { useState } from "react"
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    });
+    })
 
     if (error) {
-      setError(error.message);
-      setLoading(false);
+      setError(error.message)
+      setLoading(false)
     } else {
-      router.push("/");
-      router.refresh();
+      router.push("/")
+      router.refresh()
     }
-  };
+  }
 
-  const handleOAuthLogin = async (provider: "github" | "google") => {
-    setLoading(true);
-    setError(null);
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    setError(null)
 
     const { error } = await supabase.auth.signInWithOAuth({
-      provider,
+      provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
-    });
+    })
 
     if (error) {
-      setError(error.message);
-      setLoading(false);
+      setError(error.message)
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="flex min-h-dvh items-center justify-center p-4 sm:p-6">
       <div className="flex w-full flex-col items-center sm:max-w-sm">
-        <div className="mt-6 flex flex-col">
+        <div className="mt-6 flex flex-col text-center">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
             Log in to Portfoliohunt
           </h1>
           <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-            Don’t have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/login/register"
               className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
@@ -118,7 +118,7 @@ export default function Login() {
             <Button
               variant="secondary"
               className="mt-2 w-full sm:mt-0"
-              onClick={() => handleOAuthLogin("google")}
+              onClick={handleGoogleLogin}
               disabled={loading}
             >
               <span className="inline-flex items-center gap-2">
@@ -140,5 +140,5 @@ export default function Login() {
         </p>
       </div>
     </div>
-  );
+  )
 }
