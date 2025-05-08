@@ -26,9 +26,11 @@ export default function PortfolioCard({ portfolio, user, onUpvote, rank }: Portf
   };
 
   // Bild-URL aus Storage oder Fallback
-  const imageSrc = portfolio.image
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${portfolio.image}`
-    : portfolio.image_url || null;
+  const imageSrc = portfolio.images?.[0]
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${portfolio.images[0]}`
+    : portfolio.image
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${portfolio.image}`
+      : portfolio.image_url;
 
   // Erste 3 Tags oder leer
   const displayTags = portfolio.tags?.slice(0, 2) || [];
