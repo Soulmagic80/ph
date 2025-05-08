@@ -33,7 +33,7 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
         }
 
         fetchPortfolio();
-    }, [params.id]);
+    }, [params.id, Date.now()]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -43,16 +43,16 @@ export default function PortfolioDetailPage({ params }: { params: { id: string }
         return <div>Portfolio not found</div>;
     }
 
-    // Bild-URL aus Storage oder Fallback
-    const imageSrc = portfolio.image
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${portfolio.image}`
-        : portfolio.image_url || null;
+    // Bild-URLs aus Storage
+    const imageUrls = portfolio.images?.map(image =>
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${image}`
+    ) || [];
 
     return (
         <main className="max-w-7xl mx-auto px-5 md:px-10 py-10 mt-16">
             <PortfolioOverview
                 title={portfolio.title}
-                imageSrc={imageSrc}
+                images={imageUrls}
             />
             <Divider className="my-10" />
             <PortfolioDetails
