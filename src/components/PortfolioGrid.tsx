@@ -1,7 +1,6 @@
 "use client";
 import { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
 import { Portfolio } from "../types";
 import PortfolioCard from "./PortfolioCard";
 
@@ -21,32 +20,6 @@ export default function PortfolioGrid({ portfolios, user, onUpvote }: PortfolioG
             return b.upvotes - a.upvotes;
         }
     });
-
-    const updatePortfolioRank = async (portfolioId: string, newRank: number) => {
-        try {
-            const { data: portfolio } = await supabase
-                .from('portfolios')
-                .select('rank_all_time_best')
-                .eq('id', portfolioId)
-                .single();
-
-            if (portfolio) {
-                const shouldUpdateBestRank = !portfolio.rank_all_time_best || newRank < portfolio.rank_all_time_best;
-
-                const { error } = await supabase
-                    .from('portfolios')
-                    .update({
-                        rank_all_time: newRank,
-                        ...(shouldUpdateBestRank && { rank_all_time_best: newRank })
-                    })
-                    .eq('id', portfolioId);
-
-                if (error) throw error;
-            }
-        } catch (error) {
-            console.error('Error updating portfolio rank:', error);
-        }
-    };
 
     return (
         <div className="w-full">
