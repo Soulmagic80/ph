@@ -56,11 +56,13 @@ export default function PortfolioCard({ portfolio, user, onUpvote, rank }: Portf
         <span className="text-5xl font-inter font-semibold text-black dark:text-white">{rank || 2}</span>
         <div className="flex-1 flex flex-col">
           <h2 className="text-base font-inter font-medium text-black dark:text-white">{portfolio.title}</h2>
-          <div className="flex flex-row text-sm leading-6 text-gray-500">
+          <div className="flex flex-row gap-1.5 mt-1">
             {displayTags.map((tag, index) => (
-              <span key={index}>
+              <span
+                key={index}
+                className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10"
+              >
                 {tag}
-                {index < displayTags.length - 1 && "・"}
               </span>
             ))}
           </div>
