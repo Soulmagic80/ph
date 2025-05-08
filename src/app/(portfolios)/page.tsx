@@ -29,16 +29,27 @@ export default function Home() {
         if (userError) {
           console.error("Error fetching user:", userError);
         } else {
+          console.log("User data:", userData);
           setUser(userData.user);
         }
 
+        console.log("Fetching portfolios...");
         await fetchPortfolios(0);
       } catch (error) {
         console.error("Error in initial fetch:", error);
         setHasMore(false);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (page === 0) {
+      setPortfolios([]);
+      fetchPortfolios(0);
+    }
   }, [selectedRanking]);
 
   const fetchPortfolios = async (page: number) => {
@@ -66,6 +77,7 @@ export default function Home() {
           .order("created_at", { ascending: true });
       }
 
+      console.log("Executing query...");
       const { data, error } = await query
         .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
 
@@ -74,7 +86,7 @@ export default function Home() {
         throw error;
       }
 
-      console.log("Received portfolios:", data?.length);
+      console.log("Received portfolios:", data?.length, data);
 
       if (data && data.length > 0) {
         setPortfolios((prev) => {
@@ -87,6 +99,7 @@ export default function Home() {
               }
               return b.upvotes - a.upvotes;
             });
+          console.log("Updated portfolios:", uniquePortfolios.length);
           return uniquePortfolios;
         });
         setHasMore(data.length === ITEMS_PER_PAGE);
@@ -256,13 +269,13 @@ export default function Home() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="current_month">
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-3 text-sm">
                   <CalendarIcon className="h-4 w-4" />
                   Current month
                 </div>
               </SelectItem>
               <SelectItem value="all_time">
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-3 text-sm">
                   <TrophyIcon className="h-4 w-4" />
                   All time best
                 </div>

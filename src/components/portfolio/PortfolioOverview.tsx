@@ -26,7 +26,7 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                     </p>
                 </div>
                 {/* Right column: Content */}
-                <div className="md:col-span-2 md:pl-12">
+                <div className="md:col-span-2 md:pl-16">
                     <div className="bg-gray-50 rounded-md border border-gray-200 p-6 dark:border-gray-800">
                         <div className="w-full">
                             <div className="aspect-[500/300] w-full flex gap-4">
@@ -54,8 +54,8 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                                         <div
                                             key={index}
                                             className={`w-full h-[calc((100%-48px)/4)] rounded-md cursor-pointer transition-all ${selectedImageIndex === index
-                                                    ? 'outline outline-2 outline-blue-500 outline-offset-2'
-                                                    : 'bg-gray-200 dark:bg-gray-700'
+                                                ? 'outline outline-2 outline-blue-500 outline-offset-2'
+                                                : 'bg-gray-200 dark:bg-gray-700'
                                                 }`}
                                             onClick={() => setSelectedImageIndex(index)}
                                         >
