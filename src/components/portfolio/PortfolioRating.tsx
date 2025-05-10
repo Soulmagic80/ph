@@ -30,31 +30,26 @@ export default function PortfolioRating() {
                                         icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
                                         text="Well structured"
                                         count={42}
-                                        isPositive={true}
                                     />
                                     <FeedbackChip
                                         icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
-                                        text="Clear navigation"
+                                        text="Creative"
                                         count={38}
-                                        isPositive={true}
                                     />
                                     <FeedbackChip
                                         icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
-                                        text="Modern design"
+                                        text="Professional"
                                         count={35}
-                                        isPositive={true}
                                     />
                                     <FeedbackChip
                                         icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
                                         text="Responsive layout"
                                         count={31}
-                                        isPositive={true}
                                     />
                                     <FeedbackChip
                                         icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
                                         text="Good performance"
                                         count={28}
-                                        isPositive={true}
                                     />
                                 </div>
                             </div>
@@ -70,13 +65,11 @@ export default function PortfolioRating() {
                                         icon={<ThumbsDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
                                         text="Slow loading time"
                                         count={15}
-                                        isPositive={false}
                                     />
                                     <FeedbackChip
                                         icon={<ThumbsDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
                                         text="Unclear call-to-actions"
                                         count={12}
-                                        isPositive={false}
                                     />
                                 </div>
                             </div>
