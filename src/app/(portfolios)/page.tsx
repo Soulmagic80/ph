@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Portfolio } from "@/types";
 import { CalendarIcon, TrophyIcon } from "@heroicons/react/24/outline";
 import { User } from "@supabase/supabase-js";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
@@ -19,40 +19,7 @@ export default function Home() {
 
   const ITEMS_PER_PAGE = 12;
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        console.log("Fetching initial data...");
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-
-        if (userError) {
-          console.error("Error fetching user:", userError);
-        } else {
-          console.log("User data:", userData);
-          setUser(userData.user);
-        }
-
-        console.log("Fetching portfolios...");
-        await fetchPortfolios(0);
-      } catch (error) {
-        console.error("Error in initial fetch:", error);
-        setHasMore(false);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (page === 0) {
-      setPortfolios([]);
-      fetchPortfolios(0);
-    }
-  }, [selectedRanking]);
-
-  const fetchPortfolios = async (page: number) => {
+  const fetchPortfolios = useCallback(async (page: number) => {
     try {
       console.log("Fetching portfolios for page:", page);
 
@@ -113,7 +80,40 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedRanking]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        console.log("Fetching initial data...");
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+
+        if (userError) {
+          console.error("Error fetching user:", userError);
+        } else {
+          console.log("User data:", userData);
+          setUser(userData.user);
+        }
+
+        console.log("Fetching portfolios...");
+        await fetchPortfolios(0);
+      } catch (error) {
+        console.error("Error in initial fetch:", error);
+        setHasMore(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [fetchPortfolios]);
+
+  useEffect(() => {
+    if (page === 0) {
+      setPortfolios([]);
+      fetchPortfolios(0);
+    }
+  }, [selectedRanking, fetchPortfolios]);
 
   const handleUpvote = async (portfolioId: string) => {
     if (!user) return;
@@ -232,7 +232,7 @@ export default function Home() {
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
     };
-  }, [page, hasMore]);
+  }, [page, hasMore, fetchPortfolios]);
 
   const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
 
