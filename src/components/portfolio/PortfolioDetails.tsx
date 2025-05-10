@@ -1,10 +1,10 @@
 import { Badge } from "@/components/Badge";
 import { ToolBadge } from "@/components/ToolBadge";
 import { ToolName } from "@/lib/toolIcons";
-import { Portfolio } from "@/types";
+import { PortfolioWithRelations } from "@/types";
 
 interface PortfolioDetailsProps {
-    portfolio: Portfolio;
+    portfolio: PortfolioWithRelations;
 }
 
 export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
@@ -51,7 +51,7 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                                         <div className="flex flex-row flex-wrap justify-end gap-2">
                                             {portfolio.services && portfolio.services.length > 0 ? (
                                                 portfolio.services.map((service, index) => (
-                                                    <Badge key={index} variant="success">{service}</Badge>
+                                                    <Badge key={index} variant="success">{service.service.name}</Badge>
                                                 ))
                                             ) : (
                                                 <span className="text-gray-900 dark:text-gray-50">n.a.</span>
@@ -65,7 +65,7 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                                         <div className="flex flex-row flex-wrap justify-end gap-2">
                                             {portfolio.tools && portfolio.tools.length > 0 ? (
                                                 portfolio.tools.map((tool, index) => (
-                                                    <ToolBadge key={index} tool={tool as ToolName} />
+                                                    <ToolBadge key={index} tool={tool.tool.name as ToolName} />
                                                 ))
                                             ) : (
                                                 <span className="text-gray-900 dark:text-gray-50">n.a.</span>

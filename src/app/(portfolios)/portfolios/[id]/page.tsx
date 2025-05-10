@@ -6,11 +6,11 @@ import PortfolioDetails from "@/components/portfolio/PortfolioDetails";
 import PortfolioOverview from "@/components/portfolio/PortfolioOverview";
 import PortfolioRating from "@/components/portfolio/PortfolioRating";
 import { supabase } from "@/lib/supabase";
-import { Portfolio } from "@/types";
+import { PortfolioWithRelations } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function PortfolioDetailPage({ params }: { params: { id: string } }) {
-    const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+    const [portfolio, setPortfolio] = useState<PortfolioWithRelations | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
