@@ -113,7 +113,7 @@ export default function Home() {
       setPortfolios([]);
       fetchPortfolios(0);
     }
-  }, [selectedRanking, fetchPortfolios]);
+  }, [selectedRanking, fetchPortfolios, page]);
 
   const handleUpvote = async (portfolioId: string) => {
     if (!user) return;
