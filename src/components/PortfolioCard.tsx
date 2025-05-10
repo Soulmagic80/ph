@@ -1,4 +1,5 @@
 "use client";
+import { Medal } from "@phosphor-icons/react";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,28 +51,33 @@ export default function PortfolioCard({ portfolio, user, onUpvote, rank }: Portf
           )}
         </div>
       </Link>
-      <div className="w-full h-auto mt-3 flex items-center gap-4 px-3 py-2">
-        <span className="text-5xl font-inter font-semibold text-black dark:text-white">{rank || 2}</span>
+      <div className="w-full h-auto mt-2.5 flex items-center gap-4 px-3 py-2">
+        <span className="text-5xl font-geist font-semibold text-black dark:text-white">{rank || 2}</span>
         <div className="flex-1 flex flex-col">
-          <h2 className="text-base font-inter font-medium text-black dark:text-white">{portfolio.title}</h2>
-          <div className="flex flex-row gap-1.5 mt-1">
+          <h2 className="text-base pl-0.5 font-geist font-medium text-black dark:text-white">{portfolio.title}</h2>
+          <div className="flex flex-row gap-1.5 mt-1.5">
             {displayTags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10"
+                className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-1.5 py-0.5 text-[10px] font-geist font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10"
               >
                 {tag}
               </span>
             ))}
           </div>
         </div>
-        <button
-          onClick={handleUpvoteClick}
-          className="w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-900 border-[2px] border-[#000000] dark:border-gray-700 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#FF006A] dark:hover:border-[#FF006A]"
-        >
-          <Image src="/upvote.svg" alt="Upvote" width={12} height={12} />
-          <span className="text-xs font-inter font-semibold text-black dark:text-white">{portfolio.upvotes}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {rank === 1 && <Medal className="w-6 h-6 text-yellow-500" weight="fill" />}
+          {rank === 2 && <Medal className="w-6 h-6 text-gray-400" weight="fill" />}
+          {rank === 3 && <Medal className="w-6 h-6 text-amber-700" weight="fill" />}
+          <button
+            onClick={handleUpvoteClick}
+            className="w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-900 border-[2px] border-[#000000] dark:border-gray-700 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#FF006A] dark:hover:border-[#FF006A]"
+          >
+            <Image src="/upvote.svg" alt="Upvote" width={12} height={12} className="dark:invert" />
+            <span className="text-xs font-geist font-semibold text-black dark:text-white">{portfolio.upvotes}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

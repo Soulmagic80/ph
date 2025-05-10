@@ -244,16 +244,16 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto">
+    <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto bg-white dark:bg-[#090E1A]">
       <div className="w-full flex flex-col gap-6 pt-[160px] pb-[120px]">
-        <h1 className="text-[36px] text-supergrey-100 font-geist-sans font-semibold w-full min-w-[250px] text-left text-balance tracking-[-0.03em] leading-[120%]">
+        <h1 className="text-[36px] font-geist-sans font-semibold w-full min-w-[250px] text-left text-balance tracking-[-0.03em] leading-[120%] text-gray-900 dark:text-gray-50">
           Get feedback.
           <br />
           Get upvotes.
           <br />
           Get <span className="text-pink-100 dark:text-pinkdark-200">noticed.</span>
         </h1>
-        <p className="text-[18px] lg:text-[18px] font-geist-sans font-light leading-[150%] text-gray-600 w-full text-left max-w-[640px]">
+        <p className="text-[18px] lg:text-[18px] font-geist-sans font-light leading-[150%] text-gray-600 dark:text-gray-300 w-full text-left max-w-[640px]">
           Submit your portfolio, earn upvotes and valuable feedback from the design community, help others and maximize your visibility.
         </p>
       </div>

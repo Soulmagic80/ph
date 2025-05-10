@@ -17,7 +17,16 @@ Select.displayName = "Select"
 const SelectGroup = SelectPrimitives.Group
 SelectGroup.displayName = "SelectGroup"
 
-const SelectValue = SelectPrimitives.Value
+const SelectValue = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitives.Value>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitives.Value>
+>(({ className, ...props }, forwardedRef) => (
+  <SelectPrimitives.Value
+    ref={forwardedRef}
+    className={cx(className)}
+    {...props}
+  />
+))
 SelectValue.displayName = "SelectValue"
 
 const selectTriggerStyles = [
@@ -60,7 +69,7 @@ const SelectTrigger = React.forwardRef<
       tremor-id="tremor-raw"
       {...props}
     >
-      <span className="truncate">{children}</span>
+      <div className="truncate">{children}</div>
       <SelectPrimitives.Icon asChild>
         <RiExpandUpDownLine
           className={cx(
@@ -250,15 +259,20 @@ const SelectSeparator = React.forwardRef<
 
 SelectSeparator.displayName = "SelectSeparator"
 
-const SelectWithNoScroll = React.forwardRef(
-  (props: any, ref: any) => (
-    <SelectPrimitives.Root modal={false} onOpenAutoFocus={(e: Event) => e.preventDefault()} ref={ref} {...props} />
-  )
-)
+const SelectWithNoScroll = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitives.Root>
+>((props, ref) => (
+  <SelectPrimitives.Root
+    onOpenAutoFocus={(e: Event) => e.preventDefault()}
+    ref={ref}
+    {...props}
+  />
+))
 SelectWithNoScroll.displayName = "Select"
 
 export {
-  SelectWithNoScroll as Select,
+  Select,
   SelectContent,
   SelectGroup,
   SelectGroupLabel,

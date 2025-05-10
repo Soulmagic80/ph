@@ -27,12 +27,12 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                 </div>
                 {/* Right column: Content */}
                 <div className="md:col-span-2 md:pl-16">
-                    <div className="bg-gray-50 rounded-md border border-gray-200 p-6 dark:border-gray-800">
+                    <div className="bg-white dark:bg-gray-900 rounded-md border border-gray-200 p-6 dark:border-gray-800">
                         <div className="w-full">
                             <div className="aspect-[500/300] w-full flex gap-4">
                                 {/* Hauptbild */}
                                 <div className="flex-1 h-full">
-                                    <div className="rounded-md h-full">
+                                    <div className="rounded-md h-full border border-gray-200 dark:border-gray-800">
                                         {images[selectedImageIndex] ? (
                                             <Image
                                                 src={images[selectedImageIndex]}
@@ -72,15 +72,15 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                                     ))}
                                 </div>
                             </div>
-                            <button className="w-full mt-8 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                            <button className="w-full mt-8 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors text-sm dark:bg-blue-600 dark:hover:bg-blue-700">
                                 Visit website
                             </button>
                             <div className="flex flex-col lg:flex-row gap-2 mt-4">
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-white text-supergrey-100 py-2 px-4 rounded-md border border-beige-300 hover:bg-gray-50 transition-colors text-sm">
+                                <button className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
                                     <ArrowUpCircleIcon className="w-5 h-5" />
                                     <span>Upvote this portfolio</span>
                                 </button>
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-white text-supergrey-100 py-2 px-4 rounded-md border border-beige-300 hover:bg-gray-50 transition-colors text-sm">
+                                <button className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
                                     <StarIcon className="w-5 h-5" />
                                     <span>Rate this portfolio</span>
                                 </button>

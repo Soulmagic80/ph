@@ -1,3 +1,4 @@
+import { Database } from "@/types/database.types";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -7,4 +8,4 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Supabase URL und Key müssen in .env.local definiert sein!");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
