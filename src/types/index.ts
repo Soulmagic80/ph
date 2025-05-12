@@ -1,15 +1,15 @@
 export interface Portfolio {
   id: string;
-  title: string;
-  description: string;
-  images?: string[]; // Array von Bild-Pfaden im Storage
-  upvotes: number;
-  created_at: string;
   user_id: string;
-  tags?: string[]; // Tags-Array
-  rank_current_month?: number;
-  rank_all_time?: number;
-  rank_all_time_best?: number;
+  title: string;
+  description: string | null;
+  images: string[] | null; // Array von Bild-Pfaden im Storage, default: ARRAY[]::text[]
+  tags: string[] | null; // Tags-Array, default: ARRAY[]::text[]
+  upvotes: number | null; // default: 0
+  rank_current_month: number | null;
+  rank_all_time: number | null;
+  rank_all_time_best: number | null;
+  created_at: string;
   updated_at: string;
 }
 
@@ -26,9 +26,15 @@ export interface PortfolioRankHistory {
 export interface FeedbackChip {
   id: string;
   name: string;
-  description?: string;
-  category: 'block' | 'warning' | 'info';
-  color: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortfolioRatingCount {
+  id: string;
+  portfolio_id: string;
+  feedback_chip_id: string;
+  count: number;
   created_at: string;
   updated_at: string;
 }
@@ -37,7 +43,10 @@ export interface PortfolioRating {
   id: string;
   portfolio_id: string;
   feedback_chip_id: string;
+  user_id: string;
+  is_positive: boolean;
   created_at: string;
+  feedback_chip: FeedbackChip;
 }
 
 export interface Tool {
@@ -79,22 +88,35 @@ export interface Comment {
   portfolio_id: string;
   user_id: string;
   content: string;
-  parent_id?: string;
-  created_at: string;
-  updated_at: string;
-  portfolio_title?: string;
-  user?: {
-    username: string | null;
-    avatar_url: string | null;
-  };
-  replies?: Comment[];
+  parent_id: string | null;
+  created_at: string; // default: now()
+  updated_at: string; // default: now()
+  portfolio_title: string | null;
+  user: Profile | null; // Beziehung zu profiles über user_id
+  replies: Comment[] | null;
 }
 
 // Erweiterte Portfolio-Schnittstelle mit Beziehungen
 export interface PortfolioWithRelations extends Portfolio {
-  rank_history?: PortfolioRankHistory[];
-  ratings?: (PortfolioRating & { feedback_chip: FeedbackChip })[];
-  tools?: (PortfolioTool & { tool: Tool })[];
-  services?: (PortfolioService & { service: Service })[];
-  comments?: Comment[];
+  rank_history: PortfolioRankHistory[] | null;
+  tools: (PortfolioTool & { tool: Tool })[] | null;
+  services: (PortfolioService & { service: Service })[] | null;
+  comments: Comment[] | null;
+  user: Profile | null; // Beziehung zu profiles über user_id
+  portfolio_rating: PortfolioRating[] | null;
+  portfolio_rating_counts: (PortfolioRatingCount & {
+    feedback_chip: FeedbackChip;
+  })[] | null;
+}
+
+export interface Profile {
+  id: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  website: string | null;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+  is_admin: boolean | null; // default: false
 }
