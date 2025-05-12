@@ -205,10 +205,10 @@ export default function Home() {
       prev
         .map((p) =>
           p.id === portfolioId
-            ? { ...p, upvotes: p.upvotes + 1, rank_all_time: allTimeRanked.find(r => r.id === p.id)?.rank_all_time }
+            ? { ...p, upvotes: (p.upvotes ?? 0) + 1, rank_all_time: allTimeRanked.find(r => r.id === p.id)?.rank_all_time }
             : p
         )
-        .sort((a, b) => b.upvotes - a.upvotes)
+        .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0))
     );
   };
 
