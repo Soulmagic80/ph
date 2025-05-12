@@ -17,7 +17,7 @@ export default function PortfolioGrid({ portfolios, user, onUpvote }: PortfolioG
         if (sortBy === "newest") {
             return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         } else {
-            return b.upvotes - a.upvotes;
+            return (b.upvotes ?? 0) - (a.upvotes ?? 0);
         }
     });
 
