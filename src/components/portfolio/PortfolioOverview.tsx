@@ -6,11 +6,10 @@ import { useState } from "react";
 interface PortfolioOverviewProps {
     title: string;
     images: string[];
-    portfolioId: string;
     portfolioSlug: string | null | undefined;
 }
 
-export default function PortfolioOverview({ title, images, portfolioId, portfolioSlug }: PortfolioOverviewProps) {
+export default function PortfolioOverview({ title, images, portfolioSlug }: PortfolioOverviewProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
     return (

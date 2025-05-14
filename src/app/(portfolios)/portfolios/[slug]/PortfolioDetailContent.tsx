@@ -122,7 +122,6 @@ export default function PortfolioDetailContent({ slug }: { slug: string }) {
                 <PortfolioOverview
                     title={portfolio.title}
                     images={imageUrls}
-                    portfolioId={portfolio.id}
                     portfolioSlug={portfolio.slug}
                 />
                 <Divider />
