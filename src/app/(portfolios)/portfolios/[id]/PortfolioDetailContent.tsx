@@ -20,7 +20,6 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
                 setLoading(true);
                 setError(null);
 
-                // First, get the portfolio with its basic data
                 const { data: portfolioData, error: portfolioError } = await supabase
                     .from('portfolios')
                     .select(`
@@ -53,10 +52,6 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
                     return;
                 }
 
-                console.log('Portfolio Data:', portfolioData);
-                console.log('Services:', portfolioData.services);
-
-                // Then, get the user profile
                 const { data: profileData, error: profileError } = await supabase
                     .from('profiles')
                     .select('*')
@@ -69,7 +64,6 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
                     return;
                 }
 
-                // Combine the data
                 const combinedData = {
                     ...portfolioData,
                     user: profileData || null
@@ -118,7 +112,6 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
         );
     }
 
-    // Bild-URLs aus Storage
     const imageUrls = portfolio.images?.map(image =>
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${image}`
     ) || [];

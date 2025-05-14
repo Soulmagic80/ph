@@ -5,10 +5,9 @@ import { NextResponse } from "next/server"
 export async function GET(request: Request) {
     const requestUrl = new URL(request.url)
     const code = requestUrl.searchParams.get("code")
-    const redirectedFrom = requestUrl.searchParams.get("redirectedFrom")
 
     if (code) {
-        const cookieStore = cookies()
+        const cookieStore = await cookies()
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -26,10 +25,9 @@ export async function GET(request: Request) {
                 },
             }
         )
+
         await supabase.auth.exchangeCodeForSession(code)
     }
 
-    // URL to redirect to after sign in process completes
-    const redirectUrl = redirectedFrom ? `${requestUrl.origin}${redirectedFrom}` : requestUrl.origin
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(requestUrl.origin)
 } 
