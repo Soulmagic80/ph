@@ -1,27 +1,29 @@
 import { Database } from "@/types/database.types";
 import { createServerClient } from "@supabase/ssr";
-import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
-import { cache } from "react";
 
-export const createServerSupabaseClient = cache(async () => {
-  const cookieStore = await cookies();
+export const createServerSupabaseClient = () => {
+  const cookieStore = cookies();
   
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        async getAll() {
+          return (await cookieStore).getAll();
         },
-        set(name: string, value: string, options: Omit<ResponseCookie, "name" | "value">) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: Omit<ResponseCookie, "name" | "value">) {
-          cookieStore.delete({ name, ...options });
+        async setAll(cookiesToSet) {
+          try {
+            const resolvedCookiesStore = await cookieStore;
+            cookiesToSet.forEach(({ name, value, options }) =>
+              resolvedCookiesStore.set(name, value, options)
+            );
+          } catch {
+            // Handle errors if needed
+          }
         }
       }
     }
   );
-});
+};
