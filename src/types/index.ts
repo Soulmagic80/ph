@@ -5,12 +5,15 @@ export interface Portfolio {
   description: string | null;
   images: string[] | null; // Array von Bild-Pfaden im Storage, default: ARRAY[]::text[]
   tags: string[] | null; // Tags-Array, default: ARRAY[]::text[]
+  style?: string[] | null; // Add style attribute
   upvotes: number | null; // default: 0
   rank_current_month: number | null;
   rank_all_time: number | null;
   rank_all_time_best: number | null;
+  slug?: string | null;
   created_at: string;
   updated_at: string;
+  url?: string | null;
 }
 
 // Neue Typen für die zusätzlichen Tabellen

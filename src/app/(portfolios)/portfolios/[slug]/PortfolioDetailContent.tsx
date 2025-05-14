@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { PortfolioWithRelations } from "@/types";
 import { useEffect, useState } from "react";
 
-export default function PortfolioDetailContent({ id }: { id: string }) {
+export default function PortfolioDetailContent({ slug }: { slug: string }) {
     const [portfolio, setPortfolio] = useState<PortfolioWithRelations | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
                             feedback_chip:feedback_chips(*)
                         )
                     `)
-                    .eq('id', id)
+                    .eq('slug', slug)
                     .single();
 
                 if (portfolioError) {
@@ -79,7 +79,7 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
         }
 
         fetchPortfolio();
-    }, [id]);
+    }, [slug]);
 
     if (loading) {
         return (
@@ -106,7 +106,7 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
         return (
             <div className="max-w-7xl mx-auto px-5 md:px-10 py-10 mt-20">
                 <div className="text-gray-500 dark:text-gray-400">
-                    Portfolio not found
+                    Portfolio not found for slug: {slug}
                 </div>
             </div>
         );
@@ -122,6 +122,8 @@ export default function PortfolioDetailContent({ id }: { id: string }) {
                 <PortfolioOverview
                     title={portfolio.title}
                     images={imageUrls}
+                    portfolioId={portfolio.id}
+                    portfolioSlug={portfolio.slug}
                 />
                 <Divider />
                 <PortfolioDetails portfolio={portfolio} />

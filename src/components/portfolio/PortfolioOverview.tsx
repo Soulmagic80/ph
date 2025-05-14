@@ -1,13 +1,16 @@
 import { ArrowUpCircleIcon, StarIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 interface PortfolioOverviewProps {
     title: string;
     images: string[];
+    portfolioId: string;
+    portfolioSlug: string | null | undefined;
 }
 
-export default function PortfolioOverview({ title, images }: PortfolioOverviewProps) {
+export default function PortfolioOverview({ title, images, portfolioId, portfolioSlug }: PortfolioOverviewProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
     return (
@@ -80,10 +83,19 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                                     <ArrowUpCircleIcon className="w-5 h-5" />
                                     <span>Upvote this portfolio</span>
                                 </button>
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
-                                    <StarIcon className="w-5 h-5" />
-                                    <span>Rate this portfolio</span>
-                                </button>
+                                {portfolioSlug ? (
+                                    <Link href={`/feedback/${portfolioSlug}/info`} passHref className="flex-1">
+                                        <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
+                                            <StarIcon className="w-5 h-5" />
+                                            <span>Rate this portfolio</span>
+                                        </button>
+                                    </Link>
+                                ) : (
+                                    <button className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 opacity-50 cursor-not-allowed" disabled>
+                                        <StarIcon className="w-5 h-5" />
+                                        <span>Rate this portfolio (Slug missing)</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

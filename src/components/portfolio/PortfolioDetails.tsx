@@ -51,6 +51,20 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">{portfolio.title}</td>
                                 </tr>
                                 <tr>
+                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Portfolio style</td>
+                                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">
+                                        <div className="flex flex-row flex-wrap justify-end gap-2">
+                                            {portfolio.style && portfolio.style.length > 0 ? (
+                                                portfolio.style.map((styleItem, index) => (
+                                                    <Badge key={index} variant="warning">{styleItem}</Badge>
+                                                ))
+                                            ) : (
+                                                <span className="text-gray-900 dark:text-gray-50">n.a.</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Services</td>
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">
                                         <div className="flex flex-row flex-wrap justify-end gap-2">
@@ -87,7 +101,7 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">{portfolio.upvotes || 0}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Upload Date</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Upload date</td>
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">{formattedDate}</td>
                                 </tr>
                                 <tr>

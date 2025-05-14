@@ -75,7 +75,7 @@ const DropdownMenuSubMenuContent = React.forwardRef<
         // heights
         "max-h-[var(--radix-popper-available-height)]",
         // background color
-        "bg-white dark:bg-[#090E1A]",
+        "bg-white dark:bg-gray-950",
         // text color
         "text-gray-900 dark:text-gray-50",
         // border color
@@ -119,7 +119,7 @@ const DropdownMenuContent = React.forwardRef<
           // heights
           "max-h-[var(--radix-popper-available-height)]",
           // background color
-          "bg-white dark:bg-[#090E1A]",
+          "bg-white dark:bg-gray-950",
           // text color
           "text-gray-900 dark:text-gray-50",
           // border color

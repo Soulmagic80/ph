@@ -1,7 +1,8 @@
 // Tremor Raw cx [v0.0.0]
 
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { supabase } from './supabase'; // Pfad ggf. anpassen
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -95,4 +96,49 @@ export const formatters: { [key: string]: any } = {
     }).format(number)
     return `${formattedNumber}M`
   },
+}
+
+export function slugify(text: string): string {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') // Ersetze Leerzeichen durch -
+    .replace(/[^\w-]+/g, '') // Entferne alle nicht-Wort-Zeichen (außer -)
+    .replace(/--+/g, '-') // Ersetze mehrere -- durch ein einzelnes -
+    .replace(/^-+/, '') // Entferne führende -
+    .replace(/-+$/, ''); // Entferne abschließende -
+}
+
+export async function generateUniqueSlug(title: string, portfolioIdToExclude: string | null = null): Promise<string> {
+  let slug = slugify(title);
+  let uniqueSlug = slug;
+  let counter = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const query = supabase
+      .from('portfolios')
+      .select('slug')
+      .eq('slug', uniqueSlug);
+
+    if (portfolioIdToExclude) {
+      query.neq('id', portfolioIdToExclude);
+    }
+
+    const { data, error } = await query.maybeSingle();
+
+    if (error) {
+      console.error('Error checking for existing slug:', error);
+      return `${slug}-${Math.random().toString(36).substring(2, 7)}`;
+    }
+
+    if (!data) {
+      return uniqueSlug;
+    }
+
+    counter++;
+    uniqueSlug = `${slug}-${counter}`;
+  }
 }

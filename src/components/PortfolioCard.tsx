@@ -34,9 +34,12 @@ export default function PortfolioCard({ portfolio, user, onUpvote, rank }: Portf
   // Erste 3 Tags oder leer
   const displayTags = portfolio.tags?.slice(0, 2) || [];
 
+  // Construct the link href using slug if available, otherwise fallback to id
+  const portfolioLink = portfolio.slug ? `/portfolios/${portfolio.slug}` : `/portfolios/${portfolio.id}`;
+
   return (
     <div className="w-full h-fit bg-white dark:bg-gray-900 outline outline-1 outline-gray-200 dark:outline-gray-800 rounded-md hover:outline-4 hover:outline-[#3474DB] transition-all duration-200 p-2">
-      <Link href={`/portfolios/${portfolio.id}`} className="block w-full rounded-md">
+      <Link href={portfolioLink} className="block w-full rounded-md">
         <div className="w-full rounded-md aspect-[300/205] outline-md outline-1 outline-[#F5F2F0] dark:outline-gray-800 overflow-hidden">
           {imageSrc ? (
             <Image
