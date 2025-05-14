@@ -6,7 +6,7 @@ export default function PortfoliosLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-white dark:bg-gray-950">
       <Sidebar />
       <main className="flex-1">
         {children}

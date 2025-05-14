@@ -244,7 +244,7 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto bg-white dark:bg-[#090E1A]">
+    <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto bg-white dark:bg-gray-950">
       <div className="w-full flex flex-col gap-6 pt-[160px] pb-[120px]">
         <h1 className="text-[36px] font-geist-sans font-semibold w-full min-w-[250px] text-left text-balance tracking-[-0.03em] leading-[120%] text-gray-900 dark:text-gray-50">
           Get feedback.

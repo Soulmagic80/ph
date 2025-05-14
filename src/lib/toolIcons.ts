@@ -1,32 +1,24 @@
 import {
-    Camera,
     Code2,
-    Eye,
-    Figma,
+    Database,
     FileJson,
-    Globe,
+    GitBranch,
     Layout,
-    Pencil,
-    PenTool,
-    Image as Photoshop,
+    Server,
     Type,
-    Video
+    Webhook
 } from "lucide-react";
 
 export const toolIcons = {
-    figma: Figma,
-    sketch: Pencil,
-    photoshop: Photoshop,
-    illustrator: PenTool,
-    xd: Layout,
-    invision: Eye,
-    code: Code2,
-    aftereffects: Video,
-    premiere: Video,
-    indesign: Type,
-    lightroom: Camera,
-    webflow: Globe,
-    framer: FileJson,
+    "React": Code2,
+    "Next.js": FileJson,
+    "TypeScript": Type,
+    "Tailwind CSS": Layout,
+    "Node.js": Server,
+    "PostgreSQL": Database,
+    "Figma": Layout,
+    "Git": GitBranch,
+    "AWS": Webhook,
 } as const;
 
 export type ToolName = keyof typeof toolIcons; 

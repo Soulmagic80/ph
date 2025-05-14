@@ -8,6 +8,11 @@ interface PortfolioDetailsProps {
 }
 
 export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
+    // Debug logging
+    console.log('Portfolio in PortfolioDetails:', portfolio);
+    console.log('Services in PortfolioDetails:', portfolio.services);
+    console.log('Services structure:', JSON.stringify(portfolio.services, null, 2));
+
     // Format date
     const formattedDate = new Date(portfolio.created_at).toLocaleDateString('de-DE', {
         day: '2-digit',
@@ -40,7 +45,7 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                                     <th scope="col" className="border-b px-4 py-3.5 text-right text-gray-900 dark:text-gray-50 border-gray-200 dark:border-gray-800 text-xs font-medium uppercase">Value</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-transparent">
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-950">
                                 <tr>
                                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">Designer or Agency</td>
                                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50 text-right">{portfolio.title}</td>

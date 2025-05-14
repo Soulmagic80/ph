@@ -17,6 +17,7 @@ const config: Config = {
         "courier-prime": ["var(--font-courier-prime)"],
       },
       colors: {
+        suoerdark: { 999: "#090E1A" },
         gray: { 925: "#050814" },
         warmgrey: { 100: "#9C9C9C" },
         /*lightbeige: { 100: "#FBFAF9" },*/

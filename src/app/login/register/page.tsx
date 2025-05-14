@@ -4,11 +4,11 @@ import { Button } from "@/components/Button";
 import { Divider } from "@/components/Divider";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
+import { supabase } from "@/lib/supabase";
 import { RiGoogleFill } from "@remixicon/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
-import Link from "next/link";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -29,6 +29,10 @@ export default function Register() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
+        data: {
+          full_name: email.split('@')[0], // Default to email username
+          avatar_url: null
+        }
       },
     });
 
@@ -78,7 +82,7 @@ export default function Register() {
         </div>
         <div className="mt-10 w-full">
 
-  
+
           <form onSubmit={handleSignUp} className="flex w-full flex-col gap-y-6">
             {error && (
               <div className="text-red-500 text-sm">

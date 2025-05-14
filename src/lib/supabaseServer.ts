@@ -1,10 +1,12 @@
 import { Database } from "@/types/database.types";
 import { createServerClient } from "@supabase/ssr";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export const createSupabaseServerClient = () => {
-  const cookieStore = cookies();
-
+export const createServerSupabaseClient = cache(async () => {
+  const cookieStore = await cookies();
+  
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -13,13 +15,13 @@ export const createSupabaseServerClient = () => {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: Omit<ResponseCookie, "name" | "value">) {
           cookieStore.set({ name, value, ...options });
         },
-        remove(name: string, options: any) {
+        remove(name: string, options: Omit<ResponseCookie, "name" | "value">) {
           cookieStore.delete({ name, ...options });
-        },
-      },
+        }
+      }
     }
   );
-};
+});

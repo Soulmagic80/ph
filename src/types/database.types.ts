@@ -83,27 +83,18 @@ export interface Database {
         Row: {
           id: string
           name: string
-          description: string | null
-          category: 'block' | 'warning' | 'info'
-          color: string
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           name: string
-          description?: string | null
-          category: 'block' | 'warning' | 'info'
-          color: string
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           name?: string
-          description?: string | null
-          category?: 'block' | 'warning' | 'info'
-          color?: string
           created_at?: string
           updated_at?: string
         }
@@ -113,19 +104,51 @@ export interface Database {
           id: string
           portfolio_id: string
           feedback_chip_id: string
+          user_id: string
+          is_positive: boolean
           created_at: string
         }
         Insert: {
           id?: string
           portfolio_id: string
           feedback_chip_id: string
+          user_id: string
+          is_positive: boolean
           created_at?: string
         }
         Update: {
           id?: string
           portfolio_id?: string
           feedback_chip_id?: string
+          user_id?: string
+          is_positive?: boolean
           created_at?: string
+        }
+      }
+      portfolio_rating_counts: {
+        Row: {
+          id: string
+          portfolio_id: string
+          feedback_chip_id: string
+          count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          portfolio_id: string
+          feedback_chip_id: string
+          count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          portfolio_id?: string
+          feedback_chip_id?: string
+          count?: number
+          created_at?: string
+          updated_at?: string
         }
       }
       portfolio_comments: {

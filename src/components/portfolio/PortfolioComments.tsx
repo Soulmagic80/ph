@@ -101,7 +101,14 @@ export default function PortfolioComments({ portfolio_id }: PortfolioCommentsPro
                     {loading ? (
                         <div className="text-gray-500">Loading comments...</div>
                     ) : comments.length === 0 ? (
-                        <div className="text-gray-500">No comments yet.</div>
+                        <CommentCard
+                            avatarSrc=""
+                            avatarFallback="U"
+                            name="User"
+                            timeAgo={new Date().toLocaleDateString()}
+                            comment="No comments yet."
+                            role="User"
+                        />
                     ) : (
                         <div className="space-y-3">
                             {comments.map((comment) => (

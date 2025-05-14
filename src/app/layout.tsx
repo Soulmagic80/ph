@@ -1,5 +1,5 @@
 import { AuthProvider } from "@/components/AuthProvider";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createServerSupabaseClient } from "@/lib/supabaseServer";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
@@ -52,7 +52,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
   const initialIsLoggedIn = !!session;
   const initialUserEmail = session?.user?.email || "Unknown";
@@ -63,7 +63,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.className} ${geistSans.variable} ${geistMono.variable} ${courierPrime.variable}`}>
+      <body className={`${inter.className} ${geistSans.variable} ${geistMono.variable} ${courierPrime.variable} bg-white dark:bg-gray-950`}>
         <ThemeProvider
           defaultTheme="system"
           disableTransitionOnChange

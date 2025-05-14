@@ -1,10 +1,10 @@
-export default function PortfolioLayout({
+export default function AuthLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     return (
-        <div className="bg-white dark:bg-gray-950 min-h-screen">
+        <div className="bg-white dark:bg-gray-900 min-h-screen">
             {children}
         </div>
     );

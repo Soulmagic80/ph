@@ -42,7 +42,7 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                                                 className="w-full h-full object-cover rounded-md"
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center">
+                                            <div className="w-full h-full bg-gray-50 dark:bg-gray-800 rounded-md flex items-center justify-center">
                                                 <span className="text-gray-400 dark:text-gray-600">No image available</span>
                                             </div>
                                         )}
@@ -55,7 +55,7 @@ export default function PortfolioOverview({ title, images }: PortfolioOverviewPr
                                             key={index}
                                             className={`w-full h-[calc((100%-48px)/4)] rounded-md cursor-pointer transition-all ${selectedImageIndex === index
                                                 ? 'outline outline-2 outline-blue-500 outline-offset-2'
-                                                : 'bg-gray-200 dark:bg-gray-700'
+                                                : 'bg-gray-50 dark:bg-gray-800'
                                                 }`}
                                             onClick={() => setSelectedImageIndex(index)}
                                         >

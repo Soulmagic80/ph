@@ -205,14 +205,99 @@ INSERT INTO feedback_chips (name, description, category, color) VALUES
     ('Warning', 'Potential issue that should be reviewed', 'warning', 'bg-orange-500'),
     ('Info', 'General information about the portfolio', 'info', 'bg-blue-500');
 
--- Insert some initial tools
+-- Insert initial tools with more realistic data
 INSERT INTO tools (name, description, category, icon_url) VALUES
-    ('React', 'A JavaScript library for building user interfaces', 'Frontend', 'https://example.com/react.svg'),
-    ('Node.js', 'JavaScript runtime built on Chrome''s V8 JavaScript engine', 'Backend', 'https://example.com/nodejs.svg'),
-    ('PostgreSQL', 'Advanced open source database', 'Database', 'https://example.com/postgresql.svg');
+    ('React', 'A JavaScript library for building user interfaces', 'Frontend', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg'),
+    ('Next.js', 'React framework for production', 'Frontend', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg'),
+    ('TypeScript', 'Typed superset of JavaScript', 'Language', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg'),
+    ('Tailwind CSS', 'Utility-first CSS framework', 'Frontend', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg'),
+    ('Node.js', 'JavaScript runtime for server-side development', 'Backend', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg'),
+    ('PostgreSQL', 'Advanced open source database', 'Database', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg'),
+    ('Docker', 'Container platform', 'DevOps', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg'),
+    ('Figma', 'Collaborative interface design tool', 'Design', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg'),
+    ('Git', 'Distributed version control system', 'DevOps', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg'),
+    ('AWS', 'Cloud computing platform', 'Cloud', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg')
+ON CONFLICT (name) DO UPDATE SET 
+    description = EXCLUDED.description,
+    category = EXCLUDED.category,
+    icon_url = EXCLUDED.icon_url;
 
--- Insert some initial services
+-- Insert initial services with more realistic data
 INSERT INTO services (name, description, category, price_range) VALUES
-    ('Web Development', 'Custom website development services', 'Development', '$1000-$5000'),
-    ('UI/UX Design', 'User interface and experience design', 'Design', '$500-$3000'),
-    ('Consulting', 'Technical consulting and architecture', 'Consulting', '$150-$300/hour');
+    ('Web Development', 'Custom website development with modern technologies', 'Development', '$2,000-$10,000'),
+    ('UI/UX Design', 'User interface and experience design for web and mobile', 'Design', '$1,500-$5,000'),
+    ('Mobile App Development', 'Native and cross-platform mobile application development', 'Development', '$5,000-$20,000'),
+    ('E-commerce Solutions', 'Custom e-commerce platform development', 'Development', '$3,000-$15,000'),
+    ('Technical Consulting', 'Expert advice on technology stack and architecture', 'Consulting', '$150-$300/hour'),
+    ('Performance Optimization', 'Website and application performance improvement', 'Optimization', '$1,000-$5,000'),
+    ('SEO Services', 'Search engine optimization and digital marketing', 'Marketing', '$500-$2,000/month'),
+    ('Content Creation', 'Professional content writing and strategy', 'Content', '$50-$200/page'),
+    ('Cloud Migration', 'Moving applications to cloud infrastructure', 'Cloud', '$5,000-$25,000'),
+    ('Maintenance & Support', 'Ongoing technical support and maintenance', 'Support', '$500-$2,000/month')
+ON CONFLICT (name) DO UPDATE SET 
+    description = EXCLUDED.description,
+    category = EXCLUDED.category,
+    price_range = EXCLUDED.price_range;
+
+-- Insert test data for feedback chips
+INSERT INTO feedback_chips (name, count, category, color) VALUES
+    ('Well structured', 42, 'info', '#4F46E5'),
+    ('Creative', 38, 'info', '#F59E42'),
+    ('Professional', 35, 'info', '#10B981'),
+    ('Responsive layout', 31, 'info', '#06B6D4'),
+    ('Good performance', 28, 'info', '#F43F5E'),
+    ('Slow loading time', 15, 'warning', '#EF4444'),
+    ('Unclear navigation', 12, 'warning', '#F97316'),
+    ('Missing features', 8, 'warning', '#EC4899')
+ON CONFLICT (name) DO UPDATE SET count = EXCLUDED.count, category = EXCLUDED.category, color = EXCLUDED.color;
+
+-- Link feedback chips to a portfolio (replace 'YOUR_PORTFOLIO_ID' with an actual portfolio ID)
+INSERT INTO portfolio_feedback_chips (portfolio_id, feedback_chip_id)
+SELECT 
+    'YOUR_PORTFOLIO_ID', -- Replace this with an actual portfolio ID
+    id
+FROM feedback_chips
+WHERE name IN ('Well structured', 'Creative', 'Professional', 'Responsive layout', 'Good performance', 'Slow loading time', 'Unclear navigation', 'Missing features')
+ON CONFLICT (portfolio_id, feedback_chip_id) DO NOTHING;
+
+-- Link tools to portfolios (replace 'YOUR_PORTFOLIO_ID' with actual portfolio IDs)
+INSERT INTO portfolio_tools (portfolio_id, tool_id)
+SELECT 
+    p.id,
+    t.id
+FROM portfolios p
+CROSS JOIN tools t
+WHERE p.id IN (SELECT id FROM portfolios LIMIT 5)  -- Link to first 5 portfolios
+AND t.name IN ('React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Node.js')  -- Link specific tools
+ON CONFLICT (portfolio_id, tool_id) DO NOTHING;
+
+-- Link services to portfolios
+INSERT INTO portfolio_services (portfolio_id, service_id)
+SELECT 
+    p.id,
+    s.id
+FROM portfolios p
+CROSS JOIN services s
+WHERE p.id IN (SELECT id FROM portfolios LIMIT 5)  -- Link to first 5 portfolios
+AND s.name IN ('Web Development', 'UI/UX Design', 'Technical Consulting')  -- Link specific services
+ON CONFLICT (portfolio_id, service_id) DO NOTHING;
+
+-- Create a trigger to automatically create a profile when a new user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, username, full_name, avatar_url)
+  VALUES (
+    new.id,
+    split_part(new.email, '@', 1),
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'avatar_url'
+  );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger the function every time a user is created
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
