@@ -4,13 +4,8 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
-
-export default async function FeedbackInfoPage({ params }: PageProps) {
+export default async function FeedbackInfoPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const cookieStore = cookies()
     const supabase = createServerComponentClient({ cookies: () => cookieStore });
     const { data: { session } } = await supabase.auth.getSession();
@@ -31,7 +26,7 @@ export default async function FeedbackInfoPage({ params }: PageProps) {
                     </p>
                     <div className="flex justify-center">
                         <Button asChild>
-                            <a href={`/feedback/${params.id}/pchips`}>
+                            <a href={`/feedback/${id}/pchips`}>
                                 Start Feedback
                             </a>
                         </Button>

@@ -7,13 +7,14 @@ export default function FeedbackInfo() {
     const [loading, setLoading] = React.useState(false)
     const router = useRouter()
     const params = useParams()
-    const portfolioSlug = params.slug as string
+    if (!params?.id) throw new Error("Portfolio ID is required")
+    const portfolioId = params.id as string
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
         setTimeout(() => {
-            router.push(`/feedback/${portfolioSlug}/pchips`)
+            router.push(`/feedback/${portfolioId}/pchips`)
         }, 600)
     }
 

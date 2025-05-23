@@ -19,6 +19,7 @@ interface StepProgressProps {
 
 const StepProgress = ({ steps }: StepProgressProps) => {
     const pathname = usePathname()
+    if (!pathname) return null
     const currentStepIndex = steps.findIndex((step) =>
         pathname.endsWith(step.path),
     )
@@ -58,6 +59,7 @@ const Layout = ({
 }>) => {
     const scrolled = useScroll(15)
     const params = useParams()
+    if (!params?.id) return null
     const portfolioId = params.id as string
 
     const steps: Step[] = [

@@ -34,7 +34,7 @@ export default function UserLayout({
             <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
               User Settings
             </h1>
-            <Tabs defaultValue={pathname} className="mt-6">
+            <Tabs defaultValue={pathname ?? undefined} className="mt-6">
               <TabsList>
                 {navigationSettings.map((item) => (
                   <TabsTrigger
