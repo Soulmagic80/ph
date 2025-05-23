@@ -11,7 +11,8 @@ interface PageProps {
 }
 
 export default async function FeedbackInfoPage({ params }: PageProps) {
-    const supabase = createServerComponentClient({ cookies });
+    const cookieStore = cookies()
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {

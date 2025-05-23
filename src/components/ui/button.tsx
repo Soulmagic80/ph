@@ -5,7 +5,7 @@ import { RiLoader2Fill } from "@remixicon/react"
 import React from "react"
 import { tv, type VariantProps } from "tailwind-variants"
 
-import { cx } from "@/lib/utils"
+import { cx, focusRing } from "@/lib/utils"
 
 const buttonVariants = tv({
   base: [
@@ -14,7 +14,7 @@ const buttonVariants = tv({
     // disabled
     "disabled:pointer-events-none disabled:shadow-none",
     // focus
-    "outline-none focus-visible:outline-none",
+    focusRing,
   ],
   variants: {
     variant: {

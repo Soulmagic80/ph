@@ -19,7 +19,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/Accordion"
+} from "@/components/ui/Accordion"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
 import {

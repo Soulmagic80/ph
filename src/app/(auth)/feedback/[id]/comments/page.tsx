@@ -13,6 +13,9 @@ export default function CommentsPage() {
     const [error, setError] = React.useState<string | null>(null)
     const router = useRouter()
     const params = useParams()
+    if (!params?.id) {
+        throw new Error('Portfolio ID is required')
+    }
     const portfolioId = params.id as string
     const supabase = createClientComponentClient()
 
