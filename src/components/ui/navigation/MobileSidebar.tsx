@@ -1,6 +1,6 @@
 "use client";
-import { AuthContext } from "@/components/AuthProvider";
-import { Button } from "@/components/Button";
+import { AuthContext } from "@/components/core/AuthProvider";
+import { Button } from "@/components/ui/Button";
 import {
   Drawer,
   DrawerBody,
@@ -8,7 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/Drawer";
+} from "@/components/ui/Drawer";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useContext } from "react";
@@ -23,7 +23,7 @@ export default function MobileSidebar() {
           <Menu className="size-6 shrink-0 text-gray-600 dark:text-gray-400" aria-hidden="true" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="bg-midbeige-200 border-beige-300 overflow-x-hidden sm:max-w-lg">
+      <DrawerContent className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 overflow-x-hidden sm:max-w-lg">
         <DrawerHeader>
           <DrawerTitle>Menu</DrawerTitle>
         </DrawerHeader>

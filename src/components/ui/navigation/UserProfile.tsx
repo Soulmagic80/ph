@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 import { cx } from "@/lib/utils";
 import { User } from "lucide-react";
 import { DropdownUserProfile } from "./DropdownUserProfile";

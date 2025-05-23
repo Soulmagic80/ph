@@ -1,6 +1,6 @@
 "use client";
-import { AuthContext } from "@/components/AuthProvider";
-import { Button } from "@/components/Button";
+import { AuthContext } from "@/components/core/AuthProvider";
+import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,13 +41,13 @@ export function Sidebar() {
             {/* Nav Links */}
             <div className="hidden md:flex items-center gap-6">
               <div className="flex flex-row gap-6 items-center">
-                <Link href="/howto" className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
+                <Link href="/howto" className="text-sm font-normal text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
                   How To
                 </Link>
-                <Link href="#" className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
+                <Link href="#" className="text-sm font-normal text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
                   Community
                 </Link>
-                <Link href="#" className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
+                <Link href="#" className="text-sm font-normal text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200">
                   Resources
                 </Link>
               </div>
@@ -56,7 +56,7 @@ export function Sidebar() {
             {/* Sign In Button / User Profile (nur ab md) */}
             <div className="hidden md:block">
               {isLoggedIn ? (
-                <UserProfileDesktop handleLogout={handleLogout} userEmail={userEmail} />
+                <UserProfileDesktop handleLogout={handleLogout} userEmail={userEmail || ""} />
               ) : (
                 <Link href="/login">
                   <Button variant="primary">
@@ -69,7 +69,7 @@ export function Sidebar() {
             {/* User (nur unter md) */}
             {isLoggedIn && (
               <div className="md:hidden">
-                <UserProfileMobile handleLogout={handleLogout} userEmail={userEmail} />
+                <UserProfileMobile handleLogout={handleLogout} userEmail={userEmail || ""} />
               </div>
             )}
 

@@ -1,56 +1,147 @@
+// Tremor Raw Button [v0.1.1]
+
 import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-import * as React from "react"
+import { RiLoader2Fill } from "@remixicon/react"
+import React from "react"
+import { tv, type VariantProps } from "tailwind-variants"
 
-import { cn } from "@/lib/utils"
+import { cx } from "@/lib/utils"
 
-const buttonVariants = cva(
-    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-gray-950 dark:focus-visible:ring-gray-300",
-    {
-        variants: {
-            variant: {
-                default: "bg-gray-900 text-gray-50 hover:bg-gray-900/90 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90",
-                destructive:
-                    "bg-red-500 text-gray-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-gray-50 dark:hover:bg-red-900/90",
-                outline:
-                    "border border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50",
-                secondary:
-                    "bg-gray-100 text-gray-900 hover:bg-gray-100/80 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-800/80",
-                ghost: "hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50",
-                link: "text-gray-900 underline-offset-4 hover:underline dark:text-gray-50",
-            },
-            size: {
-                default: "h-10 px-4 py-2",
-                sm: "h-9 rounded-md px-3",
-                lg: "h-11 rounded-md px-8",
-                icon: "h-10 w-10",
-            },
-        },
-        defaultVariants: {
-            variant: "default",
-            size: "default",
-        },
-    }
-)
+const buttonVariants = tv({
+  base: [
+    // base
+    "relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-center font-medium shadow-sm transition-all duration-100 ease-in-out text-base sm:text-sm",
+    // disabled
+    "disabled:pointer-events-none disabled:shadow-none",
+    // focus
+    "outline-none focus-visible:outline-none",
+  ],
+  variants: {
+    variant: {
+      primary: [
+        // border
+        "border-transparent",
+        // text color
+        "text-white dark:text-white",
+        // background color
+        "bg-blue-500 dark:bg-blue-500",
+        // hover color
+        "hover:bg-blue-600 dark:hover:bg-blue-600",
+        // disabled
+        "disabled:bg-gray-100 disabled:text-gray-400",
+        "disabled:dark:bg-gray-800 disabled:dark:text-gray-600",
+      ],
+      secondary: [
+        // border
+        "border-gray-300 dark:border-gray-800",
+        // text color
+        "text-gray-900 dark:text-gray-50",
+        // background color
+        "bg-white dark:bg-gray-900",
+        //hover color
+        "hover:bg-gray-50 dark:hover:bg-gray-800/30",
+        // disabled
+        "disabled:text-gray-400",
+        "disabled:dark:text-gray-600",
+      ],
+      light: [
+        // base
+        "shadow-none",
+        // border
+        "border-transparent",
+        // text color
+        "text-gray-900 dark:text-gray-50",
+        // background color
+        "bg-gray-200 dark:bg-gray-900",
+        // hover color
+        "hover:bg-gray-300/70 dark:hover:bg-gray-800/80",
+        // disabled
+        "disabled:bg-gray-100 disabled:text-gray-400",
+        "disabled:dark:bg-gray-800 disabled:dark:text-gray-600",
+      ],
+      ghost: [
+        // base
+        "shadow-none",
+        // border
+        "border-transparent",
+        // text color
+        "text-gray-900 dark:text-gray-50",
+        // hover color
+        "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800/80",
+        // disabled
+        "disabled:text-gray-400",
+        "disabled:dark:text-gray-600",
+      ],
+      destructive: [
+        // text color
+        "text-white",
+        // border
+        "border-transparent",
+        // background color
+        "bg-red-600 dark:bg-red-700",
+        // hover color
+        "hover:bg-red-700 dark:hover:bg-red-600",
+        // disabled
+        "disabled:bg-red-300 disabled:text-white",
+        "disabled:dark:bg-red-950 disabled:dark:text-red-400",
+      ],
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+  },
+})
 
-export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-    asChild?: boolean
+interface ButtonProps
+  extends React.ComponentPropsWithoutRef<"button">,
+  VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  isLoading?: boolean
+  loadingText?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
-        const Comp = asChild ? Slot : "button"
-        return (
-            <Comp
-                className={cn(buttonVariants({ variant, size, className }))}
-                ref={ref}
-                {...props}
+  (
+    {
+      asChild,
+      isLoading = false,
+      loadingText,
+      className,
+      disabled,
+      variant,
+      children,
+      ...props
+    }: ButtonProps,
+    forwardedRef,
+  ) => {
+    const Component = asChild ? Slot : "button"
+    return (
+      <Component
+        ref={forwardedRef}
+        className={cx(buttonVariants({ variant }), className)}
+        disabled={disabled || isLoading}
+        tremor-id="tremor-raw"
+        {...props}
+      >
+        {isLoading ? (
+          <span className="pointer-events-none flex shrink-0 items-center justify-center gap-1.5">
+            <RiLoader2Fill
+              className="size-4 shrink-0 animate-spin"
+              aria-hidden="true"
             />
-        )
-    }
+            <span className="sr-only">
+              {loadingText ? loadingText : "Loading"}
+            </span>
+            {loadingText ? loadingText : children}
+          </span>
+        ) : (
+          children
+        )}
+      </Component>
+    )
+  },
 )
+
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, type ButtonProps }
