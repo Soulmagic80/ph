@@ -1,5 +1,5 @@
 "use client";
-import { FeedbackChip } from "@/components/FeedbackChip";
+import { FeedbackChip } from "@/components/feedback/ui/FeedbackChip";
 import { PortfolioWithRelations } from "@/types";
 import { Heart, Screwdriver } from "@phosphor-icons/react";
 import { ThumbsDown, ThumbsUp } from "lucide-react";

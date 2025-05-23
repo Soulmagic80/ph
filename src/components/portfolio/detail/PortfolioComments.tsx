@@ -1,9 +1,9 @@
 "use client";
+import CommentCard from "@/components/feedback/ui/CommentCard";
 import { supabase } from "@/lib/supabase";
 import { Comment } from "@/types";
 import { ChatCircle } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import CommentCard from "./CommentCard";
 
 interface PortfolioCommentsProps {
     portfolio_id: string;

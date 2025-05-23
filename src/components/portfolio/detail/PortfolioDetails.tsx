@@ -1,5 +1,5 @@
-import { Badge } from "@/components/Badge";
-import { ToolBadge } from "@/components/ToolBadge";
+import { Badge } from "@/components/ui/Badge";
+import { ToolBadge } from "@/components/ui/ToolBadge";
 import { ToolName } from "@/lib/toolIcons";
 import { PortfolioWithRelations } from "@/types";
 
