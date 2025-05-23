@@ -17,6 +17,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
+  if (!searchParams) {
+    throw new Error('Search params not available')
+  }
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
