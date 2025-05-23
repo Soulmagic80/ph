@@ -1,4 +1,4 @@
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@/components/core/AuthProvider";
 import { createServerSupabaseClient } from "@/lib/supabaseServer";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
