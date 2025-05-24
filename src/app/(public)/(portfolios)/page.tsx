@@ -1,15 +1,15 @@
 "use client";
+import { AuthContext } from "@/components/core/AuthProvider";
 import PortfolioCard from "@/components/portfolio/home/PortfolioCard";
 import { Portfolio } from "@/components/portfolio/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
 import { supabase } from "@/lib/supabase";
 import { CalendarIcon, TrophyIcon } from "@heroicons/react/24/outline";
-import { User } from "@supabase/supabase-js";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  const { isLoggedIn } = useContext(AuthContext);
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
-  const [user, setUser] = useState<User | null>(null);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,16 +86,6 @@ export default function Home() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        console.log("Fetching initial data...");
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-
-        if (userError) {
-          console.error("Error fetching user:", userError);
-        } else {
-          console.log("User data:", userData);
-          setUser(userData.user);
-        }
-
         console.log("Fetching portfolios...");
         await fetchPortfolios(0);
       } catch (error) {
@@ -115,133 +105,35 @@ export default function Home() {
     }
   }, [selectedRanking, fetchPortfolios, page]);
 
-  const handleUpvote = async (portfolioId: string) => {
-    if (!user) return;
-
-    const isAdmin = user.email === "admin@example.com";
-
-    if (!isAdmin) {
-      const { data: existingVote, error: voteError } = await supabase
-        .from("upvotes")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("portfolio_id", portfolioId)
-        .single();
-
-      if (voteError && voteError.code !== "PGRST116") {
-        console.error("Vote check failed:", voteError.message);
-        return;
-      }
-
-      if (existingVote) {
-        console.log("User has already upvoted this portfolio");
-        return;
-      }
-
-      const { error: insertError } = await supabase
-        .from("upvotes")
-        .insert({ user_id: user.id, portfolio_id: portfolioId });
-
-      if (insertError) {
-        console.error("Insert vote failed:", insertError.message);
-        return;
-      }
-    }
-
-    // Upvote erhöhen
-    const { data: currentPortfolio, error: fetchError } = await supabase
-      .from("portfolios")
-      .select("upvotes")
-      .eq("id", portfolioId)
-      .single();
-
-    if (fetchError) {
-      console.error("Fetch failed:", fetchError.message);
+  const handleUpvote = async (id: string) => {
+    if (!isLoggedIn) {
+      window.location.href = "/login";
       return;
     }
 
-    const newUpvotes = currentPortfolio.upvotes + 1;
+    try {
+      const { error } = await supabase
+        .from("portfolio_upvotes")
+        .insert([{ portfolio_id: id }]);
 
-    const { error: updateError } = await supabase
-      .from("portfolios")
-      .update({ upvotes: newUpvotes })
-      .eq("id", portfolioId);
+      if (error) throw error;
 
-    if (updateError) {
-      console.error("Upvote failed:", updateError.message);
-      return;
-    }
-
-    // Alle Portfolios laden und Ränge berechnen
-    const { data: allPortfolios, error: allError } = await supabase
-      .from("portfolios")
-      .select("*")
-      .order("upvotes", { ascending: false });
-
-    if (allError) {
-      console.error("Fetch all portfolios failed:", allError.message);
-      return;
-    }
-
-    // All Time Ränge
-    const allTimeRanked = allPortfolios.map((p, index) => ({
-      ...p,
-      rank_all_time: index + 1,
-    }));
-
-    // Ränge in DB aktualisieren
-    const { error: rankUpdateError } = await supabase.from("portfolios").upsert(allTimeRanked, {
-      onConflict: "id",
-      ignoreDuplicates: false,
-    });
-
-    if (rankUpdateError) {
-      console.error("Rank update failed:", rankUpdateError.message);
-      return;
-    }
-
-    // Lokale State-Aktualisierung
-    setPortfolios((prev) =>
-      prev
-        .map((p) =>
-          p.id === portfolioId
-            ? { ...p, upvotes: (p.upvotes ?? 0) + 1, rank_all_time: allTimeRanked.find(r => r.id === p.id)?.rank_all_time }
-            : p
+      setPortfolios((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, upvotes: (p.upvotes || 0) + 1 } : p
         )
-        .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0))
-    );
+      );
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    }
   };
-
-  useEffect(() => {
-    if (!loadMoreRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchPortfolios(nextPage);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(loadMoreRef.current);
-    observerRef.current = observer;
-
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-    };
-  }, [page, hasMore, fetchPortfolios]);
-
-  const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
 
   const handleFilterChange = (value: string) => {
     setSelectedRanking(value);
-    setPortfolios([]);
     setPage(0);
-    setHasMore(true);
   };
+
+  const currentMonth = new Date().toLocaleString("default", { month: "long" });
 
   return (
     <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto bg-white dark:bg-gray-950">
@@ -305,7 +197,7 @@ export default function Home() {
           <PortfolioCard
             key={p.id}
             portfolio={p}
-            user={user}
+            user={null}
             onUpvote={handleUpvote}
             rank={portfolios.indexOf(p) + 1}
           />

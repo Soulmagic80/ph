@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button"
 import { Logo } from "@/components/ui/Logo"
 import useScroll from "@/lib/useScroll"
 import { cx } from "@/lib/utils"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React from "react"
 
@@ -84,7 +85,7 @@ const Layout = ({
         </div>
         <StepProgress steps={steps} />
         <Button variant="ghost" className="ml-auto w-fit" asChild>
-          <a href="/">Skip feedback</a>
+          <Link href="/">Skip feedback</Link>
         </Button>
       </header>
       <main id="main-content" className="mx-auto mb-20 mt-28 max-w-lg">
