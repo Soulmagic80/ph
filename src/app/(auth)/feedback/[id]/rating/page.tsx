@@ -9,16 +9,16 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import React, { useState } from "react"
 
-const feedbackTypes = [
-  { value: "design", label: "Design" },
-  { value: "ux", label: "User Experience" },
-  { value: "content", label: "Content" },
-  { value: "functionality", label: "Functionality" },
-  { value: "other", label: "Other" },
+const ratingOptions = [
+  { value: "1", label: "Poor" },
+  { value: "2", label: "Fair" },
+  { value: "3", label: "Good" },
+  { value: "4", label: "Very Good" },
+  { value: "5", label: "Excellent" },
 ]
 
-export default function Info() {
-  const [selectedFeedbackType, setSelectedFeedbackType] = useState("")
+export default function Rating() {
+  const [selectedRating, setSelectedRating] = useState("")
   const [loading, setLoading] = React.useState(false)
   const router = useRouter()
   const params = useParams()
@@ -28,8 +28,8 @@ export default function Info() {
     e.preventDefault()
     setLoading(true)
     setTimeout(() => {
-      console.log("Form submitted with feedback type:", selectedFeedbackType)
-      router.push(`/feedback/${portfolioId}/rating`)
+      console.log("Form submitted with rating:", selectedRating)
+      router.push(`/feedback/${portfolioId}/comment`)
     }, 600)
   }
 
@@ -40,25 +40,25 @@ export default function Info() {
         style={{ animationDuration: "500ms" }}
       >
         <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
-          What would you like to provide feedback on?
+          How would you rate this portfolio?
         </h1>
         <p className="mt-6 text-gray-700 sm:text-sm dark:text-gray-300">
-          Select the main aspect you want to focus on in your feedback.
+          Select a rating that best reflects your overall impression.
         </p>
       </div>
       <form onSubmit={handleSubmit} className="mt-4">
         <fieldset>
-          <legend className="sr-only">Select feedback type</legend>
+          <legend className="sr-only">Select rating</legend>
           <RadioCardGroup
-            value={selectedFeedbackType}
-            onValueChange={(value) => setSelectedFeedbackType(value)}
+            value={selectedRating}
+            onValueChange={(value) => setSelectedRating(value)}
             required
-            aria-label="Feedback type"
+            aria-label="Portfolio rating"
           >
-            {feedbackTypes.map((type, index) => (
+            {ratingOptions.map((option, index) => (
               <div
                 className="motion-safe:animate-revealBottom"
-                key={type.value}
+                key={option.value}
                 style={{
                   animationDuration: "600ms",
                   animationDelay: `${100 + index * 50}ms`,
@@ -67,8 +67,8 @@ export default function Info() {
               >
                 <RadioCardItem
                   className="active:scale-[99%] dark:bg-gray-925"
-                  key={type.value}
-                  value={type.value}
+                  key={option.value}
+                  value={option.value}
                   style={{
                     animationDuration: "600ms",
                     animationDelay: `${100 + index * 50}ms`,
@@ -77,7 +77,7 @@ export default function Info() {
                 >
                   <div className="flex items-center gap-2.5">
                     <RadioCardIndicator />
-                    <span className="block sm:text-sm">{type.label}</span>
+                    <span className="block sm:text-sm">{option.label}</span>
                   </div>
                 </RadioCardItem>
               </div>
@@ -86,13 +86,13 @@ export default function Info() {
         </fieldset>
         <div className="mt-6 flex justify-between">
           <Button type="button" variant="ghost" asChild>
-            <Link href={`/portfolios/${portfolioId}`}>Back</Link>
+            <Link href={`/feedback/${portfolioId}/info`}>Back</Link>
           </Button>
           <Button
             className="disabled:bg-gray-200 disabled:text-gray-500"
             type="submit"
-            disabled={!selectedFeedbackType || loading}
-            aria-disabled={!selectedFeedbackType || loading}
+            disabled={!selectedRating || loading}
+            aria-disabled={!selectedRating || loading}
             isLoading={loading}
           >
             {loading ? "Submitting..." : "Continue"}
