@@ -1,1 +1,0 @@
-INSERT INTO portfolio_services (portfolio_id, service_id) SELECT '91aca578-c77f-41d7-85f7-876a440b32f5', id FROM services WHERE name IN ('Web Development', 'UI/UX Design', 'Technical Consulting') ON CONFLICT DO NOTHING;
