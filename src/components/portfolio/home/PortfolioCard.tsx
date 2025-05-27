@@ -143,9 +143,10 @@ export default function PortfolioCard({ portfolio, onUpvote, rank }: PortfolioCa
             {rank === 3 && <Medal className="w-6 h-6 text-amber-700" weight="fill" />}
             <button
               onClick={handleUpvote}
-              className="w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-900 border-[2px] border-[#000000] dark:border-gray-700 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#FF006A] dark:hover:border-[#FF006A]"
+              disabled={isUpvoting}
+              className={`w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-900 border-[2px] border-[#000000] dark:border-gray-700 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#FF006A] dark:hover:border-[#FF006A] ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <Image src="/upvote.svg" alt="Upvote" width={12} height={12} className="dark:invert" />
+              <Image src="/upvote.svg" alt="Upvote" width={12} height={12} className={`dark:invert ${isUpvoting ? 'animate-pulse' : ''}`} />
               <span className="text-xs font-geist font-semibold text-black dark:text-white">{upvotes}</span>
             </button>
           </div>
