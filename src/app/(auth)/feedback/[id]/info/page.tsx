@@ -5,7 +5,6 @@ import {
   RadioCardIndicator,
   RadioCardItem,
 } from "@/components/ui/RadioCardGroup"
-import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import React, { useState } from "react"
 
@@ -84,10 +83,7 @@ export default function Info() {
             ))}
           </RadioCardGroup>
         </fieldset>
-        <div className="mt-6 flex justify-between">
-          <Button type="button" variant="ghost" asChild>
-            <Link href={`/portfolios/${portfolioId}`}>Back</Link>
-          </Button>
+        <div className="mt-6 flex justify-end">
           <Button
             className="disabled:bg-gray-200 disabled:text-gray-500"
             type="submit"

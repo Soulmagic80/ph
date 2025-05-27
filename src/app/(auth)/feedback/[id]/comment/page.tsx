@@ -1,6 +1,6 @@
 "use client"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/Button"
+import { Textarea } from "@/components/ui/Textarea"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
