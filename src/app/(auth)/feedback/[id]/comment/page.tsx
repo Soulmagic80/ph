@@ -1,6 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/Button"
 import { Textarea } from "@/components/ui/Textarea"
+import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import React, { useState } from "react"
@@ -10,15 +11,43 @@ export default function Comment() {
   const [loading, setLoading] = React.useState(false)
   const router = useRouter()
   const params = useParams()
-  const portfolioId = params?.id as string
+  if (!params?.id) throw new Error("Portfolio ID is required")
+  const portfolioId = params.id
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      console.log("Form submitted with comment:", comment)
+
+    try {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) throw new Error("User not found")
+
+      // Get selected chips from session storage
+      const positiveChips = JSON.parse(sessionStorage.getItem("positiveChips") || "[]")
+      const negativeChips = JSON.parse(sessionStorage.getItem("negativeChips") || "[]")
+
+      // Start a transaction
+      const { error: transactionError } = await supabase.rpc('save_portfolio_feedback', {
+        p_portfolio_id: portfolioId,
+        p_user_id: user.id,
+        p_positive_chips: positiveChips,
+        p_negative_chips: negativeChips,
+        p_comment: comment
+      })
+
+      if (transactionError) throw transactionError
+
+      // Clear session storage
+      sessionStorage.removeItem("positiveChips")
+      sessionStorage.removeItem("negativeChips")
+
+      // Redirect to portfolio page
       router.push(`/portfolios/${portfolioId}`)
-    }, 600)
+    } catch (error) {
+      console.error("Error saving feedback:", error)
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,7 +76,7 @@ export default function Comment() {
         </fieldset>
         <div className="mt-6 flex justify-between">
           <Button type="button" variant="ghost" asChild>
-            <Link href={`/feedback/${portfolioId}/rating`}>Back</Link>
+            <Link href={`/feedback/${portfolioId}/rating/negative`}>Back</Link>
           </Button>
           <Button
             className="disabled:bg-gray-200 disabled:text-gray-500"

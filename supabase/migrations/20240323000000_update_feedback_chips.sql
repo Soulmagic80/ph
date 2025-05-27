@@ -54,9 +54,11 @@ CREATE TABLE portfolio_rating (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     portfolio_id UUID NOT NULL REFERENCES portfolios(id) ON DELETE CASCADE,
     feedback_chip_id UUID NOT NULL REFERENCES feedback_chips(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    rating_type TEXT NOT NULL CHECK (rating_type IN ('positive', 'negative')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE(portfolio_id, feedback_chip_id)
+    UNIQUE(portfolio_id, feedback_chip_id, user_id)
 );
 
 -- Recreate the portfolio_rating_counts table

@@ -1,16 +1,14 @@
 "use client";
-import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { Portfolio } from "../types";
 import PortfolioCard from "./PortfolioCard";
 
 interface PortfolioGridProps {
     portfolios: Portfolio[];
-    user: User | null;
     onUpvote: (id: string) => void;
 }
 
-export default function PortfolioGrid({ portfolios, user, onUpvote }: PortfolioGridProps) {
+export default function PortfolioGrid({ portfolios, onUpvote }: PortfolioGridProps) {
     const [sortBy, setSortBy] = useState<"newest" | "top">("newest");
 
     const sortedPortfolios = [...portfolios].sort((a, b) => {
@@ -50,7 +48,6 @@ export default function PortfolioGrid({ portfolios, user, onUpvote }: PortfolioG
                     <PortfolioCard
                         key={portfolio.id}
                         portfolio={portfolio}
-                        user={user}
                         onUpvote={onUpvote}
                         rank={sortBy === "top" ? index + 1 : undefined}
                     />

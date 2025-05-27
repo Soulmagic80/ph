@@ -1,20 +1,19 @@
 "use client";
-import { AuthContext } from "@/components/core/AuthProvider";
 import PortfolioCard from "@/components/portfolio/home/PortfolioCard";
 import { Portfolio } from "@/components/portfolio/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
 import { supabase } from "@/lib/supabase";
 import { CalendarIcon, TrophyIcon } from "@heroicons/react/24/outline";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 export default function Home() {
-  const { isLoggedIn } = useContext(AuthContext);
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [selectedRanking, setSelectedRanking] = useState("current_month");
+  const { ref, inView } = useInView();
 
   const ITEMS_PER_PAGE = 12;
 
@@ -104,26 +103,89 @@ export default function Home() {
     }
   }, [selectedRanking, fetchPortfolios, page]);
 
-  const handleUpvote = async (id: string) => {
-    if (!isLoggedIn) {
-      window.location.href = "/login";
+  const loadMorePortfolios = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("portfolios")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(page * 10, (page + 1) * 10 - 1);
+
+    if (error) {
+      console.error("Error loading portfolios:", error);
       return;
     }
 
+    if (data.length < 10) {
+      setHasMore(false);
+    }
+
+    setPortfolios((prev) => [...prev, ...data]);
+    setPage((prev) => prev + 1);
+  }, [page]);
+
+  useEffect(() => {
+    if (inView && hasMore) {
+      loadMorePortfolios();
+    }
+  }, [inView, hasMore, loadMorePortfolios]);
+
+  const handleUpvote = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from("portfolio_upvotes")
-        .insert([{ portfolio_id: id }]);
+      // Get current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-      if (error) throw error;
+      if (sessionError) {
+        console.error("Error getting session:", sessionError);
+        return;
+      }
 
-      setPortfolios((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, upvotes: (p.upvotes || 0) + 1 } : p
-        )
-      );
+      if (!session) {
+        console.log("No session found");
+        return;
+      }
+
+      const user = session.user;
+      console.log("Upvote clicked, user:", user.email);
+      const isAdmin = user.email === "admin@example.com";
+      console.log("Is admin:", isAdmin);
+
+      if (!isAdmin) {
+        // First check if user has already upvoted
+        const { data: existingVote, error: checkError } = await supabase
+          .from("portfolio_upvotes")
+          .select("id")
+          .eq("portfolio_id", id)
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (checkError) {
+          console.error("Error checking existing vote:", checkError);
+          return;
+        }
+
+        if (existingVote) {
+          console.log("User has already upvoted this portfolio");
+          return;
+        }
+
+        // If no existing vote, proceed with upvote
+        const { error: insertError } = await supabase
+          .from("portfolio_upvotes")
+          .insert([{
+            portfolio_id: id,
+            user_id: user.id
+          }]);
+
+        if (insertError) {
+          console.error("Error inserting upvote:", insertError);
+          return;
+        }
+      }
+
+      // Refresh the portfolios to get the updated upvote count
+      await fetchPortfolios(0);
     } catch (error) {
-      console.error("Error upvoting:", error);
+      console.error("Error in upvote process:", error);
     }
   };
 
@@ -185,8 +247,10 @@ export default function Home() {
 
       {/* Load more indicator */}
       {!isLoading && hasMore && (
-        <div ref={loadMoreRef} className="w-full text-center py-4">
-          <p className="text-gray-500">Loading more...</p>
+        <div ref={ref} className="h-10 w-full">
+          <div className="flex justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          </div>
         </div>
       )}
 
@@ -196,7 +260,6 @@ export default function Home() {
           <PortfolioCard
             key={p.id}
             portfolio={p}
-            user={null}
             onUpvote={handleUpvote}
             rank={portfolios.indexOf(p) + 1}
           />

@@ -1,5 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/Dialog";
 import { supabase } from "@/lib/supabase";
 import { ArrowUpCircleIcon, StarIcon } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
@@ -18,23 +27,83 @@ interface PortfolioOverviewProps {
 export default function PortfolioOverview({ title, images, portfolioId, user: initialUser, onUpvote }: PortfolioOverviewProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isUpvoting, setIsUpvoting] = useState(false);
+    const [hasRated, setHasRated] = useState(false);
+    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+    const [isUpvoteModalOpen, setIsUpvoteModalOpen] = useState(false);
     const [user, setUser] = useState<User | null>(initialUser);
 
     useEffect(() => {
         async function getUser() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                setUser(session.user);
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error('Error getting session:', error);
+                    setUser(null);
+                    return;
+                }
+                if (session?.user) {
+                    setUser(session.user);
+                } else {
+                    setUser(null);
+                }
+            } catch (err) {
+                console.error('Exception in getUser:', err);
+                setUser(null);
             }
         }
         getUser();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('Auth state changed:', _event);
             setUser(session?.user ?? null);
         });
 
         return () => subscription.unsubscribe();
     }, []);
+
+    useEffect(() => {
+        async function checkIfUserHasRated() {
+            if (!user) {
+                console.log('No user logged in');
+                setHasRated(false);
+                return;
+            }
+
+            console.log('Checking if user has rated:', {
+                portfolioId,
+                userId: user.id,
+                userEmail: user.email
+            });
+
+            try {
+                const { data, error } = await supabase.rpc('has_user_rated_portfolio', {
+                    p_portfolio_id: portfolioId,
+                    p_user_id: user.id
+                });
+
+                console.log('Rating check result:', { data, error });
+
+                if (error) {
+                    console.error('Error checking rating:', error);
+                    setHasRated(false);
+                    return;
+                }
+
+                if (data) {
+                    console.log('User has already rated this portfolio');
+                    setHasRated(true);
+                } else {
+                    console.log('User has not rated this portfolio yet');
+                    setHasRated(false);
+                }
+            } catch (err) {
+                console.error('Exception in checkIfUserHasRated:', err);
+                setHasRated(false);
+            }
+        }
+
+        checkIfUserHasRated();
+    }, [portfolioId, user]);
 
     const handleUpvote = async () => {
         if (!user?.id) {
@@ -49,104 +118,59 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
             console.log("Is admin:", isAdmin);
 
             if (!isAdmin) {
+                // Prüfe auf existierenden Upvote
                 const { data: existingVote, error: voteError } = await supabase
-                    .from("upvotes")
+                    .from("portfolio_upvotes")
                     .select("id")
                     .eq("user_id", user.id)
                     .eq("portfolio_id", portfolioId)
-                    .single();
+                    .maybeSingle();
 
-                if (voteError && voteError.code !== "PGRST116") {
-                    console.error("Vote check failed:", voteError.message);
+                console.log("Existing vote check:", { existingVote, voteError });
+
+                if (voteError) {
+                    console.error("Vote check failed:", voteError);
                     alert("Failed to check if you've already upvoted");
                     return;
                 }
 
                 if (existingVote) {
                     console.log("User has already upvoted this portfolio");
-                    alert("You have already upvoted this portfolio");
+                    setIsUpvoteModalOpen(true);
                     return;
                 }
 
+                // Füge neuen Upvote hinzu
                 const { error: insertError } = await supabase
-                    .from("upvotes")
+                    .from("portfolio_upvotes")
                     .insert({ user_id: user.id, portfolio_id: portfolioId });
 
                 if (insertError) {
-                    console.error("Insert vote failed:", insertError.message);
+                    console.error("Insert vote failed:", insertError);
                     alert("Failed to record your upvote");
                     return;
                 }
-            }
-
-            // Upvote erhöhen
-            const { data: currentPortfolio, error: fetchError } = await supabase
-                .from("portfolios")
-                .select("upvotes")
-                .eq("id", portfolioId)
-                .single();
-
-            if (fetchError) {
-                console.error("Fetch failed:", fetchError.message);
-                alert("Failed to update upvotes");
-                return;
-            }
-
-            const newUpvotes = (currentPortfolio?.upvotes || 0) + 1;
-            console.log("New upvotes count:", newUpvotes);
-
-            const { error: updateError } = await supabase
-                .from("portfolios")
-                .update({ upvotes: newUpvotes })
-                .eq("id", portfolioId);
-
-            if (updateError) {
-                console.error("Upvote failed:", updateError.message);
-                alert("Failed to update upvotes");
-                return;
-            }
-
-            // Alle Portfolios laden und Ränge berechnen
-            const { data: allPortfolios, error: allError } = await supabase
-                .from("portfolios")
-                .select("*")
-                .order("upvotes", { ascending: false });
-
-            if (allError) {
-                console.error("Fetch all portfolios failed:", allError.message);
-                alert("Failed to update rankings");
-                return;
-            }
-
-            // All Time Ränge
-            const allTimeRanked = allPortfolios.map((p, index) => ({
-                ...p,
-                rank_all_time: index + 1,
-            }));
-
-            // Ränge in DB aktualisieren
-            const { error: rankUpdateError } = await supabase.from("portfolios").upsert(allTimeRanked, {
-                onConflict: "id",
-                ignoreDuplicates: false,
-            });
-
-            if (rankUpdateError) {
-                console.error("Rank update failed:", rankUpdateError.message);
-                alert("Failed to update rankings");
-                return;
             }
 
             // Callback aufrufen um UI zu aktualisieren
             if (onUpvote) {
                 onUpvote();
             }
-
-            alert("Successfully upvoted!");
         } catch (error) {
             console.error("Error in handleUpvote:", error);
             alert("An error occurred while upvoting");
         } finally {
             setIsUpvoting(false);
+        }
+    };
+
+    const handleRateClick = (e: React.MouseEvent) => {
+        console.log('Rate button clicked, hasRated:', hasRated, 'user:', user?.email);
+        if (hasRated) {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsRatingModalOpen(true);
+            return false;
         }
     };
 
@@ -175,7 +199,7 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
                                     <div className="rounded-md h-full border border-gray-200 dark:border-gray-800">
                                         {images[selectedImageIndex] ? (
                                             <Image
-                                                src={images[selectedImageIndex]}
+                                                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${images[selectedImageIndex]}`}
                                                 alt={title}
                                                 width={500}
                                                 height={300}
@@ -201,7 +225,7 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
                                         >
                                             {images[index] && (
                                                 <Image
-                                                    src={images[index]}
+                                                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/portfolio-images/${images[index]}`}
                                                     alt={`${title} - Image ${index + 1}`}
                                                     width={120}
                                                     height={72}
@@ -233,17 +257,81 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
                                         </button>
                                     </Link>
                                 )}
-                                <Link href={`/feedback/${portfolioId}/info`} passHref className="flex-1">
-                                    <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
+                                {hasRated ? (
+                                    <button
+                                        onClick={() => setIsRatingModalOpen(true)}
+                                        className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
+                                    >
                                         <StarIcon className="w-5 h-5" />
                                         <span>Rate this portfolio</span>
                                     </button>
-                                </Link>
+                                ) : user ? (
+                                    <Link
+                                        href={`/feedback/${portfolioId}/info`}
+                                        passHref
+                                        className="flex-1"
+                                        onClick={handleRateClick}
+                                    >
+                                        <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
+                                            <StarIcon className="w-5 h-5" />
+                                            <span>Rate this portfolio</span>
+                                        </button>
+                                    </Link>
+                                ) : (
+                                    <Link href="/login" className="flex-1">
+                                        <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700">
+                                            <StarIcon className="w-5 h-5" />
+                                            <span>Rate this portfolio</span>
+                                        </button>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Upvote Modal */}
+            <Dialog open={isUpvoteModalOpen} onOpenChange={setIsUpvoteModalOpen}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Already Upvoted</DialogTitle>
+                        <DialogDescription className="mt-1 text-sm leading-6">
+                            You have already upvoted this portfolio. Each portfolio can only be upvoted once.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-6">
+                        <Button
+                            variant="primary"
+                            className="mt-2 w-full sm:mt-0 sm:w-fit bg-[#3474DB] hover:bg-[#2B5FB3] dark:bg-[#3474DB] dark:hover:bg-[#2B5FB3]"
+                            onClick={() => setIsUpvoteModalOpen(false)}
+                        >
+                            Close
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Rating Modal */}
+            <Dialog open={isRatingModalOpen} onOpenChange={setIsRatingModalOpen}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle>Already Rated</DialogTitle>
+                        <DialogDescription className="mt-1 text-sm leading-6">
+                            You have already rated this portfolio. Each portfolio can only be rated once.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-6">
+                        <Button
+                            variant="primary"
+                            className="mt-2 w-full sm:mt-0 sm:w-fit bg-[#3474DB] hover:bg-[#2B5FB3] dark:bg-[#3474DB] dark:hover:bg-[#2B5FB3]"
+                            onClick={() => setIsRatingModalOpen(false)}
+                        >
+                            Close
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </section>
     );
 } 

@@ -29,7 +29,7 @@ export default function Info() {
     setLoading(true)
     setTimeout(() => {
       console.log("Form submitted with feedback type:", selectedFeedbackType)
-      router.push(`/feedback/${portfolioId}/rating`)
+      router.push(`/feedback/${portfolioId}/rating/positive`)
     }, 600)
   }
 

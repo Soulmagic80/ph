@@ -29,6 +29,7 @@ export interface PortfolioRankHistory {
 export interface FeedbackChip {
   id: string;
   name: string;
+  type: 'positive' | 'negative';
   created_at: string;
   updated_at: string;
 }

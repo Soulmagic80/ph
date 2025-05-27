@@ -12,30 +12,14 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
     // Get all feedback chips and sort by count
     const allFeedback = portfolio.portfolio_rating_counts || [];
 
-    // Separate and sort positive and negative feedback chips
+    // Separate and sort positive and negative feedback chips based on type
     const positiveChips = allFeedback
-        .filter((feedback) => {
-            const name = feedback.feedback_chip.name.toLowerCase();
-            return !name.includes('slow') &&
-                !name.includes('unclear') &&
-                !name.includes('missing') &&
-                !name.includes('poor') &&
-                !name.includes('outdated') &&
-                !name.includes('limited');
-        })
+        .filter((feedback) => feedback.feedback_chip.type === 'positive')
         .sort((a, b) => b.count - a.count)
         .slice(0, 6); // Only show top 6
 
     const negativeChips = allFeedback
-        .filter((feedback) => {
-            const name = feedback.feedback_chip.name.toLowerCase();
-            return name.includes('slow') ||
-                name.includes('unclear') ||
-                name.includes('missing') ||
-                name.includes('poor') ||
-                name.includes('outdated') ||
-                name.includes('limited');
-        })
+        .filter((feedback) => feedback.feedback_chip.type === 'negative')
         .sort((a, b) => b.count - a.count)
         .slice(0, 3); // Only show top 3
 

@@ -14,7 +14,8 @@ interface Step {
 
 const steps: Step[] = [
   { name: "Info", href: "/feedback/[id]/info" },
-  { name: "Rating", href: "/feedback/[id]/rating" },
+  { name: "Positive", href: "/feedback/[id]/rating/positive" },
+  { name: "Negative", href: "/feedback/[id]/rating/negative" },
   { name: "Comment", href: "/feedback/[id]/comment" },
 ]
 
@@ -30,7 +31,7 @@ const StepProgress = ({ steps }: StepProgressProps) => {
 
   return (
     <div aria-label="Feedback progress">
-      <ol className="mx-auto flex w-24 flex-nowrap gap-1 md:w-fit">
+      <ol className="mx-auto flex w-32 flex-nowrap gap-1 md:w-fit">
         {steps.map((step, index) => (
           <li
             key={step.name}

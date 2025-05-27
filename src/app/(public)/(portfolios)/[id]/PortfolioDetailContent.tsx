@@ -52,4 +52,4 @@ export default function PortfolioDetailContent({ portfolio: initialPortfolio, us
             </div>
         </main>
     );
-}
+} 

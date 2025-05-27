@@ -1,0 +1,3 @@
+-- Remove the unique constraint from portfolio_rating_counts
+ALTER TABLE portfolio_rating_counts
+DROP CONSTRAINT IF EXISTS portfolio_rating_counts_portfolio_id_feedback_chip_id_key; 

@@ -1,5 +1,5 @@
--- Create a function to save portfolio feedback
-create or replace function save_portfolio_feedback(
+-- Update the save_portfolio_feedback function
+CREATE OR REPLACE FUNCTION save_portfolio_feedback(
   p_portfolio_id uuid,
   p_user_id uuid,
   p_positive_chips uuid[],
@@ -18,7 +18,7 @@ begin
     -- Update portfolio_rating_counts
     insert into portfolio_rating_counts (portfolio_id, feedback_chip_id, count)
     values (p_portfolio_id, v_chip_id, 1)
-    on conflict (portfolio_id, feedback_chip_id)
+    on conflict (portfolio_id, feedback_chip_id) 
     do update set count = portfolio_rating_counts.count + 1;
   end loop;
 
@@ -31,7 +31,7 @@ begin
     -- Update portfolio_rating_counts
     insert into portfolio_rating_counts (portfolio_id, feedback_chip_id, count)
     values (p_portfolio_id, v_chip_id, 1)
-    on conflict (portfolio_id, feedback_chip_id)
+    on conflict (portfolio_id, feedback_chip_id) 
     do update set count = portfolio_rating_counts.count + 1;
   end loop;
 
