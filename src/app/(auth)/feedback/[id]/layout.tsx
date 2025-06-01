@@ -80,9 +80,6 @@ const Layout = ({
             className="w-7 p-px text-blue-500 dark:text-blue-500"
             aria-hidden="true"
           />
-          <span className="mt-0.5 text-lg font-semibold text-gray-900 dark:text-gray-50">
-            Feedback
-          </span>
         </div>
         <StepProgress steps={steps} />
         <Button variant="ghost" className="ml-auto w-fit" asChild>
