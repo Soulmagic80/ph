@@ -72,14 +72,8 @@ const Layout = ({
           scrolled ? "h-12" : "h-20",
         )}
       >
-        <div
-          className="hidden flex-nowrap items-center gap-0.5 md:flex"
-          aria-hidden="true"
-        >
-          <Logo
-            className="w-7 p-px text-blue-500 dark:text-blue-500"
-            aria-hidden="true"
-          />
+        <div className="hidden md:flex">
+          <Logo />
         </div>
         <StepProgress steps={steps} />
         <Button variant="ghost" className="ml-auto w-fit" asChild>

@@ -1,7 +1,6 @@
 import Image from "next/image"
-import type { SVGProps } from "react"
 
-const Logo = (props: SVGProps<SVGSVGElement>) => (
+const Logo = () => (
   <div className="relative h-6 w-auto">
     <Image
       src="/logo-light.svg"
