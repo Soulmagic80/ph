@@ -77,7 +77,7 @@ const Layout = ({
         </div>
         <StepProgress steps={steps} />
         <Button variant="ghost" className="ml-auto w-fit" asChild>
-          <Link href="/">Skip feedback</Link>
+          <Link href="/">Cancel feedback process</Link>
         </Button>
       </header>
       <main id="main-content" className="mx-auto mb-20 mt-28 max-w-lg">
