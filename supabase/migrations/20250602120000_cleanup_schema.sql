@@ -7,6 +7,7 @@ DROP TRIGGER IF EXISTS update_updated_at_trigger ON public.portfolios;
 
 -- Consolidate functions
 DROP FUNCTION IF EXISTS public.save_feedback;
+DROP FUNCTION IF EXISTS public.update_portfolio_title_in_comments;
 -- save_portfolio_feedback is the main function to use
 
 -- Create a single updated_at trigger function
