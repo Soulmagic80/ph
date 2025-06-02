@@ -47,13 +47,15 @@ CREATE TRIGGER handle_updated_at
     BEFORE UPDATE ON public.tools
     FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
--- Now we can safely drop the old triggers
+-- Drop all old triggers that use update_updated_at_column
 DROP TRIGGER IF EXISTS set_portfolios_updated_at ON public.portfolios;
+DROP TRIGGER IF EXISTS set_profiles_updated_at ON public.profiles;
 DROP TRIGGER IF EXISTS update_portfolio_comments_updated_at ON public.portfolio_comments;
 DROP TRIGGER IF EXISTS update_portfolio_feedback_status_updated_at ON public.portfolio_feedback_status;
 DROP TRIGGER IF EXISTS update_portfolio_rank_history_updated_at ON public.portfolio_rank_history;
 DROP TRIGGER IF EXISTS update_services_updated_at ON public.services;
 DROP TRIGGER IF EXISTS update_tools_updated_at ON public.tools;
+DROP TRIGGER IF EXISTS update_updated_at_trigger ON public.portfolios;
 
 -- And finally drop the old function
 DROP FUNCTION IF EXISTS public.update_updated_at_column();
