@@ -8,16 +8,16 @@ FROM
     public.tools t
 WHERE 
     -- Portfolio 1: Web Design Portfolio
-    (p.id = 1 AND t.name IN ('Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'VS Code'))
+    (p.title = 'Web Design Portfolio' AND t.name IN ('Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'VS Code'))
     OR
     -- Portfolio 2: Development Portfolio
-    (p.id = 2 AND t.name IN ('React', 'Node.js', 'PostgreSQL', 'Docker', 'GitHub'))
+    (p.title = 'Development Portfolio' AND t.name IN ('React', 'Node.js', 'PostgreSQL', 'Docker', 'GitHub'))
     OR
     -- Portfolio 3: UI/UX Design Portfolio
-    (p.id = 3 AND t.name IN ('Figma', 'Sketch', 'Principle', 'Lottie', 'Framer'))
+    (p.title = 'UI/UX Design Portfolio' AND t.name IN ('Figma', 'Sketch', 'Principle', 'Lottie', 'Framer'))
     OR
     -- Portfolio 4: Full Stack Portfolio
-    (p.id = 4 AND t.name IN ('Next.js', 'TypeScript', 'MongoDB', 'AWS', 'Docker'))
+    (p.title = 'Full Stack Portfolio' AND t.name IN ('Next.js', 'TypeScript', 'MongoDB', 'AWS', 'Docker'))
     OR
     -- Portfolio 5: Creative Design Portfolio
-    (p.id = 5 AND t.name IN ('Photoshop', 'Illustrator', 'InDesign', 'After Effects', 'Premiere Pro')); 
+    (p.title = 'Creative Design Portfolio' AND t.name IN ('Photoshop', 'Illustrator', 'InDesign', 'After Effects', 'Premiere Pro')); 
