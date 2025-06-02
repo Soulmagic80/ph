@@ -9,14 +9,6 @@ DROP TRIGGER IF EXISTS update_updated_at_trigger ON public.portfolios;
 DROP FUNCTION IF EXISTS public.save_feedback;
 -- save_portfolio_feedback is the main function to use
 
--- Clean up duplicate updated_at triggers
-DROP TRIGGER IF EXISTS set_portfolios_updated_at ON public.portfolios;
-DROP TRIGGER IF EXISTS update_portfolio_comments_updated_at ON public.portfolio_comments;
-DROP TRIGGER IF EXISTS update_portfolio_feedback_status_updated_at ON public.portfolio_feedback_status;
-DROP TRIGGER IF EXISTS update_portfolio_rank_history_updated_at ON public.portfolio_rank_history;
-DROP TRIGGER IF EXISTS update_services_updated_at ON public.services;
-DROP TRIGGER IF EXISTS update_tools_updated_at ON public.tools;
-
 -- Create a single updated_at trigger function
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER AS $$
@@ -55,7 +47,15 @@ CREATE TRIGGER handle_updated_at
     BEFORE UPDATE ON public.tools
     FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
--- Clean up old function
+-- Now we can safely drop the old triggers
+DROP TRIGGER IF EXISTS set_portfolios_updated_at ON public.portfolios;
+DROP TRIGGER IF EXISTS update_portfolio_comments_updated_at ON public.portfolio_comments;
+DROP TRIGGER IF EXISTS update_portfolio_feedback_status_updated_at ON public.portfolio_feedback_status;
+DROP TRIGGER IF EXISTS update_portfolio_rank_history_updated_at ON public.portfolio_rank_history;
+DROP TRIGGER IF EXISTS update_services_updated_at ON public.services;
+DROP TRIGGER IF EXISTS update_tools_updated_at ON public.tools;
+
+-- And finally drop the old function
 DROP FUNCTION IF EXISTS public.update_updated_at_column();
 
 -- Add missing indexes
