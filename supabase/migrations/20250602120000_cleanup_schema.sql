@@ -68,30 +68,42 @@ CREATE INDEX IF NOT EXISTS idx_portfolio_feedback_process_portfolio_id ON public
 CREATE INDEX IF NOT EXISTS idx_portfolio_upvotes_portfolio_id ON public.portfolio_upvotes(portfolio_id);
 CREATE INDEX IF NOT EXISTS idx_portfolio_upvotes_user_id ON public.portfolio_upvotes(user_id);
 
--- Add missing constraints
-ALTER TABLE public.portfolio_rating
-    ADD CONSTRAINT portfolio_rating_unique_user_chip
-    UNIQUE (portfolio_id, user_id, feedback_chip_id);
+-- Add missing constraints if they don't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_rating_unique_user_chip') THEN
+        ALTER TABLE public.portfolio_rating
+            ADD CONSTRAINT portfolio_rating_unique_user_chip
+            UNIQUE (portfolio_id, user_id, feedback_chip_id);
+    END IF;
 
-ALTER TABLE public.portfolio_upvotes
-    ADD CONSTRAINT portfolio_upvotes_unique_user
-    UNIQUE (portfolio_id, user_id);
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_upvotes_unique_user') THEN
+        ALTER TABLE public.portfolio_upvotes
+            ADD CONSTRAINT portfolio_upvotes_unique_user
+            UNIQUE (portfolio_id, user_id);
+    END IF;
 
--- Add missing foreign key constraints
-ALTER TABLE public.portfolio_rating
-    ADD CONSTRAINT portfolio_rating_feedback_chip_id_fkey
-    FOREIGN KEY (feedback_chip_id)
-    REFERENCES public.feedback_chips(id)
-    ON DELETE CASCADE;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_rating_feedback_chip_id_fkey') THEN
+        ALTER TABLE public.portfolio_rating
+            ADD CONSTRAINT portfolio_rating_feedback_chip_id_fkey
+            FOREIGN KEY (feedback_chip_id)
+            REFERENCES public.feedback_chips(id)
+            ON DELETE CASCADE;
+    END IF;
 
-ALTER TABLE public.portfolio_services
-    ADD CONSTRAINT portfolio_services_service_id_fkey
-    FOREIGN KEY (service_id)
-    REFERENCES public.services(id)
-    ON DELETE CASCADE;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_services_service_id_fkey') THEN
+        ALTER TABLE public.portfolio_services
+            ADD CONSTRAINT portfolio_services_service_id_fkey
+            FOREIGN KEY (service_id)
+            REFERENCES public.services(id)
+            ON DELETE CASCADE;
+    END IF;
 
-ALTER TABLE public.portfolio_tools
-    ADD CONSTRAINT portfolio_tools_tool_id_fkey
-    FOREIGN KEY (tool_id)
-    REFERENCES public.tools(id)
-    ON DELETE CASCADE; 
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_tools_tool_id_fkey') THEN
+        ALTER TABLE public.portfolio_tools
+            ADD CONSTRAINT portfolio_tools_tool_id_fkey
+            FOREIGN KEY (tool_id)
+            REFERENCES public.tools(id)
+            ON DELETE CASCADE;
+    END IF;
+END $$; 
