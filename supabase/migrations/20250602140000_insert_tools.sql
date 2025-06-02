@@ -1,3 +1,6 @@
+-- Delete existing tools
+DELETE FROM public.tools;
+
 -- Insert tools with their categories and descriptions
 INSERT INTO public.tools (name, category, description, is_approved) VALUES
 -- No-Code/Low-Code Tools
