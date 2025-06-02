@@ -58,6 +58,18 @@ export default async function Page({ params }: PageProps) {
                         name,
                         type
                     )
+                ),
+                tools:portfolio_tools (
+                    tool:tools (
+                        id,
+                        name
+                    )
+                ),
+                services:portfolio_services (
+                    service:services (
+                        id,
+                        name
+                    )
                 )
             `)
             .eq("id", id)

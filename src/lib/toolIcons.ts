@@ -1,10 +1,15 @@
 import {
+    Cloud,
     Code2,
     Database,
     FileJson,
-    GitBranch,
+    Github,
+    Image as ImageIcon,
     Layout,
+    Palette,
+    PenTool,
     Server,
+    Terminal,
     Type,
     Webhook
 } from "lucide-react";
@@ -16,9 +21,20 @@ export const toolIcons = {
     "Tailwind CSS": Layout,
     "Node.js": Server,
     "PostgreSQL": Database,
-    "Figma": Layout,
-    "Git": GitBranch,
-    "AWS": Webhook,
+    "Figma": Palette,
+    "Adobe XD": PenTool,
+    "Photoshop": ImageIcon,
+    "Illustrator": PenTool,
+    "VS Code": Terminal,
+    "MongoDB": Database,
+    "Docker": Server,
+    "GitHub": Github,
+    "AWS": Cloud,
+    "Sketch": PenTool,
+    "Principle": Layout,
+    "Lottie": FileJson,
+    "Framer": Layout,
+    "Vercel": Webhook
 } as const;
 
 export type ToolName = keyof typeof toolIcons; 
