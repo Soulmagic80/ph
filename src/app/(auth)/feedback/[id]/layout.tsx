@@ -25,9 +25,12 @@ interface StepProgressProps {
 
 const StepProgress = ({ steps }: StepProgressProps) => {
   const pathname = usePathname()
-  const currentStepIndex = steps.findIndex((step) =>
-    pathname?.startsWith(step.href) ?? false
-  )
+  const currentStepIndex = steps.findIndex((step) => {
+    // Extrahiere den Teil nach der ID
+    const match = pathname?.match(/^\/feedback\/[^/]+(\/.*)$/);
+    const pathSuffix = match ? `/feedback/[id]${match[1]}` : (pathname || "");
+    return pathSuffix.startsWith(step.href);
+  });
 
   return (
     <div aria-label="Feedback progress">
