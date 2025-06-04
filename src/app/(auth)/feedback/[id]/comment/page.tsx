@@ -4,15 +4,32 @@ import { Textarea } from "@/components/ui/Textarea"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 export default function Comment() {
-  const [comment, setComment] = useState("")
   const [loading, setLoading] = React.useState(false)
   const router = useRouter()
   const params = useParams()
   if (!params?.id) throw new Error("Portfolio ID is required")
   const portfolioId = params.id
+
+  // Portfolio-spezifischer Initialwert
+  const [comment, setComment] = useState(() => {
+    if (typeof window !== "undefined" && portfolioId) {
+      const key = `feedbackComment_${portfolioId}`;
+      const stored = sessionStorage.getItem(key);
+      if (stored) {
+        return stored;
+      }
+    }
+    return "";
+  });
+
+  // Portfolio-spezifisch speichern
+  useEffect(() => {
+    const key = `feedbackComment_${portfolioId}`;
+    sessionStorage.setItem(key, comment);
+  }, [comment, portfolioId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,8 +41,8 @@ export default function Comment() {
       if (userError || !user) throw new Error("User not found")
 
       // Get selected chips from session storage
-      const positiveChips = JSON.parse(sessionStorage.getItem("positiveChips") || "[]")
-      const negativeChips = JSON.parse(sessionStorage.getItem("negativeChips") || "[]")
+      const positiveChips = JSON.parse(sessionStorage.getItem(`positiveChips_${portfolioId}`) || "[]")
+      const negativeChips = JSON.parse(sessionStorage.getItem(`negativeChips_${portfolioId}`) || "[]")
 
       // Start a transaction
       const { error: transactionError } = await supabase.rpc('save_portfolio_feedback', {
@@ -39,11 +56,12 @@ export default function Comment() {
       if (transactionError) throw transactionError
 
       // Clear session storage
-      sessionStorage.removeItem("positiveChips")
-      sessionStorage.removeItem("negativeChips")
+      sessionStorage.removeItem(`positiveChips_${portfolioId}`)
+      sessionStorage.removeItem(`negativeChips_${portfolioId}`)
+      sessionStorage.removeItem(`feedbackComment_${portfolioId}`)
 
       // Redirect to portfolio page
-      router.push(`/portfolios/${portfolioId}`)
+      router.push(`/${portfolioId}`)
     } catch (error) {
       console.error("Error saving feedback:", error)
       setLoading(false)

@@ -1,5 +1,6 @@
 "use client"
 
+import FeedbackProcessChip from "@/components/feedback/process/FeedbackProcessChip"
 import { Button } from "@/components/ui/Button"
 import { supabase } from "@/lib/supabase"
 import { useParams, useRouter } from "next/navigation"
@@ -10,6 +11,8 @@ interface FeedbackChip {
     name: string
     short_description: string
     icon_name: string
+    type: string
+    category: string
 }
 
 export default function PositiveRatingPage() {
@@ -18,28 +21,50 @@ export default function PositiveRatingPage() {
     if (!params?.id) throw new Error("Portfolio ID is required")
     const portfolioId = params.id
     const [chips, setChips] = useState<FeedbackChip[]>([])
-    const [selectedChips, setSelectedChips] = useState<string[]>([])
+    const [selectedChips, setSelectedChips] = useState<string[]>(() => {
+        if (typeof window !== "undefined" && portfolioId) {
+            const key = `positiveChips_${portfolioId}`;
+            const stored = sessionStorage.getItem(key);
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch {
+                    return [];
+                }
+            }
+        }
+        return [];
+    });
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         async function fetchChips() {
-            const { data, error } = await supabase
-                .from("feedback_chips")
-                .select("*")
-                .eq("type", "positive")
-                .order("name")
+            try {
+                const { data, error } = await supabase
+                    .from("feedback_chips")
+                    .select("*")
+                    .eq("type", "positive")
+                    .order("name");
 
-            if (error) {
-                console.error("Error fetching chips:", error)
-                return
+                if (error) {
+                    console.error("Error fetching chips:", error);
+                    return;
+                }
+
+                setChips(data || []);
+                setIsLoading(false);
+            } catch (e) {
+                console.error("Exception during fetch:", e);
             }
-
-            setChips(data)
-            setIsLoading(false)
         }
+        fetchChips();
+    }, []);
 
-        fetchChips()
-    }, [])
+    // Portfolio-spezifisch speichern
+    useEffect(() => {
+        const key = `positiveChips_${portfolioId}`;
+        sessionStorage.setItem(key, JSON.stringify(selectedChips));
+    }, [selectedChips, portfolioId]);
 
     const handleChipClick = (chipId: string) => {
         setSelectedChips((prev) => {
@@ -54,8 +79,6 @@ export default function PositiveRatingPage() {
     }
 
     const handleContinue = () => {
-        // Store selected chips in session storage
-        sessionStorage.setItem("positiveChips", JSON.stringify(selectedChips))
         router.push(`/feedback/${portfolioId}/rating/negative`)
     }
 
@@ -64,52 +87,46 @@ export default function PositiveRatingPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                    What do you like about this portfolio?
-                </h1>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                    Select up to 5 aspects that you find particularly good.
-                </p>
-            </div>
+        <main className="mx-auto p-4">
+            <div className="motion-safe:animate-revealBottom" style={{ animationDuration: "500ms" }}>
+                <div>
+                    <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
+                        What do you like about this portfolio?
+                    </h1>
+                    <p className="mt-2 text-gray-700 sm:text-sm dark:text-gray-300">
+                        Select up to 5 aspects that you find particularly good.
+                    </p>
+                </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {chips.map((chip) => (
-                    <button
-                        key={chip.id}
-                        onClick={() => handleChipClick(chip.id)}
-                        className={`flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${selectedChips.includes(chip.id)
-                            ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950"
-                            : "border-gray-200 hover:border-gray-300 dark:border-gray-800 dark:hover:border-gray-700"
-                            }`}
+                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {chips.map((chip) => (
+                        <FeedbackProcessChip
+                            key={chip.id}
+                            iconName={chip.icon_name}
+                            title={chip.name}
+                            category={chip.category}
+                            description={chip.short_description}
+                            selected={selectedChips.includes(chip.id)}
+                            onClick={() => handleChipClick(chip.id)}
+                        />
+                    ))}
+                </div>
+
+                <div className="mt-6 flex justify-between">
+                    <Button
+                        variant="ghost"
+                        onClick={() => router.push(`/feedback/${portfolioId}/info`)}
                     >
-                        <div className="flex-1">
-                            <h3 className="font-medium text-gray-900 dark:text-gray-50">
-                                {chip.name}
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                {chip.short_description}
-                            </p>
-                        </div>
-                    </button>
-                ))}
+                        Back
+                    </Button>
+                    <Button
+                        onClick={handleContinue}
+                        disabled={selectedChips.length === 0}
+                    >
+                        Continue
+                    </Button>
+                </div>
             </div>
-
-            <div className="flex justify-between">
-                <Button
-                    variant="ghost"
-                    onClick={() => router.push(`/feedback/${portfolioId}/info`)}
-                >
-                    Back
-                </Button>
-                <Button
-                    onClick={handleContinue}
-                    disabled={selectedChips.length === 0}
-                >
-                    Continue
-                </Button>
-            </div>
-        </div>
+        </main>
     )
-} 
+}

@@ -10,6 +10,7 @@ import {
     DialogTitle,
 } from "@/components/ui/Dialog";
 import { supabase } from "@/lib/supabase";
+import { isAdmin } from "@/utils/isAdmin";
 import { ArrowUpCircleIcon, StarIcon } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";
@@ -115,19 +116,8 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
         try {
             console.log("Upvote clicked, user:", user.email);
 
-            // Check if user is admin
-            const { data: profile, error: profileError } = await supabase
-                .from('profiles')
-                .select('is_admin')
-                .eq('id', user.id)
-                .single();
-
-            if (profileError) {
-                console.error("Error checking admin status:", profileError);
-                return;
-            }
-
-            if (profile.is_admin) {
+            // Check if user is admin (zentral)
+            if (await isAdmin(user.id)) {
                 // Admin: Directly increment upvotes
                 const { error: incrementError } = await supabase
                     .rpc('increment_portfolio_upvotes', {
@@ -138,35 +128,41 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
                     console.error("Error incrementing upvotes:", incrementError);
                     return;
                 }
-            } else {
-                // Normal user: Check for existing upvote
-                const { data: existingUpvote, error: checkError } = await supabase
-                    .from("portfolio_upvotes")
-                    .select("id")
-                    .eq("portfolio_id", portfolioId)
-                    .eq("user_id", user.id)
-                    .single();
 
-                if (checkError && checkError.code !== 'PGRST116') {
-                    alert("Failed to check if you've already upvoted");
-                    return;
+                if (onUpvote) {
+                    onUpvote();
                 }
+                // Nach Admin-Upvote returnen!
+                return;
+            }
 
-                if (existingUpvote) {
-                    console.log("User has already upvoted this portfolio");
-                    setIsUpvoteModalOpen(true);
-                    return;
-                }
+            // Normal user: Check for existing upvote
+            const { data: existingUpvote, error: checkError } = await supabase
+                .from("portfolio_upvotes")
+                .select("id")
+                .eq("portfolio_id", portfolioId)
+                .eq("user_id", user.id)
+                .single();
 
-                // Add new upvote
-                const { error: insertError } = await supabase
-                    .from("portfolio_upvotes")
-                    .insert({ portfolio_id: portfolioId, user_id: user.id });
+            if (checkError && checkError.code !== 'PGRST116') {
+                alert("Failed to check if you've already upvoted");
+                return;
+            }
 
-                if (insertError) {
-                    alert("Failed to record your upvote");
-                    return;
-                }
+            if (existingUpvote) {
+                console.log("User has already upvoted this portfolio");
+                setIsUpvoteModalOpen(true);
+                return;
+            }
+
+            // Add new upvote
+            const { error: insertError } = await supabase
+                .from("portfolio_upvotes")
+                .insert({ portfolio_id: portfolioId, user_id: user.id });
+
+            if (insertError) {
+                alert("Failed to record your upvote");
+                return;
             }
 
             // Fetch updated upvotes count
