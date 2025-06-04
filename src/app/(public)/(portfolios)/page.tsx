@@ -1,5 +1,5 @@
 "use client";
-import PortfolioCard from "@/components/portfolio/home/PortfolioCard";
+import PortfolioGrid from "@/components/portfolio/home/PortfolioGrid";
 import { Portfolio } from "@/components/portfolio/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
 import { supabase } from "@/lib/supabase";
@@ -129,32 +129,19 @@ export default function Home() {
     }
   }, [inView, hasMore, loadMorePortfolios]);
 
-  const handleUpvote = async (id: string) => {
-    try {
-      // Fetch current upvotes count
-      const { data: updatedPortfolio, error: fetchError } = await supabase
-        .from("portfolios")
-        .select("upvotes")
-        .eq("id", id)
-        .single();
-
-      if (fetchError) {
-        console.error("Error fetching updated upvotes:", fetchError);
-        return;
-      }
-
-      if (updatedPortfolio) {
-        setPortfolios(prev =>
-          prev.map(p =>
-            p.id === id
-              ? { ...p, upvotes: updatedPortfolio.upvotes }
-              : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error updating upvotes:", error);
-    }
+  const handleUpvote = (id: string) => {
+    setPortfolios((prev) => {
+      const updated = prev.map((p) =>
+        p.id === id ? { ...p, upvotes: (p.upvotes ?? 0) + 1 } : p
+      );
+      // Nach Upvote neu sortieren!
+      return [...updated].sort((a, b) => {
+        if ((b.upvotes ?? 0) === (a.upvotes ?? 0)) {
+          return new Date(b.created_at ?? "").getTime() - new Date(a.created_at ?? "").getTime();
+        }
+        return (b.upvotes ?? 0) - (a.upvotes ?? 0);
+      });
+    });
   };
 
   const handleFilterChange = (value: string) => {
@@ -163,6 +150,18 @@ export default function Home() {
   };
 
   const currentMonth = new Date().toLocaleString("default", { month: "long" });
+
+  // Sortiere das Portfolio-Array live vor der Übergabe an PortfolioGrid
+  const sortedPortfolios = [...portfolios].sort((a, b) => {
+    if (selectedRanking === "current_month" || selectedRanking === "all_time") {
+      if ((b.upvotes ?? 0) === (a.upvotes ?? 0)) {
+        return new Date(b.created_at ?? "").getTime() - new Date(a.created_at ?? "").getTime();
+      }
+      return (b.upvotes ?? 0) - (a.upvotes ?? 0);
+    } else {
+      return new Date(b.created_at ?? "").getTime() - new Date(a.created_at ?? "").getTime();
+    }
+  });
 
   return (
     <main className="max-w-7xl px-5 md:px-10 py-10 mx-auto bg-white dark:bg-gray-950">
@@ -223,16 +222,7 @@ export default function Home() {
       )}
 
       {/* Portfolio-Listen */}
-      <div id="portfolios-section" className="pb-10 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-8">
-        {portfolios.map((p) => (
-          <PortfolioCard
-            key={p.id}
-            portfolio={p}
-            onUpvote={handleUpvote}
-            rank={portfolios.indexOf(p) + 1}
-          />
-        ))}
-      </div>
+      <PortfolioGrid portfolios={sortedPortfolios} onUpvote={handleUpvote} />
     </main>
   );
 }

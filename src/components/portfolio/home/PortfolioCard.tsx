@@ -19,7 +19,7 @@ import { Portfolio } from "../types";
 
 interface PortfolioCardProps {
   portfolio: Portfolio;
-  onUpvote: (id: string) => void;
+  onUpvote?: (id: string) => void;
   rank?: number;
 }
 
