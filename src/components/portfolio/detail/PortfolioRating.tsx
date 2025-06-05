@@ -7,12 +7,6 @@ interface PortfolioRatingProps {
     portfolio: PortfolioWithRelations;
 }
 
-function getPhosphorIcon(iconName: string): React.ReactNode {
-    // Fallback auf TextAa, falls Icon nicht gefunden
-    const IconComponent = (PhosphorIcons as any)[iconName] || PhosphorIcons.TextAa;
-    return <IconComponent size={20} weight="regular" className="text-gray-600 dark:text-gray-300" />;
-}
-
 export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
     // Get all feedback chips and sort by count
     const allFeedback = portfolio.portfolio_rating_counts || [];
