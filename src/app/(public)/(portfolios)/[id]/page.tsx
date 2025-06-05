@@ -56,7 +56,10 @@ export default async function Page({ params }: PageProps) {
                     feedback_chip:feedback_chips (
                         id,
                         name,
-                        type
+                        type,
+                        icon_name,
+                        category,
+                        short_description
                     )
                 ),
                 tools:portfolio_tools (

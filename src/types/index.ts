@@ -32,6 +32,9 @@ export interface FeedbackChip {
   type: 'positive' | 'negative';
   created_at: string;
   updated_at: string;
+  icon_name: string;
+  category: string;
+  short_description: string;
 }
 
 export interface PortfolioRatingCount {

@@ -1,11 +1,16 @@
 "use client";
-import { FeedbackChip } from "@/components/feedback/ui/FeedbackChip";
+import FeedbackDisplayChip from "@/components/feedback/ui/FeedbackDisplayChip";
 import { PortfolioWithRelations } from "@/types";
-import { Heart, Screwdriver } from "@phosphor-icons/react";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import * as PhosphorIcons from "@phosphor-icons/react";
 
 interface PortfolioRatingProps {
     portfolio: PortfolioWithRelations;
+}
+
+function getPhosphorIcon(iconName: string): React.ReactNode {
+    // Fallback auf TextAa, falls Icon nicht gefunden
+    const IconComponent = (PhosphorIcons as any)[iconName] || PhosphorIcons.TextAa;
+    return <IconComponent size={20} weight="regular" className="text-gray-600 dark:text-gray-300" />;
 }
 
 export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
@@ -16,12 +21,12 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
     const positiveChips = allFeedback
         .filter((feedback) => feedback.feedback_chip.type === 'positive')
         .sort((a, b) => b.count - a.count)
-        .slice(0, 6); // Only show top 6
+        .slice(0, 4); // Nur Top 4 anzeigen
 
     const negativeChips = allFeedback
         .filter((feedback) => feedback.feedback_chip.type === 'negative')
         .sort((a, b) => b.count - a.count)
-        .slice(0, 3); // Only show top 3
+        .slice(0, 2); // Nur Top 2 anzeigen
 
     return (
         <>
@@ -41,23 +46,25 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                             {/* Positive Ratings */}
                             <div>
                                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50 flex items-center gap-3">
-                                    <Heart className="w-4 h-4 text-red-500" weight="fill" />
+                                    <PhosphorIcons.Heart className="w-4 h-4 text-red-500" weight="fill" />
                                     What the community loves
                                 </h3>
-                                <div className="flex flex-wrap gap-3 mt-6">
+                                <div className="flex flex-col gap-3 mt-6">
                                     {positiveChips.length > 0 ? (
                                         positiveChips.map((feedback, index) => (
-                                            <FeedbackChip
+                                            <FeedbackDisplayChip
                                                 key={index}
-                                                icon={<ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
-                                                text={feedback.feedback_chip.name}
+                                                iconName={feedback.feedback_chip.icon_name}
+                                                title={feedback.feedback_chip.name}
+                                                category={feedback.feedback_chip.category}
+                                                description={feedback.feedback_chip.short_description}
                                                 count={feedback.count}
                                             />
                                         ))
                                     ) : (
                                         <div className="flex items-center gap-2 pl-2 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg">
                                             <div className="p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50">
-                                                <ThumbsUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                                                <PhosphorIcons.Heart className="w-4 h-4 text-gray-600 dark:text-gray-300" weight="fill" />
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-geist font-normal text-gray-900 dark:text-white">No feedback yet</span>
@@ -71,23 +78,25 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                             {/* Negative Ratings */}
                             <div className="mt-10">
                                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50 flex items-center gap-3">
-                                    <Screwdriver className="w-4 h-4 text-blue-500" weight="fill" />
+                                    <PhosphorIcons.Screwdriver className="w-4 h-4 text-blue-500" weight="fill" />
                                     What could be even better
                                 </h3>
-                                <div className="flex flex-wrap gap-3 mt-6">
+                                <div className="flex flex-col gap-3 mt-6">
                                     {negativeChips.length > 0 ? (
                                         negativeChips.map((feedback, index) => (
-                                            <FeedbackChip
+                                            <FeedbackDisplayChip
                                                 key={index}
-                                                icon={<ThumbsDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
-                                                text={feedback.feedback_chip.name}
+                                                iconName={feedback.feedback_chip.icon_name}
+                                                title={feedback.feedback_chip.name}
+                                                category={feedback.feedback_chip.category}
+                                                description={feedback.feedback_chip.short_description}
                                                 count={feedback.count}
                                             />
                                         ))
                                     ) : (
                                         <div className="flex items-center gap-2 pl-2 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg">
                                             <div className="p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50">
-                                                <ThumbsDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                                                <PhosphorIcons.Screwdriver className="w-4 h-4 text-gray-600 dark:text-gray-300" weight="fill" />
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-geist font-normal text-gray-900 dark:text-white">No feedback yet</span>
