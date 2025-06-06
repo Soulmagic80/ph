@@ -12,7 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { isAdmin } from "@/utils/isAdmin";
 import { ArrowUpCircleIcon, StarIcon } from "@heroicons/react/24/solid";
-import { User } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -56,7 +56,7 @@ export default function PortfolioOverview({ title, images, portfolioId, user: in
         }
         getUser();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
             console.log('Auth state changed:', _event);
             setUser(session?.user ?? null);
         });

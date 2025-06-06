@@ -72,15 +72,19 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  // Best Practice: Authentifizierten User holen
+  const { data: { user } } = await supabase.auth.getUser()
 
   // Session Persistence: Prüfe ob Session abgelaufen ist
-  if (session?.expires_at && session.expires_at < Date.now() / 1000) {
+  if (user) {
     try {
-      const { data: { session: newSession } } = await supabase.auth.refreshSession()
-      if (newSession) {
-        // Session wurde erfolgreich aktualisiert
-        console.log('Session refreshed successfully')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.expires_at && session.expires_at < Date.now() / 1000) {
+        const { data: { session: newSession } } = await supabase.auth.refreshSession()
+        if (newSession) {
+          // Session wurde erfolgreich aktualisiert
+          console.log('Session refreshed successfully')
+        }
       }
     } catch (error) {
       console.error('Error refreshing session:', error)
@@ -93,7 +97,7 @@ export async function middleware(request: NextRequest) {
   )
 
   // Wenn die Route geschützt ist und kein User eingeloggt ist, redirect zu login
-  if (isProtectedRoute && !session) {
+  if (isProtectedRoute && !user) {
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectedFrom', request.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
@@ -114,4 +118,4 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
-} 
+}

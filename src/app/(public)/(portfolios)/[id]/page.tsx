@@ -1,5 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from "next/headers";
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from "next/navigation";
 import PortfolioDetailContent from "./PortfolioDetailContent";
 
@@ -20,19 +19,8 @@ export default async function Page({ params }: PageProps) {
             notFound();
         }
 
-        // Initialize Supabase client with the new SSR package
-        const cookieStore = await cookies();
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            {
-                cookies: {
-                    get(name: string) {
-                        return cookieStore.get(name)?.value;
-                    },
-                },
-            }
-        );
+        // Initialize Supabase client with the new SSR package (new signature)
+        const supabase = createServerSupabaseClient();
 
         // Get portfolio with relations
         const { data: portfolio, error } = await supabase
@@ -84,9 +72,7 @@ export default async function Page({ params }: PageProps) {
         }
 
         // Get current user
-        const { data: { session } } = await supabase.auth.getSession();
-        const user = session?.user || null;
-
+        const { data: { user } } = await supabase.auth.getUser();
         return <PortfolioDetailContent portfolio={portfolio} user={user} />;
     } catch (error) {
         console.error("Error in portfolio page:", error);
