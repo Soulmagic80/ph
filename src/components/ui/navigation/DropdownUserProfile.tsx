@@ -22,13 +22,13 @@ import * as React from "react";
 
 export type DropdownUserProfileProps = {
   children: React.ReactNode;
-  handleLogout: () => void;
+  onSignOut: () => void;
   userEmail: string;
 };
 
 export function DropdownUserProfile({
   children,
-  handleLogout,
+  onSignOut,
   userEmail,
 }: DropdownUserProfileProps) {
   const [mounted, setMounted] = React.useState(false);
@@ -98,7 +98,7 @@ export function DropdownUserProfile({
                 Account
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={onSignOut}>
               Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>

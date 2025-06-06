@@ -1,5 +1,5 @@
 import { Database } from "@/types/database.types";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from '@supabase/ssr';
 
 // Determine which environment to use
 const useStaging = process.env.NEXT_PUBLIC_USE_STAGING_DB === 'true';
@@ -17,4 +17,6 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Supabase URL und Key müssen in .env.local definiert sein!");
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+export const createClient = () => {
+  return createBrowserClient<Database>(supabaseUrl, supabaseKey);
+} 

@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/Button";
 import { Divider } from "@/components/ui/Divider";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { RiGoogleFill } from "@remixicon/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+
+const supabase = createClient();
 
 export default function Login() {
   const [email, setEmail] = useState("")

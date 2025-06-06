@@ -1,5 +1,3 @@
-import { AuthProvider } from "@/components/core/AuthProvider";
-import { createServerSupabaseClient } from "@/lib/supabaseServer";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
@@ -52,11 +50,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createServerSupabaseClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  const initialIsLoggedIn = !!session;
-  const initialUserEmail = session?.user?.email || "Unknown";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -69,9 +62,7 @@ export default async function RootLayout({
           disableTransitionOnChange
           attribute="class"
         >
-          <AuthProvider initialIsLoggedIn={initialIsLoggedIn} initialUserEmail={initialUserEmail}>
-            {children}
-          </AuthProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

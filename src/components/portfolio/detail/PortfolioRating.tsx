@@ -73,7 +73,7 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                             <div className="mt-10">
                                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50 flex items-center gap-3">
                                     <PhosphorIcons.Screwdriver className="w-4 h-4 text-blue-500" weight="fill" />
-                                    What could be even better
+                                    What the community thinks could be even better
                                 </h3>
                                 <div className="flex flex-col gap-3 mt-6">
                                     {negativeChips.length > 0 ? (

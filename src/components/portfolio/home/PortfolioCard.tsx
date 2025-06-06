@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { isAdmin } from "@/utils/isAdmin";
 import { Medal } from "@phosphor-icons/react";
 import { User } from "@supabase/supabase-js";
@@ -22,6 +22,8 @@ interface PortfolioCardProps {
   onUpvote?: (id: string) => void;
   rank?: number;
 }
+
+const supabase = createClient();
 
 export default function PortfolioCard({ portfolio, onUpvote, rank }: PortfolioCardProps) {
   const [isUpvoting, setIsUpvoting] = useState(false);

@@ -30,7 +30,7 @@ export default function FeedbackProcessChip({
             role="button"
             tabIndex={0}
             onClick={onClick}
-            className={`w-full flex items-center gap-4 rounded-lg border transition-colors px-5 py-4 text-left bg-white dark:bg-gray-900
+            className={`w-full flex items-center gap-4 rounded-lg border transition-colors px-5 py-4 text-left bg-gray-50 dark:bg-gray-900
         ${selected ? "border-blue-500 shadow-md" : "border-gray-200 hover:border-gray-300 dark:border-gray-800 dark:hover:border-gray-700"}
       `}
         >
@@ -41,7 +41,7 @@ export default function FeedbackProcessChip({
                 <div className="flex items-center gap-2 mb-2">
                     <span className="font-medium text-sm text-tremor-title dark:text-tremor-title-dark">{title}</span>
                     <span
-                        className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-1.5 py-0.5 text-[10px] font-geist font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10"
+                        className="inline-flex items-center rounded-md bg-white dark:bg-gray-800 px-1.5 py-0.5 text-[10px] font-geist font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10"
                     >
                         {category}
                     </span>

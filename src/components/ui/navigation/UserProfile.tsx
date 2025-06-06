@@ -6,16 +6,16 @@ import { User } from "lucide-react";
 import { DropdownUserProfile } from "./DropdownUserProfile";
 
 interface UserProfileProps {
-  handleLogout: () => void;
+  onSignOut: () => void;
   userEmail: string;
   isCollapsed?: boolean;
 }
 
-export const UserProfileDesktop = ({ handleLogout, userEmail, isCollapsed }: UserProfileProps) => {
+export const UserProfileDesktop = ({ onSignOut, userEmail, isCollapsed }: UserProfileProps) => {
   const initial = userEmail ? userEmail.charAt(0).toUpperCase() : "U";
 
   return (
-    <DropdownUserProfile handleLogout={handleLogout} userEmail={userEmail}>
+    <DropdownUserProfile onSignOut={onSignOut} userEmail={userEmail}>
       <Button
         aria-label="User settings"
         variant="ghost"
@@ -25,7 +25,6 @@ export const UserProfileDesktop = ({ handleLogout, userEmail, isCollapsed }: Use
         )}
       >
         {isCollapsed ? (
-          // h-8 to avoid layout shift with icon shown in isCollapsibled == false
           <div className="flex h-8 items-center">
             <User
               className="size-5 shrink-0 text-gray-500 group-hover:text-gray-700 dark:text-gray-500 group-hover:dark:text-gray-300"
@@ -50,11 +49,11 @@ export const UserProfileDesktop = ({ handleLogout, userEmail, isCollapsed }: Use
   );
 };
 
-export const UserProfileMobile = ({ handleLogout, userEmail }: UserProfileProps) => {
+export const UserProfileMobile = ({ onSignOut, userEmail }: UserProfileProps) => {
   const initial = userEmail ? userEmail.charAt(0).toUpperCase() : "U";
 
   return (
-    <DropdownUserProfile handleLogout={handleLogout} userEmail={userEmail}>
+    <DropdownUserProfile onSignOut={onSignOut} userEmail={userEmail}>
       <Button
         aria-label="User settings"
         variant="ghost"

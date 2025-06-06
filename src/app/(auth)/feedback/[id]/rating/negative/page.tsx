@@ -2,9 +2,11 @@
 
 import FeedbackProcessChip from "@/components/feedback/process/FeedbackProcessChip"
 import { Button } from "@/components/ui/Button"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+
+const supabase = createClient()
 
 interface FeedbackChip {
     id: string

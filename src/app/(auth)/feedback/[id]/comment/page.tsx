@@ -1,10 +1,12 @@
 "use client"
 import { Button } from "@/components/ui/Button"
 import { Textarea } from "@/components/ui/Textarea"
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
+
+const supabase = createClient()
 
 export default function Comment() {
   const [loading, setLoading] = React.useState(false)

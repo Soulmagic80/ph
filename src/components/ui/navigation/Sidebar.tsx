@@ -1,18 +1,29 @@
 "use client";
-import { AuthContext } from "@/components/core/AuthProvider";
+
 import { Button } from "@/components/ui/Button";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
 
+const supabase = createClient();
+
 export function Sidebar() {
   const router = useRouter();
-  const { isLoggedIn, userEmail } = useContext(AuthContext);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<{ email: string | undefined } | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ? { email: session.user.email } : null);
+    };
+    getUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -55,8 +66,8 @@ export function Sidebar() {
 
             {/* Sign In Button / User Profile (nur ab md) */}
             <div className="hidden md:block">
-              {isLoggedIn ? (
-                <UserProfileDesktop handleLogout={handleLogout} userEmail={userEmail || ""} />
+              {user ? (
+                <UserProfileDesktop onSignOut={handleLogout} userEmail={user?.email || ""} />
               ) : (
                 <Link href="/login">
                   <Button variant="primary">
@@ -67,15 +78,20 @@ export function Sidebar() {
             </div>
 
             {/* User (nur unter md) */}
-            {isLoggedIn && (
+            {user && (
               <div className="md:hidden">
-                <UserProfileMobile handleLogout={handleLogout} userEmail={userEmail || ""} />
+                <UserProfileMobile onSignOut={handleLogout} userEmail={user?.email || ""} />
               </div>
             )}
 
             {/* Burger */}
             <div className="md:hidden">
-              <MobileSidebar />
+              <MobileSidebar
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
+                onSignOut={handleLogout}
+                user={user}
+              />
             </div>
           </div>
         </nav>

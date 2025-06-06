@@ -9,7 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/Dialog";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { isAdmin } from "@/utils/isAdmin";
 import { ArrowUpCircleIcon, StarIcon } from "@heroicons/react/24/solid";
 import { User } from "@supabase/supabase-js";
@@ -24,6 +24,8 @@ interface PortfolioOverviewProps {
     user: User | null;
     onUpvote?: () => void;
 }
+
+const supabase = createClient();
 
 export default function PortfolioOverview({ title, images, portfolioId, user: initialUser, onUpvote }: PortfolioOverviewProps) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);

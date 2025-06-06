@@ -5,7 +5,7 @@ import PortfolioDetails from "@/components/portfolio/detail/PortfolioDetails";
 import PortfolioOverview from "@/components/portfolio/detail/PortfolioOverview";
 import PortfolioRating from "@/components/portfolio/detail/PortfolioRating";
 import { Divider } from "@/components/ui/Divider";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { PortfolioWithRelations } from "@/types";
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
@@ -14,6 +14,8 @@ interface PortfolioDetailContentProps {
     portfolio: PortfolioWithRelations;
     user: User | null;
 }
+
+const supabase = createClient();
 
 export default function PortfolioDetailContent({ portfolio: initialPortfolio, user }: PortfolioDetailContentProps) {
     const [portfolio, setPortfolio] = useState<PortfolioWithRelations>(initialPortfolio);
