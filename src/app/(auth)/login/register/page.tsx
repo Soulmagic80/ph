@@ -12,6 +12,33 @@ import { useState } from "react";
 
 const supabase = createClient();
 
+// Password Policy Validierung
+const validatePassword = (password: string): { isValid: boolean; message: string } => {
+  const minLength = 8
+  const hasUpperCase = /[A-Z]/.test(password)
+  const hasLowerCase = /[a-z]/.test(password)
+  const hasNumbers = /\d/.test(password)
+  const hasSpecialChar = /[!@#$%^&*]/.test(password)
+
+  if (password.length < minLength) {
+    return { isValid: false, message: `Password must be at least ${minLength} characters long` }
+  }
+  if (!hasUpperCase) {
+    return { isValid: false, message: 'Password must contain at least one uppercase letter' }
+  }
+  if (!hasLowerCase) {
+    return { isValid: false, message: 'Password must contain at least one lowercase letter' }
+  }
+  if (!hasNumbers) {
+    return { isValid: false, message: 'Password must contain at least one number' }
+  }
+  if (!hasSpecialChar) {
+    return { isValid: false, message: 'Password must contain at least one special character (!@#$%^&*)' }
+  }
+
+  return { isValid: true, message: '' }
+}
+
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +52,14 @@ export default function Register() {
     setLoading(true);
     setError(null);
     setMessage(null);
+
+    // Validiere Passwort
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message);
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -83,8 +118,6 @@ export default function Register() {
           </p>
         </div>
         <div className="mt-10 w-full">
-
-
           <form onSubmit={handleSignUp} className="flex w-full flex-col gap-y-6">
             {error && (
               <div className="text-red-500 text-sm">
@@ -126,6 +159,9 @@ export default function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <p className="text-xs text-gray-500">
+                  Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters.
+                </p>
               </div>
             </div>
             <Button type="submit" isLoading={loading}>
