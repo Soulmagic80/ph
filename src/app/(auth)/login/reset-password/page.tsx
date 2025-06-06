@@ -3,9 +3,11 @@
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const supabase = createClient();
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
