@@ -8,11 +8,12 @@ import { createClient } from "@/lib/supabase";
 import { RiGoogleFill } from "@remixicon/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 
 const supabase = createClient();
 
-export default function Login() {
+// Separate component that uses useSearchParams
+function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -152,5 +153,14 @@ export default function Login() {
         </p>
       </div>
     </div>
+  )
+}
+
+// Main component with Suspense boundary
+export default function Login() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
