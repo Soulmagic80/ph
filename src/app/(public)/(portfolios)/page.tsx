@@ -151,7 +151,7 @@ export default function Home() {
         setPage(0);
     };
 
-    const currentMonth = new Date().toLocaleString("default", { month: "long" });
+
 
     // Sortiere das Portfolio-Array live vor der Übergabe an PortfolioGrid
     const sortedPortfolios = [...portfolios].sort((a, b) => {
