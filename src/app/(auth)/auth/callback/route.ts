@@ -5,6 +5,7 @@ import { NextResponse } from "next/server"
 export async function GET(request: Request) {
     const requestUrl = new URL(request.url)
     const code = requestUrl.searchParams.get("code")
+    const redirectedFrom = requestUrl.searchParams.get("redirectedFrom") || "/"
 
     if (code) {
         const cookieStore = await cookies()
@@ -13,21 +14,20 @@ export async function GET(request: Request) {
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
             {
                 cookies: {
-                    get(name: string) {
-                        return cookieStore.get(name)?.value
+                    getAll() {
+                        return cookieStore.getAll()
                     },
-                    set(name: string, value: string, options: any) {
-                        cookieStore.set({ name, value, ...options })
-                    },
-                    remove(name: string, options: any) {
-                        cookieStore.set({ name, value: "", ...options })
-                    },
-                },
+                    setAll(cookiesToSet) {
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            cookieStore.set({ name, value, ...options })
+                        })
+                    }
+                }
             }
         )
 
         await supabase.auth.exchangeCodeForSession(code)
     }
 
-    return NextResponse.redirect(requestUrl.origin)
+    return NextResponse.redirect(`${requestUrl.origin}${redirectedFrom}`)
 } 
