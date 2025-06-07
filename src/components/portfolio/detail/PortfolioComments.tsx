@@ -174,7 +174,16 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                                     rows={3}
                                     className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
                                 />
-                                <div className="flex items-center justify-end">
+                                <div className="flex items-center justify-end gap-4">
+                                    <Button
+                                        type="button"
+                                        size="xs"
+                                        variant="light"
+                                        onClick={() => setNewComment("")}
+                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    >
+                                        Cancel
+                                    </Button>
                                     <Button
                                         type="submit"
                                         size="xs"
