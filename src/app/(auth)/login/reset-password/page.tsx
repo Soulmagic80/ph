@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { createClient } from "@/lib/supabase/client";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -18,7 +19,7 @@ export default function ResetPassword() {
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event) => {
+    supabase.auth.onAuthStateChange(async (event: AuthChangeEvent) => {
       if (event === "PASSWORD_RECOVERY") {
         // Passwort-Reset-Modus
       }
