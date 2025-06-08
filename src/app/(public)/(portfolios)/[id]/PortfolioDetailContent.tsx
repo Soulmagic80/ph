@@ -5,7 +5,7 @@ import PortfolioDetails from "@/components/portfolio/detail/PortfolioDetails";
 import PortfolioOverview from "@/components/portfolio/detail/PortfolioOverview";
 import PortfolioRating from "@/components/portfolio/detail/PortfolioRating";
 import { Divider } from "@/components/ui/Divider";
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { PortfolioWithRelations } from "@/types";
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
