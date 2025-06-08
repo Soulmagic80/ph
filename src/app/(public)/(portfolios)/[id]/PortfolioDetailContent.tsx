@@ -1,3 +1,4 @@
+// forced redeploy: supabase import check
 "use client";
 
 import PortfolioComments from "@/components/portfolio/detail/PortfolioComments";
