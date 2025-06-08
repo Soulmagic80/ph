@@ -43,7 +43,7 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                                     <PhosphorIcons.Heart className="w-4 h-4 text-red-500" weight="fill" />
                                     What the community loves
                                 </h3>
-                                <div className="flex flex-col gap-3 mt-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
                                     {positiveChips.length > 0 ? (
                                         positiveChips.map((feedback, index) => (
                                             <FeedbackDisplayChip
@@ -75,7 +75,7 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                                     <PhosphorIcons.Screwdriver className="w-4 h-4 text-blue-500" weight="fill" />
                                     What the community thinks could be even better
                                 </h3>
-                                <div className="flex flex-col gap-3 mt-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
                                     {negativeChips.length > 0 ? (
                                         negativeChips.map((feedback, index) => (
                                             <FeedbackDisplayChip

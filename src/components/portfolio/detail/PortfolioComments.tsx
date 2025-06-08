@@ -1,7 +1,7 @@
 "use client";
 import CommentCard from "@/components/feedback/ui/CommentCard";
 import { createClient } from "@/lib/supabase/client";
-import { Comment } from "@/types";
+import { Comment as BaseComment } from "@/types";
 import { ChatCircle } from "@phosphor-icons/react";
 import { User } from "@supabase/supabase-js";
 import { Button, Textarea } from "@tremor/react";
@@ -12,61 +12,87 @@ interface PortfolioCommentsProps {
     user: User | null;
 }
 
+// Typ für Kommentare mit Votes
+type CommentWithVotes = BaseComment & {
+    upvotes: number;
+    downvotes: number;
+};
+
+export interface Comment {
+    // ... deine bisherigen Felder
+    upvotes?: number;
+    downvotes?: number;
+}
+
 export default function PortfolioComments({ portfolio_id, user }: PortfolioCommentsProps) {
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [comments, setComments] = useState<CommentWithVotes[]>([]);
     const [loading, setLoading] = useState(true);
     const [replyTo, setReplyTo] = useState<string | null>(null);
+    const [replyToParent, setReplyToParent] = useState<string | null>(null);
     const [replyContent, setReplyContent] = useState("");
     const [newComment, setNewComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [supabase] = useState(() => createClient());
 
-    useEffect(() => {
-        let isMounted = true;
+    async function fetchComments(showLoading = true) {
+        if (!portfolio_id) {
+            console.error("No portfolio_id provided");
+            return;
+        }
+        if (showLoading) setLoading(true);
+        try {
+            const { data: commentsData, error: commentsError } = await supabase
+                .from("portfolio_comments")
+                .select(`
+                    *,
+                    user:profiles(id, username, avatar_url)
+                `)
+                .eq("portfolio_id", portfolio_id)
+                .order("created_at", { ascending: false });
 
-        async function fetchComments() {
-            if (!portfolio_id) {
-                console.error("No portfolio_id provided");
+            if (commentsError) {
+                console.error("Error fetching comments:", commentsError);
                 return;
             }
 
-            console.log("Fetching comments for portfolio:", portfolio_id);
-            setLoading(true);
+            // Votes laden
+            const commentIds = (commentsData || []).map((c: BaseComment) => c.id);
+            const { data: votesData, error: votesError } = await supabase
+                .from("portfolio_comment_votes")
+                .select("comment_id, vote_type")
+                .in("comment_id", commentIds);
 
-            try {
-                // Get comments with user profiles in a single query
-                const { data: commentsData, error: commentsError } = await supabase
-                    .from("portfolio_comments")
-                    .select(`
-                        *,
-                        user:profiles(id, username, avatar_url)
-                    `)
-                    .eq("portfolio_id", portfolio_id)
-                    .order("created_at", { ascending: false });
-
-                if (commentsError) {
-                    console.error("Error fetching comments:", commentsError);
-                    return;
-                }
-
-                if (isMounted) {
-                    console.log("Setting comments:", commentsData);
-                    setComments(commentsData || []);
-                }
-            } catch (err) {
-                console.error("Exception while fetching comments:", err);
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+            if (votesError) {
+                console.error("Error fetching votes:", votesError);
             }
+
+            // Votes pro Kommentar zählen
+            const voteCounts: Record<string, { up: number; down: number }> = {};
+            for (const id of commentIds) {
+                voteCounts[id] = { up: 0, down: 0 };
+            }
+            for (const vote of votesData || []) {
+                if (vote.vote_type === "up") voteCounts[vote.comment_id].up += 1;
+                if (vote.vote_type === "down") voteCounts[vote.comment_id].down += 1;
+            }
+
+            // Votes an die Kommentare anhängen
+            const commentsWithVotes = (commentsData || []).map((c: BaseComment) => ({
+                ...c,
+                upvotes: voteCounts[c.id]?.up ?? 0,
+                downvotes: voteCounts[c.id]?.down ?? 0,
+            }));
+
+            setComments(commentsWithVotes);
+        } catch (err) {
+            console.error("Exception while fetching comments:", err);
+        } finally {
+            if (showLoading) setLoading(false);
         }
+    }
 
-        fetchComments();
-
-        return () => {
-            isMounted = false;
-        };
+    useEffect(() => {
+        fetchComments(true);
     }, [portfolio_id, supabase]);
 
     // Hilfsfunktionen für Gruppierung
@@ -74,9 +100,15 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
     const replies = comments.filter(c => c.parent_id);
     const getReplies = (parentId: string) => replies.filter(r => r.parent_id === parentId);
 
+    function getTopLevelParentId(comment: CommentWithVotes) {
+        return comment.parent_id ? comment.parent_id : comment.id;
+    }
+
     // Neuen Hauptkommentar absenden
-    async function handleNewCommentSubmit(e: React.FormEvent) {
+    async function handleNewCommentSubmit(e: React.MouseEvent) {
         e.preventDefault();
+        e.stopPropagation();
+
         if (!newComment.trim() || !user) return;
 
         setIsSubmitting(true);
@@ -90,18 +122,8 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
 
             if (error) throw error;
 
-            // Kommentare neu laden
-            const { data: commentsData, error: reloadError } = await supabase
-                .from("portfolio_comments")
-                .select(`
-                    *,
-                    user:profiles(id, username, avatar_url)
-                `)
-                .eq("portfolio_id", portfolio_id)
-                .order("created_at", { ascending: false });
-
-            if (reloadError) throw reloadError;
-            setComments(commentsData || []);
+            // Kommentare neu laden, aber ohne globales loading
+            fetchComments(false);
             setNewComment(""); // Formular zurücksetzen
         } catch (error) {
             console.error("Error posting comment:", error);
@@ -111,8 +133,13 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
     }
 
     // Antwort absenden
-    async function handleReplySubmit(parentId: string) {
-        if (!replyContent.trim() || !user) return;
+    async function handleReplySubmit(e?: React.MouseEvent) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (!replyContent.trim() || !user || !replyToParent) return;
 
         setIsSubmitting(true);
         try {
@@ -120,25 +147,15 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                 portfolio_id,
                 user_id: user.id,
                 content: replyContent,
-                parent_id: parentId,
+                parent_id: replyToParent,
             });
 
             if (error) throw error;
 
-            // Kommentare neu laden
-            const { data: commentsData, error: reloadError } = await supabase
-                .from("portfolio_comments")
-                .select(`
-                    *,
-                    user:profiles(id, username, avatar_url)
-                `)
-                .eq("portfolio_id", portfolio_id)
-                .order("created_at", { ascending: false });
-
-            if (reloadError) throw reloadError;
-            setComments(commentsData || []);
+            fetchComments(false);
             setReplyContent("");
             setReplyTo(null);
+            setReplyToParent(null);
         } catch (error) {
             console.error("Error posting reply:", error);
         } finally {
@@ -146,8 +163,62 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
         }
     }
 
+    async function handleVote(commentId: string, voteType: "up" | "down") {
+        if (!user) {
+            alert("Bitte einloggen, um abzustimmen.");
+            return;
+        }
+
+        // Optimistisches Update
+        setComments(prev => prev.map(c => {
+            if (c.id !== commentId) return c;
+            let up = c.upvotes || 0;
+            let down = c.downvotes || 0;
+            if (voteType === "up") up += 1;
+            else down += 1;
+            return { ...c, upvotes: up, downvotes: down };
+        }));
+
+        // Prüfe, ob der User schon gevotet hat
+        const { data: existingVote, error } = await supabase
+            .from("portfolio_comment_votes")
+            .select("*")
+            .eq("comment_id", commentId)
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (error) {
+            alert("Fehler beim Prüfen des Votes.");
+            return;
+        }
+
+        if (existingVote) {
+            if (existingVote.vote_type === voteType) {
+                return;
+            }
+            await supabase
+                .from("portfolio_comment_votes")
+                .update({ vote_type: voteType, updated_at: new Date().toISOString() })
+                .eq("id", existingVote.id);
+        } else {
+            await supabase
+                .from("portfolio_comment_votes")
+                .insert({
+                    comment_id: commentId,
+                    user_id: user.id,
+                    vote_type: voteType,
+                });
+        }
+        fetchComments(false);
+    }
+
+    const handleReplyClick = (comment: CommentWithVotes) => {
+        setReplyTo(comment.id);
+        setReplyToParent(getTopLevelParentId(comment));
+    };
+
     return (
-        <div className="w-full mt-10">
+        <div className="w-full mt-10" style={{ minHeight: 400, overflow: "visible" }}>
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                 {/* Left side - Title and subtitle */}
                 <div>
@@ -165,7 +236,7 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
 
                     {/* New Comment Form */}
                     {user && (
-                        <form onSubmit={handleNewCommentSubmit} className="mb-8">
+                        <div className="mb-8">
                             <div className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
                                 <Textarea
                                     value={newComment}
@@ -185,16 +256,17 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                                         Cancel
                                     </Button>
                                     <Button
-                                        type="submit"
+                                        type="button"
                                         size="xs"
                                         className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
                                         disabled={!newComment.trim() || isSubmitting}
+                                        onClick={handleNewCommentSubmit}
                                     >
                                         {isSubmitting ? "Posting..." : "Submit"}
                                     </Button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     )}
 
                     {loading ? (
@@ -206,7 +278,6 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                             name="User"
                             timeAgo={new Date().toLocaleDateString()}
                             comment="No comments yet."
-                            role="User"
                         />
                     ) : (
                         <div className="space-y-3">
@@ -218,7 +289,11 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                                         name={comment.user?.username || "Unknown"}
                                         timeAgo={new Date(comment.created_at).toLocaleDateString()}
                                         comment={comment.content}
-                                        role={undefined}
+                                        upvotes={comment.upvotes}
+                                        downvotes={comment.downvotes}
+                                        onUpvote={() => handleVote(comment.id, "up")}
+                                        onDownvote={() => handleVote(comment.id, "down")}
+                                        onReply={() => handleReplyClick(comment)}
                                     />
                                     <div className="ml-8 mt-2 space-y-2">
                                         {getReplies(comment.id).map((reply) => (
@@ -229,53 +304,46 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                                                 name={reply.user?.username || "Unknown"}
                                                 timeAgo={new Date(reply.created_at).toLocaleDateString()}
                                                 comment={reply.content}
-                                                role={undefined}
+                                                upvotes={reply.upvotes}
+                                                downvotes={reply.downvotes}
+                                                onUpvote={() => handleVote(reply.id, "up")}
+                                                onDownvote={() => handleVote(reply.id, "down")}
+                                                onReply={() => handleReplyClick(reply)}
                                             />
                                         ))}
-                                        {user && (
-                                            <div>
-                                                {replyTo === comment.id ? (
-                                                    <form
-                                                        onSubmit={e => {
-                                                            e.preventDefault();
-                                                            handleReplySubmit(comment.id);
-                                                        }}
-                                                        className="flex flex-col gap-2 mt-2"
-                                                    >
-                                                        <Textarea
-                                                            value={replyContent}
-                                                            onChange={e => setReplyContent(e.target.value)}
-                                                            placeholder="Write a reply..."
-                                                            rows={2}
-                                                        />
-                                                        <div className="flex gap-2">
-                                                            <Button
-                                                                type="submit"
-                                                                size="xs"
-                                                                disabled={!replyContent.trim() || isSubmitting}
-                                                            >
-                                                                {isSubmitting ? "Posting..." : "Reply"}
-                                                            </Button>
-                                                            <Button
-                                                                type="button"
-                                                                size="xs"
-                                                                variant="light"
-                                                                onClick={() => setReplyTo(null)}
-                                                            >
-                                                                Cancel
-                                                            </Button>
-                                                        </div>
-                                                    </form>
-                                                ) : (
+                                        {user && replyTo && replyToParent === comment.id && (
+                                            <form
+                                                onSubmit={(e) => e.preventDefault()}
+                                                className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+                                            >
+                                                <Textarea
+                                                    value={replyContent}
+                                                    onChange={e => setReplyContent(e.target.value)}
+                                                    placeholder="Write a reply..."
+                                                    rows={2}
+                                                    className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                                />
+                                                <div className="flex items-center justify-end gap-4">
                                                     <Button
+                                                        type="button"
+                                                        size="xs"
+                                                        className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
+                                                        disabled={!replyContent.trim() || isSubmitting}
+                                                        onClick={handleReplySubmit}
+                                                    >
+                                                        {isSubmitting ? "Posting..." : "Reply"}
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
                                                         size="xs"
                                                         variant="light"
-                                                        onClick={() => setReplyTo(comment.id)}
+                                                        onClick={() => setReplyTo(null)}
+                                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                                     >
-                                                        Reply
+                                                        Cancel
                                                     </Button>
-                                                )}
-                                            </div>
+                                                </div>
+                                            </form>
                                         )}
                                     </div>
                                 </div>

@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
-import { Badge } from "@/components/ui/Badge";
+import { ThumbsDownIcon, ThumbsUpIcon } from "@phosphor-icons/react";
+import React from "react";
 
 interface CommentCardProps {
     avatarSrc: string;
@@ -7,27 +8,53 @@ interface CommentCardProps {
     name: string;
     timeAgo: string;
     comment: string;
-    role?: string;
+    upvotes?: number;
+    downvotes?: number;
+    onUpvote?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onDownvote?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    voteLoading?: boolean;
+    onReply?: () => void;
 }
 
-export default function CommentCard({ avatarSrc, avatarFallback, name, timeAgo, comment, role = "User" }: CommentCardProps) {
+export default function CommentCard({
+    avatarSrc,
+    avatarFallback,
+    name,
+    timeAgo,
+    comment,
+    upvotes = 0,
+    downvotes = 0,
+    onUpvote,
+    onDownvote,
+    voteLoading = false,
+    onReply,
+}: CommentCardProps) {
     return (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-3">
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8 border border-gray-200 dark:border-gray-700">
-                        <AvatarImage src={avatarSrc} alt={name} />
-                        <AvatarFallback className="text-xs">{avatarFallback}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex items-center gap-2">
-                        <span className="font-medium text-xs text-gray-900 dark:text-gray-50">{name}</span>
-                        <Badge variant="default">{role}</Badge>
-                        <span className="text-xs text-gray-500">{timeAgo}</span>
-                    </div>
-                </div>
-                <p className="text-sm text-gray-900 dark:text-white pl-11">
-                    {comment}
-                </p>
+        <div className="flex flex-col w-full py-4">
+            <div className="flex items-center gap-3 mb-1">
+                <Avatar className="w-8 h-8">
+                    <AvatarImage src={avatarSrc} alt={name} />
+                    <AvatarFallback className="flex items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 size-8">
+                        {avatarFallback}
+                    </AvatarFallback>
+                </Avatar>
+                <span className="font-semibold text-gray-900 dark:text-gray-50 text-sm">{name}</span>
+                <span className="text-xs text-gray-400">{timeAgo}</span>
+            </div>
+            <div className="pl-11 text-gray-800 dark:text-gray-200 text-sm mb-2">
+                {comment}
+            </div>
+            <div className="pl-11 flex items-center gap-4 text-gray-500 text-xs">
+                <button type="button" onClick={onUpvote} className="flex items-center gap-1 hover:text-orange-500 transition" disabled={voteLoading}>
+                    {voteLoading ? <span className="animate-spin">⏳</span> : <ThumbsUpIcon size={16} weight="bold" />}
+                    <span>{upvotes}</span>
+                </button>
+                <button type="button" onClick={onDownvote} className="flex items-center gap-1 hover:text-orange-500 transition" disabled={voteLoading}>
+                    {voteLoading ? <span className="animate-spin">⏳</span> : <ThumbsDownIcon size={16} weight="bold" />}
+                    <span>{downvotes}</span>
+                </button>
+                <button type="button" onClick={onReply} className="hover:text-orange-500 transition">Reply</button>
+                <button type="button" className="ml-auto hover:text-gray-700">•••</button>
             </div>
         </div>
     );
