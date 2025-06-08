@@ -1,13 +1,26 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { notFound } from "next/navigation";
 import PortfolioDetailContent from "./PortfolioDetailContent";
 
-export default async function PortfolioPage({
-    params,
-}: {
-    params: Promise<{ id: string }>
-}) {
+interface PageProps {
+    params: Promise<{
+        id: string;
+    }>;
+}
+
+export default async function Page({ params }: PageProps) {
     try {
-        const { id } = await params;
+        // Resolve params first
+        const resolvedParams = await params;
+        const id = resolvedParams.id;
+
+        if (!id) {
+            console.error("No portfolio ID provided");
+            notFound();
+        }
+
+        // Initialize Supabase client with the new SSR package (new signature)
+        const supabase = createServerSupabaseClient();
 
         // Session holen
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
