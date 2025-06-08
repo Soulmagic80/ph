@@ -50,7 +50,7 @@ export default function PortfolioDetailContent({ portfolio: initialPortfolio, us
                 <Divider />
                 <PortfolioRating portfolio={portfolio} />
                 <Divider />
-                <PortfolioComments portfolio_id={portfolio.id} />
+                <PortfolioComments portfolio_id={portfolio.id} user={user} />
             </div>
         </main>
     );
