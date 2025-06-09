@@ -1,11 +1,12 @@
 "use client";
 import CommentCard from "@/components/feedback/ui/CommentCard";
+import { Divider } from "@/components/ui/Divider";
 import { createClient } from "@/lib/supabase/client";
 import { Comment as BaseComment } from "@/types";
 import { ChatCircle } from "@phosphor-icons/react";
 import { User } from "@supabase/supabase-js";
 import { Button, Textarea } from "@tremor/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface PortfolioCommentsProps {
     portfolio_id: string;
@@ -33,6 +34,8 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
     const [newComment, setNewComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [supabase] = useState(() => createClient());
+    const [editId, setEditId] = useState<string | null>(null);
+    const [editContent, setEditContent] = useState("");
 
     async function fetchComments(showLoading = true) {
         if (!portfolio_id) {
@@ -217,6 +220,61 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
         setReplyToParent(getTopLevelParentId(comment));
     };
 
+    const handleEditStart = (id: string) => {
+        setEditId(id);
+        const comment = comments.find(c => c.id === id);
+        if (comment) {
+            setEditContent(comment.content);
+        }
+    };
+
+    const handleEditCancel = () => {
+        setEditId(null);
+        setEditContent("");
+    };
+
+    const handleEditSave = async (id: string) => {
+        if (!user) return;
+
+        setIsSubmitting(true);
+        try {
+            const { error } = await supabase
+                .from("portfolio_comments")
+                .update({ content: editContent })
+                .eq("id", id);
+
+            if (error) throw error;
+
+            fetchComments(false);
+            setEditId(null);
+            setEditContent("");
+        } catch (error) {
+            console.error("Error editing comment:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!user) return;
+
+        setIsSubmitting(true);
+        try {
+            const { error } = await supabase
+                .from("portfolio_comments")
+                .delete()
+                .eq("id", id);
+
+            if (error) throw error;
+
+            fetchComments(false);
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="w-full mt-10" style={{ minHeight: 400, overflow: "visible" }}>
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
@@ -281,109 +339,153 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                         />
                     ) : (
                         <div className="space-y-3">
-                            {topLevelComments.map((comment) => (
-                                <div key={comment.id}>
-                                    <CommentCard
-                                        avatarSrc={comment.user?.avatar_url || ""}
-                                        avatarFallback={comment.user?.username ? comment.user.username.slice(0, 2).toUpperCase() : "?"}
-                                        name={comment.user?.username || "Unknown"}
-                                        timeAgo={new Date(comment.created_at).toLocaleDateString()}
-                                        comment={comment.content}
-                                        upvotes={comment.upvotes}
-                                        downvotes={comment.downvotes}
-                                        onUpvote={() => handleVote(comment.id, "up")}
-                                        onDownvote={() => handleVote(comment.id, "down")}
-                                        onReply={() => handleReplyClick(comment)}
-                                    />
-                                    {/* Reply-Feld für Top-Level-Kommentar */}
-                                    {user && replyTo === comment.id && (
-                                        <form
-                                            onSubmit={(e) => e.preventDefault()}
-                                            className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
-                                        >
-                                            <Textarea
-                                                value={replyContent}
-                                                onChange={e => setReplyContent(e.target.value)}
-                                                placeholder="Write a reply..."
-                                                rows={2}
-                                                className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
-                                            />
-                                            <div className="flex items-center justify-end gap-4">
-                                                <Button
-                                                    type="button"
-                                                    size="xs"
-                                                    className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
-                                                    disabled={!replyContent.trim() || isSubmitting}
-                                                    onClick={handleReplySubmit}
-                                                >
-                                                    {isSubmitting ? "Posting..." : "Reply"}
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    size="xs"
-                                                    variant="light"
-                                                    onClick={() => setReplyTo(null)}
-                                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                        </form>
-                                    )}
-                                    <div className="ml-8 mt-2 space-y-2">
-                                        {getReplies(comment.id).map((reply) => (
-                                            <div key={reply.id}>
-                                                <CommentCard
-                                                    avatarSrc={reply.user?.avatar_url || ""}
-                                                    avatarFallback={reply.user?.username ? reply.user.username.slice(0, 2).toUpperCase() : "?"}
-                                                    name={reply.user?.username || "Unknown"}
-                                                    timeAgo={new Date(reply.created_at).toLocaleDateString()}
-                                                    comment={reply.content}
-                                                    upvotes={reply.upvotes}
-                                                    downvotes={reply.downvotes}
-                                                    onUpvote={() => handleVote(reply.id, "up")}
-                                                    onDownvote={() => handleVote(reply.id, "down")}
-                                                    onReply={() => handleReplyClick(reply)}
+                            {topLevelComments.map((comment, idx) => (
+                                <React.Fragment key={comment.id}>
+                                    <div>
+                                        <CommentCard
+                                            avatarSrc={comment.user?.avatar_url || ""}
+                                            avatarFallback={comment.user?.username ? comment.user.username.slice(0, 2).toUpperCase() : "?"}
+                                            name={comment.user?.username || "Unknown"}
+                                            timeAgo={new Date(comment.created_at).toLocaleDateString()}
+                                            comment={comment.content}
+                                            upvotes={comment.upvotes}
+                                            downvotes={comment.downvotes}
+                                            onUpvote={() => handleVote(comment.id, "up")}
+                                            onDownvote={() => handleVote(comment.id, "down")}
+                                            onReply={() => handleReplyClick(comment)}
+                                            currentUserId={user?.id || null}
+                                            userId={comment.user_id}
+                                            onEdit={() => handleEditStart(comment.id)}
+                                            onDelete={() => handleDelete(comment.id)}
+                                            onReport={() => alert("Report coming soon!")}
+                                        />
+                                        {/* Reply-Feld für Top-Level-Kommentar */}
+                                        {user && replyTo === comment.id && (
+                                            <form
+                                                onSubmit={(e) => e.preventDefault()}
+                                                className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+                                            >
+                                                <Textarea
+                                                    value={replyContent}
+                                                    onChange={e => setReplyContent(e.target.value)}
+                                                    placeholder="Write a reply..."
+                                                    rows={2}
+                                                    className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
                                                 />
-                                                {/* Reply-Feld für Reply */}
-                                                {user && replyTo === reply.id && (
-                                                    <form
-                                                        onSubmit={(e) => e.preventDefault()}
-                                                        className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+                                                <div className="flex items-center justify-end gap-4">
+                                                    <Button
+                                                        type="button"
+                                                        size="xs"
+                                                        className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
+                                                        disabled={!replyContent.trim() || isSubmitting}
+                                                        onClick={handleReplySubmit}
                                                     >
-                                                        <Textarea
-                                                            value={replyContent}
-                                                            onChange={e => setReplyContent(e.target.value)}
-                                                            placeholder="Write a reply..."
-                                                            rows={2}
-                                                            className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
-                                                        />
-                                                        <div className="flex items-center justify-end gap-4">
-                                                            <Button
-                                                                type="button"
-                                                                size="xs"
-                                                                className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
-                                                                disabled={!replyContent.trim() || isSubmitting}
-                                                                onClick={handleReplySubmit}
-                                                            >
-                                                                {isSubmitting ? "Posting..." : "Reply"}
-                                                            </Button>
-                                                            <Button
-                                                                type="button"
-                                                                size="xs"
-                                                                variant="light"
-                                                                onClick={() => setReplyTo(null)}
-                                                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                                            >
-                                                                Cancel
-                                                            </Button>
+                                                        {isSubmitting ? "Posting..." : "Reply"}
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        size="xs"
+                                                        variant="light"
+                                                        onClick={() => setReplyTo(null)}
+                                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                </div>
+                                            </form>
+                                        )}
+                                        <div className="ml-8 mt-2 space-y-2">
+                                            {getReplies(comment.id).map((reply) => (
+                                                <div key={reply.id}>
+                                                    {editId === reply.id ? (
+                                                        <div className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
+                                                            <Textarea
+                                                                value={editContent}
+                                                                onChange={e => setEditContent(e.target.value)}
+                                                                rows={2}
+                                                                className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                                            />
+                                                            <div className="flex items-center justify-end gap-4">
+                                                                <Button
+                                                                    type="button"
+                                                                    size="xs"
+                                                                    variant="light"
+                                                                    onClick={handleEditCancel}
+                                                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                                                >
+                                                                    Cancel
+                                                                </Button>
+                                                                <Button
+                                                                    type="button"
+                                                                    size="xs"
+                                                                    className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0"
+                                                                    disabled={!editContent.trim() || isSubmitting}
+                                                                    onClick={() => handleEditSave(reply.id)}
+                                                                >
+                                                                    {isSubmitting ? "Saving..." : "Save"}
+                                                                </Button>
+                                                            </div>
                                                         </div>
-                                                    </form>
-                                                )}
-                                            </div>
-                                        ))}
+                                                    ) : (
+                                                        <CommentCard
+                                                            avatarSrc={reply.user?.avatar_url || ""}
+                                                            avatarFallback={reply.user?.username ? reply.user.username.slice(0, 2).toUpperCase() : "?"}
+                                                            name={reply.user?.username || "Unknown"}
+                                                            timeAgo={new Date(reply.created_at).toLocaleDateString()}
+                                                            comment={reply.content}
+                                                            upvotes={reply.upvotes}
+                                                            downvotes={reply.downvotes}
+                                                            onUpvote={() => handleVote(reply.id, "up")}
+                                                            onDownvote={() => handleVote(reply.id, "down")}
+                                                            onReply={() => handleReplyClick(reply)}
+                                                            currentUserId={user?.id || null}
+                                                            userId={reply.user_id}
+                                                            onEdit={() => handleEditStart(reply.id)}
+                                                            onDelete={() => handleDelete(reply.id)}
+                                                            onReport={() => alert("Report coming soon!")}
+                                                        />
+                                                    )}
+                                                    {/* Reply-Feld für Reply */}
+                                                    {user && replyTo === reply.id && (
+                                                        <form
+                                                            onSubmit={(e) => e.preventDefault()}
+                                                            className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+                                                        >
+                                                            <Textarea
+                                                                value={replyContent}
+                                                                onChange={e => setReplyContent(e.target.value)}
+                                                                placeholder="Write a reply..."
+                                                                rows={2}
+                                                                className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                                            />
+                                                            <div className="flex items-center justify-end gap-4">
+                                                                <Button
+                                                                    type="button"
+                                                                    size="xs"
+                                                                    className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
+                                                                    disabled={!replyContent.trim() || isSubmitting}
+                                                                    onClick={handleReplySubmit}
+                                                                >
+                                                                    {isSubmitting ? "Posting..." : "Reply"}
+                                                                </Button>
+                                                                <Button
+                                                                    type="button"
+                                                                    size="xs"
+                                                                    variant="light"
+                                                                    onClick={() => setReplyTo(null)}
+                                                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                                                >
+                                                                    Cancel
+                                                                </Button>
+                                                            </div>
+                                                        </form>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                    {idx < topLevelComments.length - 1 && <Divider />}
+                                </React.Fragment>
                             ))}
                         </div>
                     )}

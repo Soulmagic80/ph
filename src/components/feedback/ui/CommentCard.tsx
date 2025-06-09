@@ -1,4 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 import { ThumbsDownIcon, ThumbsUpIcon } from "@phosphor-icons/react";
 import React from "react";
 
@@ -14,6 +20,11 @@ interface CommentCardProps {
     onDownvote?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     voteLoading?: boolean;
     onReply?: () => void;
+    currentUserId?: string | null;
+    userId?: string; // author id
+    onEdit?: () => void;
+    onDelete?: () => void;
+    onReport?: () => void;
 }
 
 export default function CommentCard({
@@ -28,7 +39,13 @@ export default function CommentCard({
     onDownvote,
     voteLoading = false,
     onReply,
+    currentUserId,
+    userId,
+    onEdit,
+    onDelete,
+    onReport,
 }: CommentCardProps) {
+    const isOwnComment = currentUserId && userId && currentUserId === userId;
     return (
         <div className="flex flex-col w-full py-4">
             <div className="flex items-center gap-3 mb-1">
@@ -54,7 +71,25 @@ export default function CommentCard({
                     <span>{downvotes}</span>
                 </button>
                 <button type="button" onClick={onReply} className="hover:text-orange-500 transition">Reply</button>
-                <button type="button" className="ml-auto hover:text-gray-700">•••</button>
+                <div className="ml-auto">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" className="hover:text-gray-700 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                •••
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {isOwnComment ? (
+                                <>
+                                    <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
+                                </>
+                            ) : (
+                                <DropdownMenuItem onClick={onReport}>Report</DropdownMenuItem>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
         </div>
     );
