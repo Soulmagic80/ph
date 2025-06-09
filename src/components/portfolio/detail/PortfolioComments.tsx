@@ -493,4 +493,4 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
             </div>
         </div>
     );
-}
+} 

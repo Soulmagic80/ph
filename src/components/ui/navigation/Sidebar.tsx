@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,15 @@ export function Sidebar() {
       setUser(session?.user ? { email: session.user.email } : null);
     };
     getUser();
+
+    // Add auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+      setUser(session?.user ? { email: session.user.email } : null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
