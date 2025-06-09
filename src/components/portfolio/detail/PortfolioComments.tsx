@@ -295,56 +295,93 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                                         onDownvote={() => handleVote(comment.id, "down")}
                                         onReply={() => handleReplyClick(comment)}
                                     />
+                                    {/* Reply-Feld für Top-Level-Kommentar */}
+                                    {user && replyTo === comment.id && (
+                                        <form
+                                            onSubmit={(e) => e.preventDefault()}
+                                            className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
+                                        >
+                                            <Textarea
+                                                value={replyContent}
+                                                onChange={e => setReplyContent(e.target.value)}
+                                                placeholder="Write a reply..."
+                                                rows={2}
+                                                className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                            />
+                                            <div className="flex items-center justify-end gap-4">
+                                                <Button
+                                                    type="button"
+                                                    size="xs"
+                                                    className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
+                                                    disabled={!replyContent.trim() || isSubmitting}
+                                                    onClick={handleReplySubmit}
+                                                >
+                                                    {isSubmitting ? "Posting..." : "Reply"}
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    size="xs"
+                                                    variant="light"
+                                                    onClick={() => setReplyTo(null)}
+                                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    )}
                                     <div className="ml-8 mt-2 space-y-2">
                                         {getReplies(comment.id).map((reply) => (
-                                            <CommentCard
-                                                key={reply.id}
-                                                avatarSrc={reply.user?.avatar_url || ""}
-                                                avatarFallback={reply.user?.username ? reply.user.username.slice(0, 2).toUpperCase() : "?"}
-                                                name={reply.user?.username || "Unknown"}
-                                                timeAgo={new Date(reply.created_at).toLocaleDateString()}
-                                                comment={reply.content}
-                                                upvotes={reply.upvotes}
-                                                downvotes={reply.downvotes}
-                                                onUpvote={() => handleVote(reply.id, "up")}
-                                                onDownvote={() => handleVote(reply.id, "down")}
-                                                onReply={() => handleReplyClick(reply)}
-                                            />
-                                        ))}
-                                        {user && replyTo && replyToParent === comment.id && (
-                                            <form
-                                                onSubmit={(e) => e.preventDefault()}
-                                                className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
-                                            >
-                                                <Textarea
-                                                    value={replyContent}
-                                                    onChange={e => setReplyContent(e.target.value)}
-                                                    placeholder="Write a reply..."
-                                                    rows={2}
-                                                    className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                            <div key={reply.id}>
+                                                <CommentCard
+                                                    avatarSrc={reply.user?.avatar_url || ""}
+                                                    avatarFallback={reply.user?.username ? reply.user.username.slice(0, 2).toUpperCase() : "?"}
+                                                    name={reply.user?.username || "Unknown"}
+                                                    timeAgo={new Date(reply.created_at).toLocaleDateString()}
+                                                    comment={reply.content}
+                                                    upvotes={reply.upvotes}
+                                                    downvotes={reply.downvotes}
+                                                    onUpvote={() => handleVote(reply.id, "up")}
+                                                    onDownvote={() => handleVote(reply.id, "down")}
+                                                    onReply={() => handleReplyClick(reply)}
                                                 />
-                                                <div className="flex items-center justify-end gap-4">
-                                                    <Button
-                                                        type="button"
-                                                        size="xs"
-                                                        className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
-                                                        disabled={!replyContent.trim() || isSubmitting}
-                                                        onClick={handleReplySubmit}
+                                                {/* Reply-Feld für Reply */}
+                                                {user && replyTo === reply.id && (
+                                                    <form
+                                                        onSubmit={(e) => e.preventDefault()}
+                                                        className="bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 p-4 mt-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent"
                                                     >
-                                                        {isSubmitting ? "Posting..." : "Reply"}
-                                                    </Button>
-                                                    <Button
-                                                        type="button"
-                                                        size="xs"
-                                                        variant="light"
-                                                        onClick={() => setReplyTo(null)}
-                                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                </div>
-                                            </form>
-                                        )}
+                                                        <Textarea
+                                                            value={replyContent}
+                                                            onChange={e => setReplyContent(e.target.value)}
+                                                            placeholder="Write a reply..."
+                                                            rows={2}
+                                                            className="mb-0 border-none focus:ring-0 resize-none bg-transparent text-sm p-0"
+                                                        />
+                                                        <div className="flex items-center justify-end gap-4">
+                                                            <Button
+                                                                type="button"
+                                                                size="xs"
+                                                                className="rounded-md bg-[#3474DB] hover:bg-[#2B5FB3] text-white border-0 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200"
+                                                                disabled={!replyContent.trim() || isSubmitting}
+                                                                onClick={handleReplySubmit}
+                                                            >
+                                                                {isSubmitting ? "Posting..." : "Reply"}
+                                                            </Button>
+                                                            <Button
+                                                                type="button"
+                                                                size="xs"
+                                                                variant="light"
+                                                                onClick={() => setReplyTo(null)}
+                                                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                                            >
+                                                                Cancel
+                                                            </Button>
+                                                        </div>
+                                                    </form>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             ))}

@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { isAdmin } from "@/utils/isAdmin";
 import { Medal } from "@phosphor-icons/react";
-import { User } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -63,7 +63,7 @@ export default function PortfolioCard({ portfolio, onUpvote, rank }: PortfolioCa
     }
     getUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
     });
 
