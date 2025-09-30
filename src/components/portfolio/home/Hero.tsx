@@ -67,16 +67,16 @@ export function Hero() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex items-center gap-4 mt-4">
+            <div className="flex items-center gap-3 mt-6">
                 <Link
                     href="/getting-started"
-                    className="inline-flex items-center justify-center px-6 py-3 text-md font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm"
+                    className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                     Get Started
                 </Link>
                 <a
                     href="#portfolios"
-                    className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 rounded-xl transition-all duration-200"
                 >
                     Browse Portfolios
                 </a>

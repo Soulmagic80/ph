@@ -1,3 +1,6 @@
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default function GettingStartedPage() {
     return (
         <main className="container mx-auto px-4 py-12 max-w-4xl">
