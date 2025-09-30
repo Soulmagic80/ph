@@ -26,7 +26,7 @@ const Tab = ({ text, selected, setSelected }: TabProps) => {
         <button
             onClick={() => setSelected(text)}
             className={`${selected
-                ? 'text-white'
+                ? 'text-gray-900 dark:text-gray-50'
                 : 'text-gray-900 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-800/80'
                 } relative rounded-md px-3 py-2 text-base sm:text-sm font-medium transition-colors`}
         >
@@ -35,7 +35,7 @@ const Tab = ({ text, selected, setSelected }: TabProps) => {
                 <motion.span
                     layoutId="tab"
                     transition={{ type: 'spring', duration: 0.4 }}
-                    className="absolute inset-0 z-0 rounded-md bg-pink-100 dark:bg-pinkdark-200"
+                    className="absolute inset-0 z-0 rounded-md bg-gray-100 dark:bg-gray-800"
                 ></motion.span>
             )}
         </button>
