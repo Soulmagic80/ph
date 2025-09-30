@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function Hero() {
     return (
         <div className="w-full flex flex-col items-center text-center gap-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-[120px]">
@@ -68,12 +66,12 @@ export function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-4 mt-4">
-                <Link
+                <a
                     href="/getting-started"
                     className="inline-flex items-center justify-center px-6 py-3 text-md font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm"
                 >
                     Get Started
-                </Link>
+                </a>
                 <a
                     href="#portfolios"
                     className="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
