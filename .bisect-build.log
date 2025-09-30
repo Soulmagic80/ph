@@ -1,0 +1,23 @@
+
+> vibefolio@0.1.0 build
+> rm -rf .next && next build
+
+   ▲ Next.js 15.2.4
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/app/(auth)/admin/cronjob/page.tsx:37:12
+Type error: 'isTesting' is declared but its value is never read.
+
+[0m [90m 35 |[39m     [36mconst[39m [previewMode[33m,[39m setPreviewMode] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
+[0m [90m 36 |[39m     console[33m.[39mlog([32m'Preview mode:'[39m[33m,[39m previewMode[33m,[39m setPreviewMode)[33m;[39m [90m// TODO: implement preview mode[39m[0m
+[0m[31m[1m>[22m[39m[90m 37 |[39m     [36mconst[39m [isTesting[33m,[39m setIsTesting] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
+[0m [90m    |[39m            [31m[1m^[22m[39m[0m
+[0m [90m 38 |[39m[0m
+[0m [90m 39 |[39m     [90m// Fetch approved but unpublished portfolios[39m[0m
+[0m [90m 40 |[39m     [36mconst[39m fetchApprovedPortfolios [33m=[39m [36masync[39m () [33m=>[39m {[0m
+Next.js build worker exited with code: 1 and signal: null
