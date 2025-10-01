@@ -42,58 +42,74 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-6">
-      <div className="flex w-full flex-col items-center sm:max-w-sm">
-        {/* Logo */}
-        <div className="mb-6">
-          <Image
-            src="/logolone.svg"
-            alt="Vibefolio"
-            width={120}
-            height={40}
-            className="h-8 w-auto"
-          />
-        </div>
-
-        <div className="w-full flex flex-col text-center">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
-            Reset your password
-          </h1>
-          <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-            We will send you an email to reset your password
-          </p>
-        </div>
-        <div className="mt-10 w-full">
-          <div className="flex flex-col gap-y-6">
-            {error && (
-              <div className="text-red-500 text-sm">
-                {error}
-              </div>
-            )}
-            {message && (
-              <div className="text-green-500 text-sm">
-                {message}
-              </div>
-            )}
-            <div className="flex flex-col space-y-2">
-              <Label htmlFor="email-form-item" className="font-medium">
-                Email
-              </Label>
-              <Input
-                type="email"
-                autoComplete="email"
-                name="email"
-                id="email-form-item"
-                placeholder="name@provider.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <Button onClick={handlePasswordReset} isLoading={loading}>
-              {loading ? "" : "Email me"}
-            </Button>
+    <div className="flex min-h-dvh">
+      {/* Left side - Form content */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center p-4 sm:p-6">
+        <div className="flex w-full flex-col items-center sm:max-w-sm">
+          {/* Logo */}
+          <div className="mb-6">
+            <Image
+              src="/logolone.svg"
+              alt="Vibefolio"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+            />
           </div>
+
+          <div className="w-full flex flex-col text-center">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
+              Reset your password
+            </h1>
+            <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+              We will send you an email to reset your password
+            </p>
+          </div>
+          <div className="mt-10 w-full">
+            <div className="flex flex-col gap-y-6">
+              {error && (
+                <div className="text-red-500 text-sm">
+                  {error}
+                </div>
+              )}
+              {message && (
+                <div className="text-green-500 text-sm">
+                  {message}
+                </div>
+              )}
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="email-form-item" className="font-medium">
+                  Email
+                </Label>
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  name="email"
+                  id="email-form-item"
+                  placeholder="name@provider.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <Button onClick={handlePasswordReset} isLoading={loading}>
+                {loading ? "" : "Email me"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Pink background (desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-pink-100 dark:bg-pinkdark-200 items-center justify-center p-12">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-white leading-tight">
+            Honest feedback.
+            <br />
+            Better portfolios.
+            <br />
+            Good vibes only.
+          </h2>
         </div>
       </div>
     </div>

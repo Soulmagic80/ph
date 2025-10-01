@@ -100,7 +100,21 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
 
   return (
     <>
-      <div className="w-full h-fit bg-white dark:bg-gray-900/50 outline outline-1 outline-beige-300 dark:outline-gray-900 rounded-lg hover:outline-4 hover:outline-[#3474DB] transition-all duration-200 p-2">
+      <div className="w-full h-fit bg-white dark:bg-gray-850 outline outline-1 outline-beige-300 dark:outline-gray-800 rounded-lg hover:scale-[1.03] hover:shadow-lg transition-all duration-200 p-2 relative group">
+        {/* Plus symbols at corners - COMMENTED OUT FOR NOW */}
+        {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -top-3 -left-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -bottom-3 -left-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -top-3 -right-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -bottom-3 -right-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
+        </svg> */}
+
         <Link href={portfolioLink} className="block w-full rounded-md">
           <div className="w-full rounded-md aspect-[3/2] outline-1 outline-beige-300 dark:outline-gray-900 overflow-hidden">
             {imageSrc ? (

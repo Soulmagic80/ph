@@ -18,7 +18,10 @@ const config: Config = {
       },
       colors: {
         suoerdark: { 999: "#090E1A" },
-        gray: { 925: "#050814" },
+        gray: { 
+          850: "#1a1f2e",
+          925: "#050814" 
+        },
         warmgrey: { 100: "#9C9C9C" },
         lightbeige: { 100: "#FBFAF9" },
         /*lightbeige: { 100: "#FFFFFF" },*/

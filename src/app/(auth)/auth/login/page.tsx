@@ -118,101 +118,117 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-6">
-      <div className="flex w-full flex-col items-center sm:max-w-sm">
-        {/* Logo */}
-        <div className="mb-6">
-          <Image
-            src="/logolone.svg"
-            alt="Vibefolio"
-            width={120}
-            height={40}
-            className="h-8 w-auto"
-          />
-        </div>
+    <div className="flex min-h-dvh">
+      {/* Left side - Form content */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center p-4 sm:p-6">
+        <div className="flex w-full flex-col items-center sm:max-w-sm">
+          {/* Logo */}
+          <div className="mb-6">
+            <Image
+              src="/logolone.svg"
+              alt="Vibefolio"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+            />
+          </div>
 
-        <div className="flex flex-col text-center">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
-            Log in to vibefolio
-          </h1>
-          <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-            Don&apos;t have an account?{" "}
+          <div className="flex flex-col text-center">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
+              Log in to vibefolio
+            </h1>
+            <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/login/register"
+                className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+          <div className="mt-10 w-full">
+            <form onSubmit={handleEmailLogin} className="flex w-full flex-col gap-y-6">
+              {error && (
+                <div className="text-red-500 text-sm">
+                  {error}
+                </div>
+              )}
+              <div className="flex flex-col gap-y-4">
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="email-form-item" className="font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    type="email"
+                    autoComplete="email"
+                    name="email"
+                    id="email-form-item"
+                    placeholder="name@provider.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="password-form-item" className="font-medium">
+                    Password
+                  </Label>
+                  <Input
+                    type="password"
+                    autoComplete="current-password"
+                    name="password"
+                    id="password-form-item"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <Button type="submit" isLoading={loading}>
+                {loading ? "" : "Continue"}
+              </Button>
+            </form>
+            <Divider className="my-6">or</Divider>
+            <div className="gap-2 sm:flex sm:flex-row sm:items-center">
+              <Button
+                variant="secondary"
+                className="mt-2 w-full sm:mt-0"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <RiGoogleFill className="size-4" aria-hidden="true" />
+                  Login with Google
+                </span>
+              </Button>
+            </div>
+          </div>
+          <Divider />
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            Forgot your password?{" "}
             <Link
-              href="/auth/login/register"
+              href="/auth/login/forgot-password"
               className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
             >
-              Sign up
+              Reset password
             </Link>
           </p>
         </div>
-        <div className="mt-10 w-full">
-          <form onSubmit={handleEmailLogin} className="flex w-full flex-col gap-y-6">
-            {error && (
-              <div className="text-red-500 text-sm">
-                {error}
-              </div>
-            )}
-            <div className="flex flex-col gap-y-4">
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="email-form-item" className="font-medium">
-                  Email
-                </Label>
-                <Input
-                  type="email"
-                  autoComplete="email"
-                  name="email"
-                  id="email-form-item"
-                  placeholder="name@provider.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="password-form-item" className="font-medium">
-                  Password
-                </Label>
-                <Input
-                  type="password"
-                  autoComplete="current-password"
-                  name="password"
-                  id="password-form-item"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <Button type="submit" isLoading={loading}>
-              {loading ? "" : "Continue"}
-            </Button>
-          </form>
-          <Divider className="my-6">or</Divider>
-          <div className="gap-2 sm:flex sm:flex-row sm:items-center">
-            <Button
-              variant="secondary"
-              className="mt-2 w-full sm:mt-0"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-            >
-              <span className="inline-flex items-center gap-2">
-                <RiGoogleFill className="size-4" aria-hidden="true" />
-                Login with Google
-              </span>
-            </Button>
-          </div>
+      </div>
+
+      {/* Right side - Pink background (desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-pink-100 dark:bg-pinkdark-200 items-center justify-center p-12">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-white leading-tight">
+            Honest feedback.
+            <br />
+            Better portfolios.
+            <br />
+            Good vibes only.
+          </h2>
         </div>
-        <Divider />
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          Forgot your password?{" "}
-          <Link
-            href="/auth/login/forgot-password"
-            className="text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-400"
-          >
-            Reset password
-          </Link>
-        </p>
       </div>
     </div>
   )

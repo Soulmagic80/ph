@@ -10,7 +10,7 @@ export function Hero() {
             </p>
 
             {/* Main heading */}
-            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-bold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50">
+            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-semibold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50">
                 Get feedback. Get upvotes.
                 <br />
                 Get <span className="relative inline-block text-pink-100 dark:text-pinkdark-200">
@@ -71,7 +71,7 @@ export function Hero() {
             <div className="flex items-center gap-3 mt-4">
                 <Link
                     href="/getting-started"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 relative z-10"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-pink-100 hover:bg-pink-100/90 dark:bg-pinkdark-200 dark:hover:bg-pinkdark-200/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-100 focus-visible:ring-offset-2 relative z-10"
                 >
                     Get Started
                 </Link>
