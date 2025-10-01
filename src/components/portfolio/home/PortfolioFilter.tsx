@@ -24,4 +24,4 @@ export function PortfolioFilter({ selectedRanking, onFilterChange }: PortfolioFi
             </div>
         </div>
     );
-} 
+}

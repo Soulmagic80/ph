@@ -12,8 +12,6 @@ export default function PortfoliosLayout({
                 <div className="w-full max-w-7xl px-5 md:px-10 h-full relative">
                     {/* Left line */}
                     <div className="absolute left-5 md:left-10 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 4px, transparent 4px, transparent 8px)' }} />
-                    {/* Center line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 4px, transparent 4px, transparent 8px)' }} />
                     {/* Right line */}
                     <div className="absolute right-5 md:right-10 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 4px, transparent 4px, transparent 8px)' }} />
                 </div>
@@ -23,8 +21,6 @@ export default function PortfoliosLayout({
                 <div className="w-full max-w-7xl px-5 md:px-10 h-full relative">
                     {/* Left line */}
                     <div className="absolute left-5 md:left-10 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 4px, transparent 4px, transparent 8px)' }} />
-                    {/* Center line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 4px, transparent 4px, transparent 8px)' }} />
                     {/* Right line */}
                     <div className="absolute right-5 md:right-10 top-0 bottom-0 w-[1px]" style={{ backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 4px, transparent 4px, transparent 8px)' }} />
                 </div>

@@ -1,8 +1,25 @@
 import Link from "next/link";
 
 export function Hero() {
+    const dotColor = encodeURIComponent('#9ca3af'); // gray-400
+    const gap = 15;
+    const dotSize = 1.2;
+
     return (
-        <div className="w-full flex flex-col items-center text-center gap-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-[120px]">
+        <div className="w-full flex flex-col items-center text-center gap-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-28 pb-16 sm:pb-20 md:pb-24 relative">
+            {/* Background Dots with fade on all sides */}
+            <div
+                className="absolute inset-0 h-full w-full pointer-events-none"
+                style={{
+                    backgroundColor: 'transparent',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='${gap}' height='${gap}' viewBox='0 0 ${gap} ${gap}' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='${dotColor}' fill-opacity='0.15' fill-rule='evenodd'%3E%3Ccircle cx='${dotSize}' cy='${dotSize}' r='${dotSize}'/%3E%3C/g%3E%3C/svg%3E")`,
+                    maskImage: 'linear-gradient(to right, transparent 0%, white 20%, white 80%, transparent 100%), linear-gradient(to bottom, transparent 0%, white 15%, white 85%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, white 20%, white 80%, transparent 100%), linear-gradient(to bottom, transparent 0%, white 15%, white 85%, transparent 100%)',
+                    maskComposite: 'intersect',
+                    WebkitMaskComposite: 'source-in',
+                }}
+            />
+
             {/* Übertitel - kleiner und grau wie "BUILT FOR" auf Tremor */}
             <p className="text-[11px] sm:text-xs font-geist-sans font-medium tracking-[0.15em] text-gray-500 dark:text-gray-400 uppercase">
                 Home of Design Portfolios
@@ -70,13 +87,13 @@ export function Hero() {
             <div className="flex items-center gap-3 mt-6">
                 <Link
                     href="/getting-started"
-                    className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 relative z-10"
                 >
                     Get Started
                 </Link>
                 <a
                     href="#portfolios"
-                    className="inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 rounded-xl transition-all duration-200"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 border border-gray-300 bg-white text-gray-900 shadow-sm hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 relative z-10"
                 >
                     Browse Portfolios
                 </a>

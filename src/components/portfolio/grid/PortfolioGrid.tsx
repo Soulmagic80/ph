@@ -14,14 +14,16 @@ export function PortfolioGrid({
     className = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
 }: PortfolioGridProps) {
     return (
-        <div className={`grid ${className}`}>
-            {portfolios.map((portfolio) => (
-                <PortfolioCard
-                    key={portfolio.id}
-                    portfolio={portfolio}
-                    onUpvote={onUpvote}
-                />
-            ))}
+        <div className="relative">
+            <div className={`grid ${className}`}>
+                {portfolios.map((portfolio) => (
+                    <PortfolioCard
+                        key={portfolio.id}
+                        portfolio={portfolio}
+                        onUpvote={onUpvote}
+                    />
+                ))}
+            </div>
         </div>
     );
-} 
+}
