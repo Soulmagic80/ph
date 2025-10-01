@@ -104,8 +104,17 @@ export function usePortfolios() {
             });
 
             // No need to sort - already sorted by current_rank in query
+            
+            // Recalculate ranks for filtered results (Week/Month filters show subset)
+            // For page 0: ranks start at 1
+            // For subsequent pages: continue from where previous page ended
+            const startRank = page * ITEMS_PER_PAGE + 1;
+            const rankedData = transformedData.map((p, index) => ({
+                ...p,
+                current_rank: startRank + index
+            }));
 
-            setPortfolios(prev => page === 0 ? transformedData : [...prev, ...transformedData]);
+            setPortfolios(prev => page === 0 ? rankedData : [...prev, ...rankedData]);
             setHasMore(transformedData.length === ITEMS_PER_PAGE);
             setPage(page);
         } catch (err) {

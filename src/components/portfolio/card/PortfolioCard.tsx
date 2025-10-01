@@ -165,10 +165,10 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
                 handleUpvote(e);
               }}
               disabled={isUpvoting}
-              className={`w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-925 border-[2px] border-[#000000] dark:border-gray-800 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#FF006A] dark:hover:border-[#FF006A] group/upvote ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-925 border-[2px] border-[#000000] dark:border-gray-800 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#3474DB] dark:hover:border-[#3474DB] group/upvote ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <OptimizedImage src="/upvote.svg" alt="Upvote" width={12} height={12} className={`dark:invert group-hover/upvote:brightness-0 group-hover/upvote:saturate-100 group-hover/upvote:[filter:invert(20%)_sepia(100%)_saturate(7500%)_hue-rotate(320deg)_brightness(100%)_contrast(110%)] ${isUpvoting ? 'animate-pulse' : ''}`} />
-              <span className="text-xs font-geist font-semibold text-black dark:text-white group-hover/upvote:text-pink-100">{upvoteCount}</span>
+              <OptimizedImage src="/upvote.svg" alt="Upvote" width={12} height={12} className={`dark:invert group-hover/upvote:brightness-0 group-hover/upvote:saturate-100 group-hover/upvote:[filter:invert(47%)_sepia(96%)_saturate(1588%)_hue-rotate(195deg)_brightness(94%)_contrast(91%)] ${isUpvoting ? 'animate-pulse' : ''}`} />
+              <span className="text-xs font-geist font-semibold text-black dark:text-white group-hover/upvote:text-[#3474DB]">{upvoteCount}</span>
             </button>
           </div>
         </div>
