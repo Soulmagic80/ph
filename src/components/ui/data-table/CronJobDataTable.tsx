@@ -48,6 +48,7 @@ interface CronJobDataTableProps {
     weeklyLimit?: number
     onToggleSettings?: () => void
     onTestCron?: () => void
+    onRefreshRankings?: () => void
 }
 
 export function CronJobDataTable({
@@ -56,7 +57,8 @@ export function CronJobDataTable({
     onBulkAction,
     weeklyLimit = 5,
     onToggleSettings,
-    onTestCron
+    onTestCron,
+    onRefreshRankings
 }: CronJobDataTableProps) {
     const pageSize = 20
     const [rowSelection, setRowSelection] = React.useState({})
@@ -102,6 +104,7 @@ export function CronJobDataTable({
                     weeklyLimit={weeklyLimit}
                     onToggleSettings={onToggleSettings}
                     onTestCron={onTestCron}
+                    onRefreshRankings={onRefreshRankings}
                 />
                 <div className="relative overflow-hidden overflow-x-auto">
                     <Table>

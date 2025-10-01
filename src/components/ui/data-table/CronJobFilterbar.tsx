@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button"
 import { Table } from "@tanstack/react-table"
-import { Play, Send, Settings } from "lucide-react"
+import { Play, RefreshCw, Send, Settings } from "lucide-react"
 
 interface CronJobFilterbarProps<TData> {
     table: Table<TData>
@@ -11,6 +11,7 @@ interface CronJobFilterbarProps<TData> {
     weeklyLimit?: number
     onToggleSettings?: () => void
     onTestCron?: () => void
+    onRefreshRankings?: () => void
 }
 
 export function CronJobFilterbar<TData>({
@@ -19,7 +20,8 @@ export function CronJobFilterbar<TData>({
     onBulkAction,
     weeklyLimit = 5,
     onToggleSettings,
-    onTestCron
+    onTestCron,
+    onRefreshRankings
 }: CronJobFilterbarProps<TData>) {
 
     const getNextSunday = () => {
@@ -61,6 +63,17 @@ export function CronJobFilterbar<TData>({
                 >
                     <Settings className="w-4 h-4" />
                     Settings
+                </Button>
+
+                {/* Refresh Rankings Button */}
+                <Button
+                    variant="secondary"
+                    onClick={onRefreshRankings}
+                    className="flex items-center gap-2 text-sm"
+                    title="Refresh portfolio rankings"
+                >
+                    <RefreshCw className="w-4 h-4" />
+                    Refresh Rankings
                 </Button>
 
                 {/* Run CronJob Button */}

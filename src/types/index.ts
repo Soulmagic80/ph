@@ -3,6 +3,8 @@ export interface Portfolio {
   user_id: string;
   title: string;
   description: string | null;
+  image_url: string | null; // First image (for backward compatibility)
+  url: string | null; // Alias for website_url (for backward compatibility)
   images: string[] | null; // Array von Bild-Pfaden im Storage, default: ARRAY[]::text[]
   tags: string[] | null; // Tags-Array, default: ARRAY[]::text[]
   style: string[] | null; // Add style attribute
@@ -17,6 +19,7 @@ export interface Portfolio {
   // New fields from DB
   approved: boolean | null;
   published: boolean | null;
+  published_at: string | null;
   status: string | null;
   declined_reason: string | null;
   deleted_at: string | null;
@@ -24,6 +27,41 @@ export interface Portfolio {
   rank_all_time: number | null;
   rank_all_time_best: number | null;
   rank_current_month: number | null;
+  user?: {
+    id: string;
+    username: string | null;
+    full_name: string | null;
+  };
+}
+
+// Type for the portfolio_rankings materialized view
+export interface PortfolioRanking {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  images: string[] | null;
+  tags: string[] | null;
+  style: string[] | null;
+  website_url: string | null;
+  slug: string | null;
+  created_at: string;
+  updated_at: string;
+  approved: boolean | null;
+  published: boolean | null;
+  published_at: string | null;
+  status: string | null;
+  declined_reason: string | null;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  rank_all_time: number | null;
+  rank_all_time_best: number | null;
+  rank_current_month: number | null;
+  // View-specific fields
+  username: string | null;
+  full_name: string | null;
+  current_rank: number;
+  upvote_count: number;
 }
 
 // Neue Typen für die zusätzlichen Tabellen
@@ -115,7 +153,7 @@ export interface Comment {
 }
 
 // Erweiterte Portfolio-Schnittstelle mit Beziehungen
-export interface PortfolioWithRelations extends Portfolio {
+export interface PortfolioWithRelations extends Omit<Portfolio, 'user'> {
   rank_history: PortfolioRankHistory[] | null;
   tools: (PortfolioTool & { tool: Tool })[] | null;
   services: (PortfolioService & { service: Service })[] | null;

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 interface PortfolioCardProps {
   portfolio: Portfolio;
-  onUpvote?: (id: string) => void;
+  onUpvote?: (id: string, newUpvoteCount: number) => void;
 }
 
 export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProps) {
@@ -81,9 +81,10 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
     }
 
     try {
-      await toggleUpvote();
+      const newUpvoteCount = await toggleUpvote();
       if (onUpvote) {
-        onUpvote(portfolio.id);
+        // Pass the new upvote count to parent for optimistic re-sorting
+        onUpvote(portfolio.id, newUpvoteCount);
       }
     } catch (error) {
       console.error("Error in handleUpvote:", error);

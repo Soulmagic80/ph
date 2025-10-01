@@ -194,6 +194,37 @@ export default function CronJobPage() {
         }
     };
 
+    // Refresh rankings manually
+    const handleRefreshRankings = async () => {
+        try {
+            const response = await fetch('/api/admin/refresh-rankings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result = await response.json();
+
+            console.log('Refresh response:', { status: response.status, result });
+
+            if (!response.ok) {
+                console.error('Refresh failed:', result);
+                throw new Error(result.error || 'Failed to refresh rankings');
+            }
+
+            toast.success('Rankings refreshed successfully!', {
+                duration: 3000
+            });
+
+            // Reload portfolios to show updated rankings
+            await fetchApprovedPortfolios();
+        } catch (error) {
+            console.error('Error refreshing rankings:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to refresh rankings');
+        }
+    };
+
     useEffect(() => {
         if (user && profile?.is_admin) {
             fetchApprovedPortfolios();
@@ -270,6 +301,7 @@ export default function CronJobPage() {
                     weeklyLimit={adminSettings?.weekly_publish_limit || 5}
                     onToggleSettings={() => setShowSettings(!showSettings)}
                     onTestCron={handleTestCron}
+                    onRefreshRankings={handleRefreshRankings}
                 />
             )}
         </div>

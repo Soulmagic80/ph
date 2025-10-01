@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface UseUpvoteProps {
     portfolioId: string;
@@ -54,16 +55,18 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
     }, [portfolioId, userId, isAdmin, supabase]);
 
     // Toggle upvote
-    const toggleUpvote = async () => {
+    const toggleUpvote = async (): Promise<number> => {
         if (!userId) {
             setError('Please log in to upvote');
-            return;
+            return upvoteCount;
         }
 
         setIsLoading(true);
         setError(null);
 
         try {
+            let newCount = upvoteCount;
+
             if (isAdmin) {
                 // For admins: Always add a new upvote
                 const { error: insertError } = await supabase
@@ -74,7 +77,8 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
                     });
 
                 if (insertError) throw insertError;
-                setUpvoteCount(prev => prev + 1);
+                newCount = upvoteCount + 1;
+                setUpvoteCount(newCount);
             } else {
                 // For normal users: Toggle upvote
                 const { data: existingVotes, error: checkError } = await supabase
@@ -99,8 +103,10 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
                         });
 
                     if (deleteError) throw deleteError;
-                    setUpvoteCount(prev => prev - 1);
+                    newCount = upvoteCount - 1;
+                    setUpvoteCount(newCount);
                     setIsUpvoted(false);
+                    toast.success('Upvote removed');
                 } else {
                     // Add upvote
                     const { error: insertError } = await supabase
@@ -111,8 +117,10 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
                         });
 
                     if (insertError) throw insertError;
-                    setUpvoteCount(prev => prev + 1);
+                    newCount = upvoteCount + 1;
+                    setUpvoteCount(newCount);
                     setIsUpvoted(true);
+                    toast.success('Upvoted! Rankings update every 10 minutes');
                 }
             }
 
@@ -121,8 +129,11 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
                 .rpc('get_portfolio_upvote_count', { p_portfolio_id: portfolioId });
 
             if (latestData !== null) {
-                setUpvoteCount(latestData || 0);
+                newCount = latestData || 0;
+                setUpvoteCount(newCount);
             }
+
+            return newCount;
         } catch (err) {
             // Rollback on error
             setUpvoteCount(initialUpvoteCount);
@@ -131,6 +142,7 @@ export function useUpvote({ portfolioId, userId, initialUpvoteCount, isAdmin = f
             }
             setError(err instanceof Error ? err.message : 'Failed to update upvote');
             console.error('Error in toggleUpvote:', err);
+            return upvoteCount;
         } finally {
             setIsLoading(false);
         }

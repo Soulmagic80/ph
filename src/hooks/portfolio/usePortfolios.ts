@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase';
-import { Portfolio } from '@/types';
+import { Portfolio, PortfolioRanking } from '@/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const ITEMS_PER_PAGE = 12;
@@ -37,17 +37,9 @@ export function usePortfolios() {
             setError(null);
 
             let query = supabase
-                .from('portfolios')
-                .select(`
-                    *,
-                    profiles!portfolios_user_id_fkey (
-                        username,
-                        full_name
-                    )
-                `)
-                .eq('published', true)
-                .is('deleted_at', null)  // Exclude soft-deleted portfolios
-                .order('created_at', { ascending: false })
+                .from('portfolio_rankings')  // ✅ Read from materialized view instead
+                .select('*')
+                .order('current_rank', { ascending: true })  // Sort by rank (1, 2, 3...)
                 .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
 
             // Apply date filtering based on selected filter
@@ -71,84 +63,47 @@ export function usePortfolios() {
                 throw new Error('No data returned from query');
             }
 
-            // Get ranking data for these portfolios via API route
-            const portfolioIds = portfoliosData.map((p: any) => p.id);
-            const rankingResponse = await fetch('/api/portfolios/rankings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ portfolioIds }),
-            });
-
-            if (!rankingResponse.ok) {
-                throw new Error('Failed to fetch ranking data');
-            }
-
-            const { rankings: rankingData } = await rankingResponse.json();
-
-            // Create a map for quick lookup
-            const rankingMap = new Map();
-            if (rankingData) {
-                rankingData.forEach((item: any) => {
-                    rankingMap.set(item.id, {
-                        current_rank: item.current_rank,
-                        upvote_count: item.upvote_count
-                    });
-                });
-            }
-
-            const transformedData: Portfolio[] = portfoliosData.map((portfolio: any) => {
-                const ranking = rankingMap.get(portfolio.id);
+            // Transform PortfolioRanking (from materialized view) to Portfolio (app type)
+            const transformedData: Portfolio[] = (portfoliosData as PortfolioRanking[]).map((ranking) => {
                 return {
-                    id: portfolio.id,
-                    title: portfolio.title,
-                    description: portfolio.description,
-                    image_url: portfolio.image_url,
-                    url: portfolio.url,
-                    images: portfolio.images,
-                    tags: portfolio.tags,
-                    style: portfolio.style,
-                    website_url: portfolio.website_url,
-                    slug: portfolio.slug,
-                    created_at: portfolio.created_at,
-                    updated_at: portfolio.updated_at,
-                    user_id: portfolio.user_id,
-                    current_rank: ranking?.current_rank || 0,
-                    previous_rank: null, // Not available in current data
-                    rank_change: null, // Not available in current data
-                    upvote_count: ranking?.upvote_count || 0,
-                    // New fields from DB schema
-                    approved: portfolio.approved,
-                    published: portfolio.published,
-                    status: portfolio.status,
-                    declined_reason: portfolio.declined_reason,
-                    deleted_at: portfolio.deleted_at,
-                    deleted_by: portfolio.deleted_by,
-                    rank_all_time: portfolio.rank_all_time,
-                    rank_all_time_best: portfolio.rank_all_time_best,
-                    rank_current_month: portfolio.rank_current_month,
-                    user: portfolio.profiles
+                    id: ranking.id,
+                    title: ranking.title,
+                    description: ranking.description,
+                    image_url: ranking.images?.[0] || null, // First image from array
+                    url: ranking.website_url,
+                    images: ranking.images,
+                    tags: ranking.tags,
+                    style: ranking.style,
+                    website_url: ranking.website_url,
+                    slug: ranking.slug,
+                    created_at: ranking.created_at,
+                    updated_at: ranking.updated_at,
+                    user_id: ranking.user_id,
+                    current_rank: ranking.current_rank || 0,
+                    previous_rank: null, // Not available in materialized view
+                    rank_change: null, // Not available in materialized view
+                    upvote_count: ranking.upvote_count || 0,
+                    // DB fields
+                    approved: ranking.approved,
+                    published: ranking.published,
+                    published_at: ranking.published_at,
+                    status: ranking.status,
+                    declined_reason: ranking.declined_reason,
+                    deleted_at: ranking.deleted_at,
+                    deleted_by: ranking.deleted_by,
+                    rank_all_time: ranking.rank_all_time,
+                    rank_all_time_best: ranking.rank_all_time_best,
+                    rank_current_month: ranking.rank_current_month,
+                    // Map flat username/full_name to nested user object
+                    user: {
+                        id: ranking.user_id,
+                        username: ranking.username,
+                        full_name: ranking.full_name
+                    }
                 };
             });
 
-            // Sort by current_rank (null and 0 values last)
-            transformedData.sort((a, b) => {
-                const rankA = a.current_rank || 0;
-                const rankB = b.current_rank || 0;
-                
-                // Both have no rank (0 or null) - sort by creation date (newest first)
-                if (rankA === 0 && rankB === 0) {
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                }
-                
-                // One has no rank - put it last
-                if (rankA === 0) return 1;
-                if (rankB === 0) return -1;
-                
-                // Both have ranks - sort by rank (1, 2, 3...)
-                return rankA - rankB;
-            });
+            // No need to sort - already sorted by current_rank in query
 
             setPortfolios(prev => page === 0 ? transformedData : [...prev, ...transformedData]);
             setHasMore(transformedData.length === ITEMS_PER_PAGE);
@@ -167,13 +122,32 @@ export function usePortfolios() {
         fetchPortfolios(0);
     }, [filter, fetchPortfolios]);
 
-    const handleUpvote = useCallback(async () => {
-        try {
-            await fetchPortfolios(0);
-        } catch (error) {
-            console.error('Error refreshing portfolios after upvote:', error);
-        }
-    }, [fetchPortfolios]);
+    const handleUpvote = useCallback((portfolioId: string, newUpvoteCount: number) => {
+        // Optimistically update the portfolio list and re-sort
+        setPortfolios(prev => {
+            // Update the upvote count for the affected portfolio
+            const updated = prev.map(p => 
+                p.id === portfolioId 
+                    ? { ...p, upvote_count: newUpvoteCount }
+                    : p
+            );
+            
+            // Re-sort by upvote count (descending), then by published_at (descending)
+            // This matches the sorting logic in the portfolio_rankings materialized view
+            return updated.sort((a, b) => {
+                // First, sort by upvote count (higher is better)
+                if (b.upvote_count !== a.upvote_count) {
+                    return b.upvote_count - a.upvote_count;
+                }
+                // If upvote counts are equal, sort by published_at (newer first)
+                return new Date(b.published_at || b.created_at).getTime() - 
+                       new Date(a.published_at || a.created_at).getTime();
+            });
+            // Note: We keep the old current_rank values from the materialized view
+            // The ranks will be updated accurately every 10 minutes via pg_cron
+            // This prevents incorrect rank calculations when not all portfolios are loaded
+        });
+    }, []);
 
     const loadMore = useCallback(() => {
         if (!isLoading && hasMore) {
@@ -189,6 +163,13 @@ export function usePortfolios() {
         setHasMore(true);
     }, []);
 
+    const refreshPortfolios = useCallback(async () => {
+        setPage(0);
+        setPortfolios([]);
+        setHasMore(true);
+        await fetchPortfolios(0);
+    }, [fetchPortfolios]);
+
     return {
         portfolios,
         isLoading,
@@ -197,6 +178,7 @@ export function usePortfolios() {
         filter,
         loadMore,
         handleUpvote,
-        handleFilterChange
+        handleFilterChange,
+        refreshPortfolios
     };
 } 

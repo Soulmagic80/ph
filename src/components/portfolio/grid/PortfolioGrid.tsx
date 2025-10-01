@@ -4,7 +4,7 @@ import { Portfolio } from "@/types";
 
 interface PortfolioGridProps {
     portfolios: Portfolio[];
-    onUpvote?: (id: string) => void;
+    onUpvote?: (id: string, newUpvoteCount: number) => void;
     className?: string;
 }
 

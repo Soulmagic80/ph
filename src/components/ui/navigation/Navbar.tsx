@@ -33,7 +33,7 @@ export function Navbar({ initialSession }: NavbarProps) {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-950/80 backdrop-blur-sm border-b border-beige-100 dark:border-gray-800">
+    <div className="fixed top-0 left-0 right-0 z-50 border-b border-beige-100 dark:border-gray-800 bg-white/85 dark:bg-gray-950/85">
       <div className="max-w-7xl mx-auto px-5 md:px-10">
         <nav className="flex h-16 items-center justify-between">
           {error && <div className="text-red-500 text-sm">{error}</div>}
@@ -72,7 +72,7 @@ export function Navbar({ initialSession }: NavbarProps) {
                     </Button>
                   </Link>
                   <Link href="/auth/login/register">
-                    <Button variant="primary" className="text-sm font-normal">
+                    <Button variant="primary" className="text-sm font-normal bg-[#3474DB] hover:bg-[#3474DB]/90 dark:bg-[#3474DB] dark:hover:bg-[#3474DB]/90">
                       Sign Up
                     </Button>
                   </Link>
