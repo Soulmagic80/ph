@@ -44,15 +44,23 @@ export function Navbar({ initialSession }: NavbarProps) {
           </Link>
 
           {/* Right side */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Nav Links */}
             <div className="hidden md:flex items-center gap-6">
               <div className="flex flex-row gap-2 items-center">
-                {navigationItems.map((item) => (
-                  <Button key={item.name} variant="ghost" asChild className="text-xs font-normal">
-                    <Link href={item.href}>{item.name}</Link>
-                  </Button>
-                ))}
+                {navigationItems
+                  .filter(item => !item.mobileOnly) // Filter out mobile-only items
+                  .map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Button key={item.name} variant="ghost" asChild className="text-xs font-normal">
+                        <Link href={item.href} className="flex items-center gap-2">
+                          {Icon && <Icon className="w-4 h-4" />}
+                          {item.name}
+                        </Link>
+                      </Button>
+                    );
+                  })}
               </div>
             </div>
 
@@ -96,7 +104,7 @@ export function Navbar({ initialSession }: NavbarProps) {
               <Button
                 variant="ghost"
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2"
+                className="p-2 -mr-2"
               >
                 <List size={20} />
               </Button>
