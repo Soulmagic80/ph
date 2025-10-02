@@ -7,7 +7,7 @@ export interface NavigationItem {
 export const navigationItems: NavigationItem[] = [
   {
     name: "Getting Started",
-    href: "/howto",
+    href: "/getting-started",
   },
   {
     name: "Resources", 
