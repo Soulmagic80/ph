@@ -43,35 +43,40 @@ export default function HomeClient({ initialSession }: HomeClientProps) {
         <>
             <main className="max-w-7xl px-5 md:px-10 pt-12 mx-auto">
                 <Hero />
-                <PortfolioFilter
-                    selectedRanking={filter}
-                    onFilterChange={handleFilterChange}
-                />
 
-                <div className="-mt-2 mb-10">
-                    {/*   <Divider /> */}
-                </div>
+                {/* Anchor point for "Browse Portfolios" button */}
+                <div id="portfolios" className="scroll-mt-20">
+                    <PortfolioFilter
+                        selectedRanking={filter}
+                        onFilterChange={handleFilterChange}
+                    />
 
-                {error ? (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                        <p className="text-red-700 dark:text-red-300">{error.message}</p>
+                    <div className="-mt-2 mb-10">
+                        {/*   <Divider /> */}
                     </div>
-                ) : (
-                    <>
-                        <PortfolioGrid
-                            portfolios={portfolios}
-                            onUpvote={handleUpvote}
-                        />
-                        <div className="mb-16 sm:mb-20 lg:mb-24">
-                            <PortfolioStates
-                                isLoading={isLoading}
-                                hasMore={hasMore}
-                                portfoliosLength={portfolios.length}
-                                loadMoreRef={ref}
-                            />
+
+                    {error ? (
+                        <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                            <p className="text-red-700 dark:text-red-300">{error.message}</p>
                         </div>
-                    </>
-                )}
+                    ) : (
+                        <>
+                            <PortfolioGrid
+                                key={filter} // Re-mount on filter change to trigger animation
+                                portfolios={portfolios}
+                                onUpvote={handleUpvote}
+                            />
+                            <div className="mb-16 sm:mb-20 lg:mb-24">
+                                <PortfolioStates
+                                    isLoading={isLoading}
+                                    hasMore={hasMore}
+                                    portfoliosLength={portfolios.length}
+                                    loadMoreRef={ref}
+                                />
+                            </div>
+                        </>
+                    )}
+                </div>
             </main>
             <BackToTop />
         </>

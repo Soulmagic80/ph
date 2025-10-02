@@ -37,7 +37,7 @@ export default function Footer() {
                                 <Logo />
                             </div>
                             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
-                                Where creative portfolios come to life.
+                                Honest feedback. Better portfolios. Good vibes only.
                             </p>
                             <div className="flex space-x-6">
                                 <ThemeSwitch />

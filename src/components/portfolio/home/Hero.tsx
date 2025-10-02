@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Hero() {
     return (
-        <div className="w-full flex flex-col items-center text-center gap-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-28 pb-16 sm:pb-20 md:pb-24 relative">
+        <div className="w-full flex flex-col items-center text-center gap-8 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-24 pb-16 sm:pb-20 md:pb-24 relative">
 
             {/* Übertitel - kleiner und grau wie "BUILT FOR" auf Tremor */}
             <p className="text-[11px] sm:text-xs font-geist-sans font-medium tracking-[0.15em] text-gray-500 dark:text-gray-400 uppercase relative z-10">
@@ -10,7 +10,7 @@ export function Hero() {
             </p>
 
             {/* Main heading */}
-            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-semibold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50 relative z-10">
+            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-bold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50 relative z-10">
                 Get feedback. Get upvotes.
                 <br />
                 Get <span className="relative inline-block bg-gradient-to-r from-pink-100 to-[#3474DB] dark:from-pinkdark-200 dark:to-[#3474DB] bg-clip-text text-transparent">
