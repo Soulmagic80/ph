@@ -54,7 +54,7 @@ export function DropdownUserProfile({
   return (
     <>
       <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild onMouseEnter={() => setOpen(true)}>{children}</DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild onMouseEnter={() => setOpen(true)} suppressHydrationWarning>{children}</DropdownMenuTrigger>
         <DropdownMenuContent
           className={cx(
             "z-50 min-w-[10rem] overflow-hidden rounded-md border bg-white p-1 text-gray-900 shadow-md dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50",

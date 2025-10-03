@@ -44,7 +44,7 @@ export function ToolkitDropdown({ item }: ToolkitDropdownProps) {
 
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild suppressHydrationWarning>
                 <Button
                     variant="ghost"
                     onMouseEnter={() => setOpen(true)}
@@ -52,6 +52,7 @@ export function ToolkitDropdown({ item }: ToolkitDropdownProps) {
                         "text-xs font-normal flex items-center gap-2",
                         "hover:bg-gray-200/50 data-[state=open]:bg-gray-200/50 hover:dark:bg-gray-800/50 data-[state=open]:dark:bg-gray-800/50"
                     )}
+                    suppressHydrationWarning
                 >
                     {Icon && <Icon className="w-4 h-4" />}
                     {item.name}
