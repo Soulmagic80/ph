@@ -114,6 +114,35 @@ export interface Tool {
   updated_at: string;
 }
 
+// Toolkit Types (separate from Portfolio Tools)
+export interface ToolkitCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Toolkit {
+  id: string;
+  category_id: string;
+  name: string;
+  description: string;
+  icon_url: string | null;
+  affiliate_link: string;
+  order_index: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Toolkit with category relation
+export interface ToolkitWithCategory extends Toolkit {
+  category: ToolkitCategory;
+}
+
 export interface PortfolioTool {
   id: string;
   portfolio_id: string;

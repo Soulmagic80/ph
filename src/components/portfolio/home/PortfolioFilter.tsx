@@ -6,6 +6,12 @@ interface PortfolioFilterProps {
 }
 
 export function PortfolioFilter({ selectedRanking, onFilterChange }: PortfolioFilterProps) {
+    const tabs = [
+        { id: 'week', label: 'Week' },
+        { id: 'month', label: 'Month' },
+        { id: 'all_time', label: 'All Time' },
+    ];
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-8 items-center">
             <div>
@@ -18,8 +24,10 @@ export function PortfolioFilter({ selectedRanking, onFilterChange }: PortfolioFi
             </div>
             <div className="md:pl-16 flex md:justify-end justify-start mt-4 md:mt-0">
                 <ButtonTabs
-                    selected={selectedRanking}
-                    onSelectionChange={onFilterChange}
+                    tabs={tabs}
+                    activeTab={selectedRanking}
+                    onTabChange={(tabId: string) => onFilterChange(tabId as 'week' | 'month' | 'all_time')}
+                    layoutId="home-ranking-tabs"
                 />
             </div>
         </div>

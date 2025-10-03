@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import MobileSidebar from "./MobileSidebar";
+import { ToolkitDropdown } from "./ToolkitDropdown";
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
 
 interface NavbarProps {
@@ -51,6 +52,12 @@ export function Navbar({ initialSession }: NavbarProps) {
                 {navigationItems
                   .filter(item => !item.mobileOnly) // Filter out mobile-only items
                   .map((item) => {
+                    // If item has dropdown, use ToolkitDropdown
+                    if (item.dropdown) {
+                      return <ToolkitDropdown key={item.name} item={item} />;
+                    }
+
+                    // Otherwise, render regular link
                     const Icon = item.icon;
                     return (
                       <Button key={item.name} variant="ghost" asChild className="text-xs font-normal">

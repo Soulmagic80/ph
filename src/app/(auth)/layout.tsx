@@ -1,3 +1,5 @@
+import { PageTransition } from "@/components/ui/PageTransition";
+
 export default function AuthLayout({
     children,
 }: {
@@ -5,7 +7,7 @@ export default function AuthLayout({
 }) {
     return (
         <div className="bg-white dark:bg-gray-900 min-h-screen">
-            {children}
+            <PageTransition>{children}</PageTransition>
         </div>
     );
 } 

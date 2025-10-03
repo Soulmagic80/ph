@@ -36,7 +36,7 @@ const DropdownMenuSubMenuTrigger = React.forwardRef<
     ref={forwardedRef}
     className={cx(
       // base
-      "relative flex cursor-default select-none items-center rounded py-1.5 pl-2 pr-1 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
+      "relative flex cursor-default select-none items-center rounded py-2 pl-2.5 pr-2 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
       // text color
       "text-gray-900 dark:text-gray-50",
       // disabled
@@ -71,7 +71,7 @@ const DropdownMenuSubMenuContent = React.forwardRef<
         // base
         "relative z-50 overflow-hidden rounded-md border p-1 shadow-xl shadow-black/[2.5%]",
         // widths
-        "min-w-32",
+        "min-w-40",
         // heights
         "max-h-[var(--radix-popper-available-height)]",
         // background color
@@ -153,7 +153,7 @@ const DropdownMenuItem = React.forwardRef<
     ref={forwardedRef}
     className={cx(
       // base
-      "group/DropdownMenuItem relative flex cursor-pointer select-none items-center rounded py-1.5 pl-2 pr-1 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
+      "group/DropdownMenuItem relative flex cursor-pointer select-none items-center rounded py-2 pl-2.5 pr-2 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
       // text color
       "text-gray-900 dark:text-gray-50",
       // disabled
@@ -263,7 +263,7 @@ const DropdownMenuRadioItem = React.forwardRef<
       ref={forwardedRef}
       className={cx(
         // base
-        "group/DropdownMenuRadioItem relative flex cursor-pointer select-none items-center gap-x-2 rounded py-1.5 pl-8 pr-1 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
+        "group/DropdownMenuRadioItem relative flex cursor-pointer select-none items-center gap-x-2.5 rounded py-2 pl-8 pr-2 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
         // text color
         "text-gray-900 dark:text-gray-50",
         // disabled

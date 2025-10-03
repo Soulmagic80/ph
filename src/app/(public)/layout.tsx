@@ -1,4 +1,5 @@
 import Footer from "@/components/ui/Footer";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { Navbar } from "@/components/ui/navigation/Navbar";
 import { createServerSupabaseClient } from "@/lib/supabaseServer";
 
@@ -31,7 +32,7 @@ export default async function PublicLayout({
     return (
         <div className="bg-white dark:bg-gray-950 min-h-screen">
             <Navbar initialSession={initialSession} />
-            {children}
+            <PageTransition>{children}</PageTransition>
             <Footer />
         </div>
     );

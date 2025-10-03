@@ -11,6 +11,7 @@ const adminNavigationTabs = [
     { name: "Management", href: "/admin/portfolios" },
     { name: "Uploads", href: "/admin/uploads" },
     { name: "CronJob", href: "/admin/cronjob" },
+    { name: "Toolkit", href: "/admin/toolkit" },
 ];
 
 export default function AdminLayout({

@@ -1,10 +1,16 @@
 import { Compass, Home, Package } from "lucide-react";
 
+export interface NavigationDropdownItem {
+  name: string;
+  href: string;
+}
+
 export interface NavigationItem {
   name: string;
   href: string;
   icon?: React.ComponentType<{ className?: string }>;
   mobileOnly?: boolean; // Only show in mobile sidebar
+  dropdown?: NavigationDropdownItem[]; // Dropdown items
 }
 
 export const navigationItems: NavigationItem[] = [
@@ -20,8 +26,13 @@ export const navigationItems: NavigationItem[] = [
     icon: Compass,
   },
   {
-    name: "Toolkit", 
-    href: "/toolkit",
+    name: "Toolkit",
+    href: "/toolkit/tools",
     icon: Package,
+    dropdown: [
+      { name: "Tools", href: "/toolkit/tools" },
+      { name: "Templates", href: "/toolkit/templates" },
+      { name: "Links", href: "/toolkit/links" },
+    ],
   },
 ];

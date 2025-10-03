@@ -31,6 +31,32 @@ export default function MobileSidebar({ isOpen, onClose, user }: MobileSidebarPr
             {/* Navigation items from config */}
             {navigationItems.map((item) => {
               const Icon = item.icon;
+
+              // If item has dropdown, render parent + sub-items
+              if (item.dropdown) {
+                return (
+                  <div key={item.name} className="flex flex-col space-y-2">
+                    {/* Parent item (non-clickable, just a label) */}
+                    <div className="flex items-center space-x-2 px-4 py-2 text-gray-900 dark:text-gray-50 font-medium">
+                      {Icon && <Icon className="h-5 w-5 strokeWidth={1.5}" />}
+                      <span>{item.name}</span>
+                    </div>
+                    {/* Sub-items (indented) */}
+                    {item.dropdown.map((subItem) => (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        className="flex items-center space-x-2 pl-11 pr-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                        onClick={onClose}
+                      >
+                        <span>{subItem.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                );
+              }
+
+              // Regular item
               return (
                 <Link
                   key={item.name}
