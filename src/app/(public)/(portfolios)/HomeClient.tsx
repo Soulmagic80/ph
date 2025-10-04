@@ -1,7 +1,7 @@
 "use client";
 
 import { PortfolioGrid } from "@/components/portfolio/grid/PortfolioGrid";
-import { Hero } from "@/components/portfolio/home/Hero";
+import { HeroTwo } from "@/components/portfolio/home/HeroTwo";
 import { PortfolioFilter } from "@/components/portfolio/home/PortfolioFilter";
 import { PortfolioStates } from "@/components/portfolio/home/PortfolioStates";
 import { BackToTop } from "@/components/ui/BackToTop";
@@ -42,7 +42,7 @@ export default function HomeClient({ initialSession }: HomeClientProps) {
     return (
         <>
             <main className="max-w-7xl px-5 md:px-10 pt-12 mx-auto">
-                <Hero />
+                <HeroTwo />
 
                 {/* Anchor point for "Browse Portfolios" button */}
                 <div id="portfolios" className="scroll-mt-20">

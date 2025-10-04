@@ -389,7 +389,7 @@ export default function AdminToolkitPage() {
                                         <img
                                             src={tool.icon_url}
                                             alt={tool.name}
-                                            className="w-12 h-12 object-contain rounded"
+                                            className="w-7 h-7 object-contain rounded"
                                         />
                                     )}
                                     <div className="flex-1 min-w-0">

@@ -8,7 +8,7 @@ import { Session } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import { ToolkitDropdown } from "./ToolkitDropdown";
 import { UserProfileDesktop, UserProfileMobile } from "./UserProfile";
@@ -21,7 +21,17 @@ export function Navbar({ initialSession }: NavbarProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user, loading, signOut } = useAuth(initialSession);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -34,9 +44,13 @@ export function Navbar({ initialSession }: NavbarProps) {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 border-b border-beige-100 dark:border-gray-800 bg-white/85 dark:bg-gray-950/85">
-      <div className="max-w-7xl mx-auto px-5 md:px-10">
-        <nav className="flex h-16 items-center justify-between">
+    <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'border-b border-beige-100 dark:border-gray-800 bg-white/75 dark:bg-gray-950/75 backdrop-blur-sm' 
+        : 'border-b border-beige-100 dark:border-gray-800/15 bg-transparent'
+    }`}>
+      <div className="max-w-7xl mx-auto px-5 md:px-10 h-16">
+        <nav className="flex h-full items-center justify-between">
           {error && <div className="text-red-500 text-sm">{error}</div>}
           {/* Logo */}
           <Link href="/" aria-label="Home Link" className="flex items-center">

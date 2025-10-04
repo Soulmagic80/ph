@@ -97,16 +97,16 @@ export default function ToolsPage() {
         <div>
             {/* Header with Title and Subtitle - Full Width */}
             <div className="mb-10">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
                     Tools
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
                     Curated tools and resources to help you build stunning portfolios that get noticed
                 </p>
             </div>
 
             {/* Category Filter Tabs - Full Width */}
-            <div className="mb-6 space-y-4">
+            <div className="mb-6">
                 <ButtonTabs
                     tabs={[
                         { id: "all", label: "All Categories" },
@@ -116,13 +116,14 @@ export default function ToolsPage() {
                     onTabChange={setSelectedCategory}
                     layoutId="toolkit-category-tabs"
                 />
-                <div className="border-t border-gray-200 dark:border-gray-800" />
             </div>
 
             {/* Tools Grid - 3 Columns Layout (like upload sections) */}
             {selectedCategory !== "all" ? (
                 // Single category view
-                <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-10">
+                <>
+                    <Divider />
+                    <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-10">
                     {/* Left: Category Info (1 column) */}
                     <div>
                         {categories
@@ -150,15 +151,24 @@ export default function ToolsPage() {
                         </div>
                     </div>
                 </div>
+                    {filteredTools.length === 0 && (
+                        <div className="text-center py-12">
+                            <p className="text-gray-600 dark:text-gray-400">
+                                No tools found in this category.
+                            </p>
+                        </div>
+                    )}
+                </>
             ) : (
                 // All categories view
                 <div>
-                    {categories.map((category, index) => {
+                    {categories.map((category) => {
                         const categoryTools = toolsByCategory[category.id] || [];
                         if (categoryTools.length === 0) return null;
 
                         return (
                             <React.Fragment key={category.id}>
+                                <Divider />
                                 <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-10">
                                     {/* Left: Category Info (1 column) */}
                                     <div>
@@ -181,22 +191,9 @@ export default function ToolsPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Divider between categories (except after last one) */}
-                                {index < categories.filter(cat => (toolsByCategory[cat.id] || []).length > 0).length - 1 && (
-                                    <Divider />
-                                )}
                             </React.Fragment>
                         );
                     })}
-                </div>
-            )}
-
-            {filteredTools.length === 0 && (
-                <div className="text-center py-12">
-                    <p className="text-gray-600 dark:text-gray-400">
-                        No tools found in this category.
-                    </p>
                 </div>
             )}
         </div>
@@ -210,8 +207,13 @@ function ToolCard({ tool }: { tool: ToolkitWithCategory }) {
             href={tool.affiliate_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-colors group"
+            className="block p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-gray-50 dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-700 transition-colors group relative"
         >
+            {/* External Link Icon - Top Right */}
+            <div className="absolute top-4 right-4">
+                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+            </div>
+
             <div className="flex flex-col h-full">
                 {/* Icon */}
                 {tool.icon_url && (
@@ -219,24 +221,19 @@ function ToolCard({ tool }: { tool: ToolkitWithCategory }) {
                         <img
                             src={tool.icon_url}
                             alt={tool.name}
-                            className="w-12 h-12 object-contain"
+                            className="w-7 h-7 object-contain"
                         />
                     </div>
                 )}
 
                 {/* Content */}
-                <div className="flex-1 mb-3">
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-50 mb-1">
+                <div className="flex-1 pr-6">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-50 mb-1">
                         {tool.name}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                         {tool.description}
                     </p>
-                </div>
-
-                {/* External Link Icon - Bottom Right */}
-                <div className="flex justify-end">
-                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
                 </div>
             </div>
         </a>

@@ -1,20 +1,31 @@
 import Link from "next/link";
 
-export function Hero() {
+export function HeroTwo() {
     return (
-        <div className="w-full flex flex-col items-center text-center gap-8 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-24 pb-16 sm:pb-20 md:pb-24 relative">
+        <div className="w-full flex flex-col items-start text-left gap-6 pt-24 sm:pt-30 md:pt-36 lg:pt-40 xl:pt-40 pb-20 sm:pb-28 md:pb-36 lg:pb-40 relative">
+            {/* Aurora Background - Dark Mode Only */}
+            <div className="absolute inset-0 hidden dark:block pointer-events-none">
+                {/* Pink Blob - Top Left */}
+                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-pink-500/20 rounded-full blur-[120px] opacity-35"></div>
+                {/* Blue Blob - Top Right */}
+                <div className="absolute top-20 right-0 w-[800px] h-[500px] bg-blue-500/25 rounded-full blur-[120px] opacity-35"></div>
+                {/* Pink Blob - Bottom Left */}
+                <div className="absolute bottom-0 left-20 w-[400px] h-[400px] bg-pink-600/15 rounded-full blur-[100px] opacity-35"></div>
+            </div>
 
             {/* Übertitel - kleiner und grau wie "BUILT FOR" auf Tremor */}
             <p className="text-[11px] sm:text-xs font-geist-sans font-medium tracking-[0.15em] text-gray-500 dark:text-gray-400 uppercase relative z-10">
                 Home of Design Portfolios
             </p>
 
-            {/* Main heading */}
-            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-semibold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50 relative z-10">
-                Get feedback. Get upvotes.
+            {/* Main heading - linksbündig */}
+            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[64px] font-geist-sans font-bold max-w-5xl tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50 relative z-10">
+                Get feedback.
+                
+                Get upvotes.
                 <br />
                 Get <span className="relative inline-block bg-gradient-to-r from-pink-100 to-[#3474DB] dark:from-pinkdark-200 dark:to-[#3474DB] bg-clip-text text-transparent">
-                    noticed
+                    noticed.
                     <svg
                         className="absolute -bottom-3 left-0 w-full h-4"
                         viewBox="0 0 200 16"
@@ -72,13 +83,12 @@ export function Hero() {
                             strokeLinecap="round"
                         />
                     </svg>
-                </span>{' '}
-                and get hired.
+                </span>
             </h1>
 
-            {/* Subtitle - gleiche Schriftgröße wie Tremor */}
-            <p className="text-base text-balance sm:text-lg font-geist-sans font-normal leading-[1.6] text-gray-600 dark:text-gray-400 max-w-2xl relative z-10">
-                Submit your portfolio, earn upvotes and valuable feedback from the design community. Help others and maximize your visibility.
+            {/* Subtitle - linksbündig */}
+            <p className="text-base sm:text-lg font-geist-sans font-normal leading-[1.6] text-gray-600 dark:text-gray-400 max-w-2xl relative z-10">
+            Share your portfolio, get feedback, grow your visibility.
             </p>
 
             {/* CTA Buttons */}
@@ -91,7 +101,7 @@ export function Hero() {
                 </Link>
                 <a
                     href="#portfolios"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 border border-gray-300 bg-white text-gray-900 shadow-sm hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 relative z-10"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 border border-gray-300 bg-transparent text-gray-900 hover:bg-gray-50 dark:border-gray-800 dark:bg-transparent dark:text-gray-50 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 relative z-10"
                 >
                     Browse Portfolios
                 </a>

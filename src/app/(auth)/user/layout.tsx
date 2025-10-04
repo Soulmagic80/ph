@@ -40,10 +40,10 @@ export default function UserLayout({
           <div className="mx-auto max-w-7xl">
             <div className="px-5 md:px-10 py-10 pb-32">
               <div className="mb-12">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
                   User Area
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
                   Manage your profile, upload portfolios, and track your submissions
                 </p>
               </div>

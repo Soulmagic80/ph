@@ -101,7 +101,7 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
 
   return (
     <>
-      <Link href={portfolioLink} className="block w-full h-fit bg-white dark:bg-gray-850 outline outline-1 outline-beige-300 dark:outline-gray-800 rounded-lg hover:scale-[1.03] hover:shadow-lg transition-all duration-200 p-2 relative group">
+      <Link href={portfolioLink} className="block w-full h-fit bg-white dark:bg-gray-900 outline outline-1 outline-beige-300 dark:outline-gray-800 rounded-lg hover:scale-[1.03] hover:shadow-lg transition-all duration-200 relative group">
         {/* Plus symbols at corners - COMMENTED OUT FOR NOW */}
         {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -top-3 -left-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
@@ -116,14 +116,14 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
         </svg> */}
 
-        <div className="w-full rounded-md aspect-[3/2] outline-1 outline-beige-300 dark:outline-gray-900 overflow-hidden">
+        <div className="w-full aspect-[3/2] outline-1 outline-beige-300 dark:outline-gray-900 overflow-hidden rounded-t-lg">
           {imageSrc ? (
             <OptimizedImage
               src={imageSrc}
               alt={portfolio.title}
               width={400}
               height={267}
-              className="w-full h-full object-cover rounded-md"
+              className="w-full h-full object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               quality={85}
             />
@@ -132,7 +132,7 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
           )}
         </div>
 
-        <div className="w-full h-auto mt-2.5 flex items-center gap-4 px-3 py-2">
+        <div className="w-full h-auto flex items-center gap-4 px-4 pt-4 pb-4">
           <div className="flex flex-col items-center">
             <span className="text-5xl font-geist font-semibold text-black dark:text-white">{portfolio.current_rank}</span>
             {portfolio.rank_change && (

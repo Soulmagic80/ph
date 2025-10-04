@@ -20,9 +20,11 @@ const config: Config = {
         suoerdark: { 999: "#090E1A" },
         gray: { 
           850: "#1a1f2e",
-          925: "#050814" 
+          925: "#050814",
+          950: "#0a0f1a"  // Custom override (heller als Standard #030712)
         },
         warmgrey: { 100: "#9C9C9C" },
+        warmwhite: { 100: "#FCFCF9" },  // Phantom-style warm off-white
         lightbeige: { 100: "#FBFAF9" },
         /*lightbeige: { 100: "#FFFFFF" },*/
         midbeige: { 200: "#F5F2F0" },
