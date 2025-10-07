@@ -1,5 +1,5 @@
 // lib/supabase-server.ts (Server-only) - Next.js 15 compatible
-import { Database } from '@/types/database.types'
+import { Database } from '@/types/supabase'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import 'server-only'

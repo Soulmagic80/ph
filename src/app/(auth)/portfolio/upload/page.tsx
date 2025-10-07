@@ -28,22 +28,21 @@ export default function PortfolioUpload() {
                     })
             );
 
-            // Get existing image filenames from uploaded images
-            const existingImages = data.images
+            // Get existing image URLs from uploaded images
+            const existingImageUrls = data.images
                 .filter((image: any) => image.uploaded && image.url)
-                .map((image: any) => {
-                    // Extract filename from URL (e.g., "main.jpg" from full URL)
-                    const urlParts = image.url.split('/');
-                    return urlParts[urlParts.length - 1]; // Get last part (filename)
-                });
+                .map((image: any) => image.url); // Keep full URL
 
+            console.log('📤 Submitting images:', {
+                newImages: processedImages.length,
+                existingImages: existingImageUrls
+            });
 
             const payload = {
                 title: data.title,
                 websiteUrl: data.websiteUrl,
                 description: data.description,
-                images: processedImages, // Only new images to upload
-                existingImages: existingImages, // Existing image filenames to keep
+                images: processedImages.length > 0 ? processedImages : existingImageUrls, // New images OR existing URLs
                 tools: data.tools,
                 tags: data.tags || []
             };

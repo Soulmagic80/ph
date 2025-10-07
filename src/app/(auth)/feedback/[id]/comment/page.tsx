@@ -82,10 +82,10 @@ export default function Comment() {
     <main className="mx-auto p-4">
       <div className="motion-safe:animate-revealBottom" style={{ animationDuration: "500ms" }}>
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
+          <h1 className="heading-page">
             Add a personal comment
           </h1>
-          <p className="mt-2 text-gray-700 sm:text-sm dark:text-gray-300">
+          <p className="text-body mt-2">
             Your personal feedback is <strong>incredibly valuable</strong> to the portfolio owner. While optional, a <strong>thoughtful comment</strong> can provide <strong>specific insights</strong> that help them understand what works well and what could be improved. <br /><br />Consider sharing what <strong>caught your attention</strong>, <strong>specific suggestions</strong>, or <strong>encouragement</strong> – your words can make a <strong>real difference</strong> in their creative journey.
           </p>
         </div>

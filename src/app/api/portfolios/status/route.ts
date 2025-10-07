@@ -29,6 +29,7 @@ export async function GET(_request: NextRequest) {
                 status,
                 approved,
                 published,
+                is_visible,
                 created_at,
                 updated_at,
                 declined_reason,
@@ -50,15 +51,26 @@ export async function GET(_request: NextRequest) {
             )
         }
 
-        // If no portfolio exists, return empty state
+        // If no portfolio exists, return draft state (user can create one)
         if (!portfolio) {
             return NextResponse.json({
                 success: true,
                 portfolio: null,
-                status: 'none', // User has no portfolio yet
+                status: 'draft',
+                approved: false,
+                published: false,
+                is_visible: true,
+                feedback_count: 0,
+                // Draft capabilities - user can create a new portfolio
                 canEdit: true,
-                canSubmit: false,
-                canPreview: false
+                canSubmit: true,
+                canPreview: true,
+                canClearAll: true,
+                showEditButton: false,
+                showWithdrawButton: false,
+                statusBadge: 'DRAFT',
+                statusMessage: 'Ready to create your portfolio',
+                statusType: 'info'
             })
         }
 
@@ -85,8 +97,12 @@ export async function GET(_request: NextRequest) {
         
         portfolioTools = toolsData?.map((pt: any) => pt.tool) || []
 
-        // Determine UI capabilities based on status
-        const capabilities = getStatusCapabilities(portfolio.status || 'none')
+        // Determine UI capabilities based on status, approved, and published
+        const capabilities = getStatusCapabilities(
+            portfolio.status || 'none',
+            portfolio.approved || false,
+            portfolio.published || false
+        )
 
         // Format response
         const response = {
@@ -107,9 +123,16 @@ export async function GET(_request: NextRequest) {
             status: portfolio.status,
             approved: portfolio.approved,
             published: portfolio.published,
+            is_visible: portfolio.is_visible !== false, // Default to true if null
             feedback_count: feedbackCount,
             ...capabilities
         }
+
+        // 🔍 DEBUG: Log API response
+        console.log('📡 Status API Response:', {
+            status: portfolio.status,
+            capabilities
+        })
 
         return NextResponse.json(response)
 
@@ -125,7 +148,7 @@ export async function GET(_request: NextRequest) {
 /**
  * Determines what UI actions are available based on portfolio status
  */
-function getStatusCapabilities(status: string) {
+function getStatusCapabilities(status: string, _approved: boolean, published: boolean) {
     switch (status) {
         case 'draft':
             return {
@@ -135,6 +158,7 @@ function getStatusCapabilities(status: string) {
                 canClearAll: true,
                 showEditButton: false,
                 showWithdrawButton: false,
+                statusBadge: 'DRAFT',
                 statusMessage: 'Continue editing your portfolio',
                 statusType: 'info' as const
             }
@@ -145,22 +169,39 @@ function getStatusCapabilities(status: string) {
                 canSubmit: false,
                 canPreview: true,
                 canClearAll: false,
-                showEditButton: true,
-                showWithdrawButton: false,
+                showEditButton: false,
+                showWithdrawButton: true,
+                statusBadge: 'PENDING APPROVAL',
                 statusMessage: 'Your portfolio is pending admin approval',
                 statusType: 'warning' as const
             }
         
         case 'approved':
-            return {
-                canEdit: false,
-                canSubmit: false,
-                canPreview: true,
-                canClearAll: false,
-                showEditButton: true,
-                showWithdrawButton: false,
-                statusMessage: 'Your portfolio has been approved and is published',
-                statusType: 'success' as const
+            // Unterscheidung: Approved aber noch nicht published vs. Published
+            if (published) {
+                return {
+                    canEdit: true,
+                    canSubmit: false,
+                    canPreview: true,
+                    canClearAll: false,
+                    showEditButton: false,
+                    showWithdrawButton: true,
+                    statusBadge: 'PUBLISHED',
+                    statusMessage: 'Your portfolio is live!',
+                    statusType: 'success' as const
+                }
+            } else {
+                return {
+                    canEdit: false,
+                    canSubmit: false,
+                    canPreview: true,
+                    canClearAll: false,
+                    showEditButton: false,
+                    showWithdrawButton: true,
+                    statusBadge: 'APPROVED - IN QUEUE',
+                    statusMessage: 'Your portfolio has been approved and is waiting to be published',
+                    statusType: 'success' as const
+                }
             }
         
         case 'declined':
@@ -171,6 +212,7 @@ function getStatusCapabilities(status: string) {
                 canClearAll: true,
                 showEditButton: false,
                 showWithdrawButton: false,
+                statusBadge: 'DECLINED',
                 statusMessage: 'Your portfolio was declined. Please review the feedback and resubmit.',
                 statusType: 'error' as const
             }
@@ -183,6 +225,7 @@ function getStatusCapabilities(status: string) {
                 canClearAll: true,
                 showEditButton: false,
                 showWithdrawButton: false,
+                statusBadge: 'DRAFT',
                 statusMessage: 'Ready to create your portfolio',
                 statusType: 'info' as const
             }
@@ -211,7 +254,7 @@ export async function PATCH(request: NextRequest) {
         // Get user's current portfolio
         const { data: portfolio, error: portfolioError } = await supabase
             .from('portfolios')
-            .select('id, status')
+            .select('id, status, approved, published')
             .eq('user_id', user.id)
             .is('deleted_at', null)
             .single()
@@ -223,19 +266,42 @@ export async function PATCH(request: NextRequest) {
             )
         }
 
-        let newStatus: string
+        let updateData: any = {}
         const now = new Date().toISOString()
 
         switch (action) {
             case 'withdraw':
-                // Allow withdrawing from pending back to draft
-                if (portfolio.status !== 'pending') {
+                // Scenario 1: PENDING → DRAFT
+                if (portfolio.status === 'pending') {
+                    updateData = {
+                        status: 'draft',
+                        approved: false,
+                        published: false,
+                        updated_at: now
+                    }
+                }
+                // Scenario 2: APPROVED (in queue) → DRAFT
+                else if (portfolio.status === 'approved' && !portfolio.published) {
+                    updateData = {
+                        status: 'draft',
+                        approved: false,
+                        published: false,
+                        updated_at: now
+                    }
+                }
+                // Scenario 3: PUBLISHED → PUBLISHED (offline)
+                else if (portfolio.status === 'approved' && portfolio.published) {
+                    updateData = {
+                        is_visible: false,
+                        updated_at: now
+                    }
+                }
+                else {
                     return NextResponse.json(
-                        { error: 'Can only withdraw pending portfolios' },
+                        { error: 'Cannot withdraw portfolio in current state' },
                         { status: 400 }
                     )
                 }
-                newStatus = 'draft'
                 break
             
             case 'resubmit':
@@ -246,7 +312,11 @@ export async function PATCH(request: NextRequest) {
                         { status: 400 }
                     )
                 }
-                newStatus = 'pending'
+                updateData = {
+                    status: 'pending',
+                    declined_reason: null,
+                    updated_at: now
+                }
                 break
             
             default:
@@ -256,14 +326,10 @@ export async function PATCH(request: NextRequest) {
                 )
         }
 
-        // Update portfolio status
+        // Update portfolio with the prepared data
         const { error: updateError } = await supabase
             .from('portfolios')
-            .update({
-                status: newStatus,
-                updated_at: now,
-                ...(action === 'resubmit' && { declined_reason: null })
-            })
+            .update(updateData)
             .eq('id', portfolio.id)
 
         if (updateError) {
@@ -276,9 +342,9 @@ export async function PATCH(request: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            status: newStatus,
+            status: updateData.status || portfolio.status,
             message: action === 'withdraw' 
-                ? 'Portfolio withdrawn to draft status' 
+                ? 'Portfolio withdrawn successfully' 
                 : 'Portfolio resubmitted for review'
         })
 

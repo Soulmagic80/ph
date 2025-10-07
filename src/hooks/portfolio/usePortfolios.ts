@@ -39,6 +39,7 @@ export function usePortfolios() {
             let query = supabase
                 .from('portfolio_rankings')  // ✅ Read from materialized view instead
                 .select('*')
+                // Note: is_visible filter is already applied in the materialized view
                 .order('current_rank', { ascending: true })  // Sort by rank (1, 2, 3...)
                 .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
 

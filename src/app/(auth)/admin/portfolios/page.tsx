@@ -20,6 +20,7 @@ interface AdminPortfolio {
     deleted_by: string | null;
     published: boolean;
     approved: boolean;
+    is_visible: boolean;
     images: string[];
     user: {
         id: string;
@@ -73,6 +74,7 @@ export default function AdminPortfoliosPage() {
                         deleted_by,
                         published,
                         approved,
+                        is_visible,
                         images,
                         user:profiles!portfolios_user_id_fkey (
                             id,

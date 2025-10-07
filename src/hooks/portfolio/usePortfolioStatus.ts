@@ -23,9 +23,10 @@ export interface PortfolioStatusData {
 export interface PortfolioStatusResponse {
     success: boolean;
     portfolio: PortfolioStatusData | null;
-    status: 'none' | 'draft' | 'pending' | 'approved' | 'declined';
+    status: 'draft' | 'pending' | 'approved' | 'declined';
     approved: boolean;
     published: boolean;
+    is_visible: boolean;
     feedback_count: number;
     canEdit: boolean;
     canSubmit: boolean;
@@ -33,6 +34,7 @@ export interface PortfolioStatusResponse {
     canClearAll: boolean;
     showEditButton: boolean;
     showWithdrawButton: boolean;
+    statusBadge: string;
     statusMessage: string;
     statusType: 'info' | 'warning' | 'success' | 'error';
 }
@@ -47,6 +49,7 @@ export interface UsePortfolioStatusReturn {
     // Status info
     approved: boolean;
     published: boolean;
+    is_visible: boolean;
     feedbackCount: number;
     
     // UI Capabilities
@@ -193,23 +196,25 @@ export function usePortfolioStatus(): UsePortfolioStatusReturn {
     return {
         // Data
         portfolio: data?.portfolio || null,
-        status: data?.status || 'none',
+        status: data?.status || 'draft',
         isLoading,
         error,
         
         // Status info
         approved: data?.approved || false,
         published: data?.published || false,
+        is_visible: data?.is_visible !== false, // Default to true
         feedbackCount: data?.feedback_count || 0,
         
         // UI Capabilities
-        canEdit: data?.canEdit || false,
-        canSubmit: data?.canSubmit || false,
-        canPreview: data?.canPreview || false,
-        canClearAll: data?.canClearAll || false,
+        // When no data (loading or no portfolio), use draft defaults
+        canEdit: data?.canEdit !== undefined ? data.canEdit : true,
+        canSubmit: data?.canSubmit !== undefined ? data.canSubmit : true,
+        canPreview: data?.canPreview !== undefined ? data.canPreview : true,
+        canClearAll: data?.canClearAll !== undefined ? data.canClearAll : true,
         showEditButton: data?.showEditButton || false,
         showWithdrawButton: data?.showWithdrawButton || false,
-        statusMessage: data?.statusMessage || '',
+        statusMessage: data?.statusMessage || 'Ready to create your portfolio',
         statusType: data?.statusType || 'info',
         
         // Actions

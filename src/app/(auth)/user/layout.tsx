@@ -1,16 +1,15 @@
 "use client"
 import Footer from "@/components/ui/Footer";
 import { Navbar } from "@/components/ui/navigation/Navbar";
-import { TabNavigation, TabNavigationLink } from "@/components/ui/TabNavigation";
+import { SectionLayout } from "@/components/layouts/SectionLayout";
 import { useAuth } from "@/hooks/shared/useAuth";
 import { cx } from "@/lib/utils";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const baseNavigationTabs = [
-  { name: "Profile", href: "/user/profile" },
-  { name: "Account", href: "/user/account" },
+  { id: "profile", label: "Profile", href: "/user/profile" },
+  { id: "account", label: "Account", href: "/user/account" },
 ];
 
 export default function UserLayout({
@@ -19,50 +18,42 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { profile } = useAuth();
-
 
   // Filter tabs based on admin status
   const navigationTabs = profile?.is_admin
-    ? baseNavigationTabs.filter(tab => tab.name === "Profile" || tab.name === "Account")
+    ? baseNavigationTabs.filter(tab => tab.id === "profile" || tab.id === "account")
     : baseNavigationTabs;
 
+  // Determine active tab based on pathname
+  const activeTab = navigationTabs.find(tab => pathname === tab.href)?.id || "profile";
+
   return (
-    <div className="mx-auto w-full bg-lightbeige-100 dark:bg-gray-950">
+    <div className="mx-auto w-full bg-lightbeige-100 dark:bg-gray-900">
       <Navbar />
       <div
         className={cx(
           "w-full",
-          "ease transform-gpu overflow-x-hidden transition-all duration-100 will-change-transform lg:bg-gray-500 lg:py-0 lg:pr-0 lg:dark:bg-gray-950",
+          "ease transform-gpu overflow-x-hidden transition-all duration-100 will-change-transform lg:bg-gray-500 lg:py-0 lg:pr-0 lg:dark:bg-gray-900",
         )}
       >
-        <div className="min-h-dvh bg-white pt-16 dark:bg-gray-950 lg:dark:border-gray-900">
+        <div className="min-h-dvh bg-white pt-16 dark:bg-gray-900 lg:dark:border-gray-900">
           <div className="mx-auto max-w-7xl">
             <div className="px-5 md:px-10 py-10 pb-32">
-              <div className="mb-12">
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                  User Area
-                </h1>
-                <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
-                  Manage your profile, upload portfolios, and track your submissions
-                </p>
-              </div>
-
-
-              <TabNavigation className="mb-8">
-                {navigationTabs.map((item) => (
-                  <TabNavigationLink
-                    key={item.name}
-                    asChild
-                    active={pathname === item.href}
-                    className="px-5"
-                  >
-                    <Link href={item.href}>{item.name}</Link>
-                  </TabNavigationLink>
-                ))}
-              </TabNavigation>
-
-              {children}
+              <SectionLayout
+                title="User Area"
+                subtitle="Manage your profile, upload portfolios, and track your submissions"
+                tabs={navigationTabs}
+                activeTab={activeTab}
+                onTabChange={(tabId) => {
+                  const tab = navigationTabs.find(t => t.id === tabId);
+                  if (tab) router.push(tab.href);
+                }}
+                layoutId="user-area-tabs"
+              >
+                {children}
+              </SectionLayout>
             </div>
           </div>
         </div>

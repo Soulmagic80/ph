@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonTabs } from "@/components/ui/ButtonTabs";
+import { SectionLayout } from "@/components/layouts/SectionLayout";
 import { Divider } from "@/components/ui/Divider";
 import { createClient } from "@/lib/supabase/client";
 import { ToolkitCategory, ToolkitWithCategory } from "@/types";
@@ -94,47 +94,34 @@ export default function ToolsPage() {
     }
 
     return (
-        <div>
-            {/* Header with Title and Subtitle - Full Width */}
-            <div className="mb-10">
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                    Tools
-                </h1>
-                <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
-                    Curated tools and resources to help you build stunning portfolios that get noticed
-                </p>
-            </div>
-
-            {/* Category Filter Tabs - Full Width */}
-            <div className="mb-6">
-                <ButtonTabs
-                    tabs={[
-                        { id: "all", label: "All Categories" },
-                        ...categories.map((cat) => ({ id: cat.id, label: cat.name })),
-                    ]}
-                    activeTab={selectedCategory}
-                    onTabChange={setSelectedCategory}
-                    layoutId="toolkit-category-tabs"
-                />
-            </div>
-
+        <SectionLayout
+            title="Tools"
+            subtitle="Curated tools and resources to help you build stunning portfolios that get noticed"
+            tabs={[
+                { id: "all", label: "All Categories" },
+                ...categories.map((cat) => ({ id: cat.id, label: cat.name })),
+            ]}
+            activeTab={selectedCategory}
+            onTabChange={setSelectedCategory}
+            layoutId="toolkit-category-tabs"
+        >
             {/* Tools Grid - 3 Columns Layout (like upload sections) */}
             {selectedCategory !== "all" ? (
                 // Single category view
                 <>
                     <Divider />
-                    <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-10">
+                    <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-16">
                     {/* Left: Category Info (1 column) */}
                     <div>
                         {categories
                             .filter((cat) => cat.id === selectedCategory)
                             .map((category) => (
                                 <div key={category.id}>
-                                    <h2 className="font-semibold text-gray-900 dark:text-gray-50">
+                                    <h2 className="heading-section">
                                         {category.name}
                                     </h2>
                                     {category.description && (
-                                        <p className="mt-2 text-sm leading-6 text-gray-500">
+                                        <p className="text-small mt-2">
                                             {category.description}
                                         </p>
                                     )}
@@ -142,9 +129,9 @@ export default function ToolsPage() {
                             ))}
                     </div>
 
-                    {/* Right: Tool Cards (2 columns, 3 cards per row) */}
+                    {/* Right: Tool Cards (2 columns, 2 cards per row) */}
                     <div className="md:col-span-2 md:pl-16">
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filteredTools.map((tool) => (
                                 <ToolCard key={tool.id} tool={tool} />
                             ))}
@@ -152,7 +139,7 @@ export default function ToolsPage() {
                     </div>
                 </div>
                     {filteredTools.length === 0 && (
-                        <div className="text-center py-12">
+                        <div className="text-center py-20">
                             <p className="text-gray-600 dark:text-gray-400">
                                 No tools found in this category.
                             </p>
@@ -169,22 +156,22 @@ export default function ToolsPage() {
                         return (
                             <React.Fragment key={category.id}>
                                 <Divider />
-                                <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-10">
+                                <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-16">
                                     {/* Left: Category Info (1 column) */}
                                     <div>
-                                        <h2 className="font-semibold text-gray-900 dark:text-gray-50">
+                                        <h2 className="heading-section">
                                             {category.name}
                                         </h2>
                                         {category.description && (
-                                            <p className="mt-2 text-sm leading-6 text-gray-500">
+                                            <p className="text-small mt-2">
                                                 {category.description}
                                             </p>
                                         )}
                                     </div>
 
-                                    {/* Right: Tool Cards (2 columns, 3 cards per row) */}
+                                    {/* Right: Tool Cards (2 columns, 2 cards per row) */}
                                     <div className="md:col-span-2 md:pl-16">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {categoryTools.map((tool) => (
                                                 <ToolCard key={tool.id} tool={tool} />
                                             ))}
@@ -196,7 +183,7 @@ export default function ToolsPage() {
                     })}
                 </div>
             )}
-        </div>
+        </SectionLayout>
     );
 }
 
@@ -207,31 +194,31 @@ function ToolCard({ tool }: { tool: ToolkitWithCategory }) {
             href={tool.affiliate_link}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-gray-50 dark:bg-gray-900 hover:border-gray-300 dark:hover:border-gray-700 transition-colors group relative"
+            className="block p-6 border-gray-200 dark:border-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:scale-[1.02] transition-all group relative"
         >
             {/* External Link Icon - Top Right */}
-            <div className="absolute top-4 right-4">
-                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+            <div className="absolute top-6 right-6">
+                <ExternalLink className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
             </div>
 
             <div className="flex flex-col h-full">
                 {/* Icon */}
                 {tool.icon_url && (
-                    <div className="mb-3">
+                    <div className="mb-4">
                         <img
                             src={tool.icon_url}
                             alt={tool.name}
-                            className="w-7 h-7 object-contain"
+                            className="w-8 h-8 object-contain"
                         />
                     </div>
                 )}
 
                 {/* Content */}
                 <div className="flex-1 pr-6">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-50 mb-1">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-50 mb-1">
                         {tool.name}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
                         {tool.description}
                     </p>
                 </div>

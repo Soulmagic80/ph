@@ -24,7 +24,7 @@ export default function FeedbackInfo() {
                 className="motion-safe:animate-revealBottom"
                 style={{ animationDuration: "500ms" }}
             >
-                <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
+                <h1 className="heading-page">
                     Help This Portfolio Shine with Feedback!
                 </h1>
                 <p className="mt-6 text-gray-700 sm:text-sm dark:text-gray-300">

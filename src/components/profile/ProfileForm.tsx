@@ -22,11 +22,11 @@ export default function ProfileForm({
                 <div>
                     <h2
                         id="profile-form-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section"
                     >
                         Profile Details
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Add more information to your profile.
                     </p>
                 </div>

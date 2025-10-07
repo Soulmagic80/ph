@@ -25,6 +25,9 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
     const [hasCompletedFeedback, setHasCompletedFeedback] = useState(false);
     const router = useRouter();
     const [supabase] = useState(() => createClient());
+    
+    // Check if the current user is the portfolio owner
+    const isOwner = initialUser?.id === portfolio.user_id;
 
     useEffect(() => {
         async function checkAdminStatus() {
@@ -97,6 +100,12 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
             return;
         }
 
+        // Prevent owner from upvoting their own portfolio
+        if (isOwner) {
+            toast.info("You cannot upvote your own portfolio");
+            return;
+        }
+
         try {
             if (!isAdmin && isUpvoted) {
                 toast.info("You have already upvoted this portfolio");
@@ -118,6 +127,12 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
             return;
         }
 
+        // Prevent owner from rating their own portfolio
+        if (isOwner) {
+            toast.info("You cannot rate your own portfolio");
+            return;
+        }
+
         if (!isAdmin && hasCompletedFeedback) {
             toast.info("You have already provided feedback for this portfolio");
             return;
@@ -133,17 +148,17 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
                 <div>
                     <h2
                         id="portfolio-overview-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section scroll-mt-10"
                     >
                         Portfolio Overview
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         View and interact with this portfolio. You can upvote, rate, or visit the website.
                     </p>
                 </div>
                 {/* Right column: Content */}
                 <div className="md:col-span-2 md:pl-16">
-                    <div className="bg-white dark:bg-gray-950 rounded-lg border border-gray-200 p-6 dark:border-gray-800">
+                    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 p-6 dark:border-gray-800">
                         <div className="w-full">
                             {/* Desktop: Side by side, Mobile: Stacked */}
                             <div className="w-full flex flex-col xl:flex-row gap-4">
@@ -236,14 +251,14 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
                                     <button
                                         onClick={handleUpvoteClick}
                                         disabled={isUpvoting}
-                                        className={`flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-900 dark:text-gray-100 dark:border-gray-800 dark:hover:bg-gray-800 ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700/50 dark:hover:bg-gray-850 ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <ArrowUpCircleIcon className="w-5 h-5" />
                                         <span>{isUpvoting ? 'Upvoting...' : `Upvote (${upvoteCount})`}</span>
                                     </button>
                                 ) : (
                                     <Link href="/auth/login" className="flex-1">
-                                        <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-900 dark:text-gray-100 dark:border-gray-800 dark:hover:bg-gray-800">
+                                        <button className="w-full flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700/50 dark:hover:bg-gray-850">
                                             <ArrowUpCircleIcon className="w-5 h-5" />
                                             <span>Upvote this portfolio</span>
                                         </button>
@@ -251,7 +266,7 @@ export default function PortfolioOverview({ portfolio, user: initialUser, onUpvo
                                 )}
                                 <button
                                     onClick={handleRateClick}
-                                    className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-900 dark:text-gray-100 dark:border-gray-800 dark:hover:bg-gray-800"
+                                    className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-900 py-2 px-4 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors text-sm dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700/50 dark:hover:bg-gray-850"
                                 >
                                     <StarIcon className="w-5 h-5" />
                                     <span>Rate this portfolio</span>

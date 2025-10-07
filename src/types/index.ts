@@ -54,12 +54,14 @@ export interface PortfolioRanking {
   declined_reason: string | null;
   deleted_at: string | null;
   deleted_by: string | null;
+  is_visible: boolean | null;
   rank_all_time: number | null;
   rank_all_time_best: number | null;
   rank_current_month: number | null;
   // View-specific fields
   username: string | null;
   full_name: string | null;
+  avatar_url: string | null;
   current_rank: number;
   upvote_count: number;
 }

@@ -46,6 +46,12 @@ export function getPortfolioImageUrl(portfolioId: string, filename: string): str
         return filename;
     }
 
+    // If filename contains a slash, it's already a full path (e.g., "user_id/file.jpg")
+    // Don't prepend portfolio_id
+    if (filename.includes('/')) {
+        return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${filename}`;
+    }
+
     // CURRENT SYSTEM: All images are stored in portfolio folders
     // Format: portfolio-images/{portfolio_id}/{filename}
     // The filename can be: main.jpg, 1.png, 2.webp, OR timestamp_random.webp

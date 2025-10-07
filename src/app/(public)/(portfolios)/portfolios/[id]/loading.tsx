@@ -13,7 +13,7 @@ export default function Loading() {
                     </div>
                     {/* Content */}
                     <div className="md:col-span-2 md:pl-16">
-                        <div className="bg-white dark:bg-gray-950 rounded-lg border border-gray-200 p-6 dark:border-gray-800">
+                        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 p-6 dark:border-gray-800">
                             <div className="w-full">
                                 <div className="aspect-[4/3] w-full flex gap-4">
                                     {/* Main image */}

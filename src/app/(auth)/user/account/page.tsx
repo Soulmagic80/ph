@@ -14,10 +14,10 @@ export default function Account() {
             {/* Email Settings Section */}
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                 <div>
-                    <h2 className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50">
+                    <h2 className="heading-section">
                         Email Settings
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Change your email address. You&apos;ll need to confirm your current password.
                     </p>
                 </div>
@@ -31,10 +31,10 @@ export default function Account() {
             {/* Password Settings Section */}
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                 <div>
-                    <h2 className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50">
+                    <h2 className="heading-section">
                         Password Settings
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Update your password. You&apos;ll need to confirm your current password.
                     </p>
                 </div>
@@ -49,10 +49,10 @@ export default function Account() {
                     <Divider />
                     <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                         <div>
-                            <h2 className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50">
+                            <h2 className="heading-section">
                                 Security Settings
                             </h2>
-                            <p className="mt-2 text-sm leading-6 text-gray-500">
+                            <p className="text-small mt-2">
                                 Enable two-factor authentication to secure your admin account with an additional layer of protection.
                             </p>
                         </div>
@@ -68,10 +68,10 @@ export default function Account() {
             {/* Account Deletion Section */}
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                 <div>
-                    <h2 className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50">
+                    <h2 className="heading-section">
                         Account Deletion
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Permanently delete your account and all associated data. This action cannot be undone.
                     </p>
                 </div>

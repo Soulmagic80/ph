@@ -19,9 +19,14 @@ const config: Config = {
       colors: {
         suoerdark: { 999: "#090E1A" },
         gray: { 
-          850: "#1a1f2e",
-          925: "#050814",
-          950: "#0a0f1a"  // Custom override (heller als Standard #030712)
+          750: "#2d3748",  // Hover States (zwischen 700 und 800)
+          850: "#171f2e",  // Cards/Containers (zwischen 800 und 900)
+          925: "#0c1118",  // Optional: Sehr dunkle Elemente (zwischen 900 und 950)
+          950: "#0a0f1a"   // Custom override (heller als Standard #030712)
+        },
+        blue: {
+          primary: "#0084FF",  // Primary blue for CTAs, links, accents
+          /*primary: "#3474DB",  // Primary blue for CTAs, links, accents*/
         },
         warmgrey: { 100: "#9C9C9C" },
         warmwhite: { 100: "#FCFCF9" },  // Phantom-style warm off-white

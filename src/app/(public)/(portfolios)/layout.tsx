@@ -9,7 +9,7 @@ export default function PortfoliosLayout({
     return (
         <div className="flex min-h-screen relative">
             <Navbar />
-            <main className="flex-1 relative z-10">
+            <main className="flex-1 relative">
                 <PageTransition>{children}</PageTransition>
             </main>
         </div>

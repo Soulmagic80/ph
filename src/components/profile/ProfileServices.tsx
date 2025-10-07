@@ -124,11 +124,11 @@ export default function ProfileServices({
                 <div>
                     <h2
                         id="profile-services-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section"
                     >
                         Services
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Select the services you offer to clients.
                     </p>
                 </div>

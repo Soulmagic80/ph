@@ -54,7 +54,7 @@ export async function POST(_request: NextRequest) {
             const base64Data = body.file.split(',')[1] // Remove data:image/jpeg;base64, prefix
             const buffer = Buffer.from(base64Data, 'base64')
             
-            // Generate unique filename
+            // Generate unique filename in user folder
             const timestamp = Date.now()
             const randomString = Math.random().toString(36).substring(2, 15)
             const fileExtension = body.fileName.split('.').pop()

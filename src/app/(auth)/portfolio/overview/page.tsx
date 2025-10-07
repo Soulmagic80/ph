@@ -17,6 +17,7 @@ export default function PortfolioOverview() {
     const {
         portfolio,
         status,
+        published,
         feedbackCount: portfolioFeedbackCount,
         canEdit,
         canPreview,
@@ -102,7 +103,11 @@ export default function PortfolioOverview() {
             case 'pending':
                 return { text: 'Pending Review', variant: 'warning' as const, icon: Clock };
             case 'approved':
-                return { text: 'Approved', variant: 'success' as const, icon: CheckCircle2 };
+                if (published) {
+                    return { text: 'Published', variant: 'success' as const, icon: CheckCircle2 };
+                } else {
+                    return { text: 'In Queue', variant: 'success' as const, icon: Clock };
+                }
             case 'declined':
                 return { text: 'Declined', variant: 'error' as const, icon: XCircle };
             default:
@@ -122,7 +127,11 @@ export default function PortfolioOverview() {
             case 'pending':
                 return 'Your portfolio is pending admin approval.';
             case 'approved':
-                return 'Your portfolio has been approved and is now live!';
+                if (published) {
+                    return 'Your portfolio has been approved and is now live!';
+                } else {
+                    return 'Your portfolio has been approved and is waiting to be published.';
+                }
             case 'declined':
                 return `Your portfolio was declined. Reason: ${portfolio.declined_reason || 'N/A'}`;
             default:
@@ -137,7 +146,7 @@ export default function PortfolioOverview() {
         const step3Status = getStepStatus(3);
 
         // If no portfolio exists yet, show "Get Started"
-        if (status === 'none') {
+        if (!portfolio) {
             return (
                 <Button asChild>
                     <Link href="/portfolio/upload#portfolio-actions">
@@ -169,7 +178,19 @@ export default function PortfolioOverview() {
             );
         }
 
-        // If portfolio can be previewed (approved, declined, pending)
+        // If portfolio is published, show "See Portfolio" (link to live version)
+        if (status === 'approved' && published && portfolio) {
+            return (
+                <Button asChild variant="secondary">
+                    <Link href={`/portfolios/${portfolio.id}`}>
+                        <Eye size={16} className="mr-2" />
+                        See Portfolio
+                    </Link>
+                </Button>
+            );
+        }
+
+        // If portfolio can be previewed (approved but not published, declined, pending)
         if (canPreview && (status === 'approved' || status === 'declined' || status === 'pending')) {
             return (
                 <Button asChild variant="secondary">
@@ -279,11 +300,11 @@ export default function PortfolioOverview() {
                     <div>
                         <h2
                             id="overview-heading"
-                            className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                            className="heading-section"
                         >
                             Upload Status
                         </h2>
-                        <p className="mt-2 text-sm leading-6 text-gray-500">
+                        <p className="text-small mt-2">
                             Follow the steps to upload your portfolio. This allows you to showcase your work publicly.
                         </p>
                     </div>
@@ -329,23 +350,21 @@ export default function PortfolioOverview() {
                                 </div>
 
                                 {/* Portfolio Status Summary */}
-                                {(portfolio && status !== 'none') || status === 'none' ? (
-                                    <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4 mb-6">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex-1">
-                                                <h3 className="font-medium text-blue-900 dark:text-blue-100">
-                                                    {portfolio ? `Portfolio: ${portfolio.title || 'Untitled'}` : 'Ready to get started?'}
-                                                </h3>
-                                                <p className="text-blue-700 dark:text-blue-300 text-sm mt-1">
-                                                    {statusMessage || 'Create your first portfolio to showcase your work.'}
-                                                </p>
-                                            </div>
-                                            <div className="ml-4 flex-shrink-0">
-                                                {getPrimaryAction()}
-                                            </div>
+                                <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4 mb-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <h3 className="font-medium text-blue-900 dark:text-blue-100">
+                                                {portfolio ? `Portfolio: ${portfolio.title || 'Untitled'}` : 'Ready to get started?'}
+                                            </h3>
+                                            <p className="text-blue-700 dark:text-blue-300 text-sm mt-1">
+                                                {statusMessage || 'Create your first portfolio to showcase your work.'}
+                                            </p>
+                                        </div>
+                                        <div className="ml-4 flex-shrink-0">
+                                            {getPrimaryAction()}
                                         </div>
                                     </div>
-                                ) : null}
+                                </div>
 
                                 {/* Steps List */}
                                 <ul role="list" className="space-y-4">

@@ -10,10 +10,10 @@ export function Hero() {
             </p>
 
             {/* Main heading */}
-            <h1 className="text-[36px] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[56px] font-geist-sans font-semibold max-w-5xl text-balance tracking-[-0.06em] leading-[1.05] text-supergrey-100 dark:text-gray-50 relative z-10">
+            <h1 className="heading-hero-lg font-geist-sans max-w-5xl text-balance relative z-10">
                 Get feedback. Get upvotes.
                 <br />
-                Get <span className="relative inline-block bg-gradient-to-r from-pink-100 to-[#3474DB] dark:from-pinkdark-200 dark:to-[#3474DB] bg-clip-text text-transparent">
+                Get <span className="relative inline-block bg-gradient-to-r from-pink-100 to-blue-primary dark:from-pinkdark-200 dark:to-blue-primary bg-clip-text text-transparent">
                     noticed
                     <svg
                         className="absolute -bottom-3 left-0 w-full h-4"
@@ -24,19 +24,19 @@ export function Hero() {
                         <defs>
                             <linearGradient id="gradient-pink-blue" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style={{ stopColor: '#FF006A', stopOpacity: 0.65 }} />
-                                <stop offset="100%" style={{ stopColor: '#3474DB', stopOpacity: 0.65 }} />
+                                <stop offset="100%" style={{ stopColor: 'var(--blue-primary)', stopOpacity: 0.65 }} />
                             </linearGradient>
                             <linearGradient id="gradient-pink-blue-2" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style={{ stopColor: '#FF006A', stopOpacity: 0.75 }} />
-                                <stop offset="100%" style={{ stopColor: '#3474DB', stopOpacity: 0.75 }} />
+                                <stop offset="100%" style={{ stopColor: 'var(--blue-primary)', stopOpacity: 0.75 }} />
                             </linearGradient>
                             <linearGradient id="gradient-pink-blue-3" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style={{ stopColor: '#FF006A', stopOpacity: 0.8 }} />
-                                <stop offset="100%" style={{ stopColor: '#3474DB', stopOpacity: 0.8 }} />
+                                <stop offset="100%" style={{ stopColor: 'var(--blue-primary)', stopOpacity: 0.8 }} />
                             </linearGradient>
                             <linearGradient id="gradient-pink-blue-4" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style={{ stopColor: '#FF006A', stopOpacity: 0.85 }} />
-                                <stop offset="100%" style={{ stopColor: '#3474DB', stopOpacity: 0.85 }} />
+                                <stop offset="100%" style={{ stopColor: 'var(--blue-primary)', stopOpacity: 0.85 }} />
                             </linearGradient>
                         </defs>
                         {/* Erste Linie - etwas versetzt */}
@@ -77,7 +77,7 @@ export function Hero() {
             </h1>
 
             {/* Subtitle - gleiche Schriftgröße wie Tremor */}
-            <p className="text-base text-balance sm:text-lg font-geist-sans font-normal leading-[1.6] text-gray-600 dark:text-gray-400 max-w-2xl relative z-10">
+            <p className="text-body font-geist-sans text-balance max-w-2xl relative z-10">
                 Submit your portfolio, earn upvotes and valuable feedback from the design community. Help others and maximize your visibility.
             </p>
 
@@ -85,7 +85,7 @@ export function Hero() {
             <div className="flex items-center gap-3 mt-4">
                 <Link
                     href="/getting-started"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-[#3474DB] hover:bg-[#3474DB]/90 dark:bg-[#3474DB] dark:hover:bg-[#3474DB]/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3474DB] focus-visible:ring-offset-2 relative z-10"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-blue-primary hover:bg-blue-primary/90 dark:bg-blue-primary dark:hover:bg-blue-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary focus-visible:ring-offset-2 relative z-10"
                 >
                     Get Started
                 </Link>

@@ -7,7 +7,7 @@ import { List } from "@phosphor-icons/react";
 import { Session } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MobileSidebar from "./MobileSidebar";
 import { ToolkitDropdown } from "./ToolkitDropdown";
@@ -19,6 +19,8 @@ interface NavbarProps {
 
 export function Navbar({ initialSession }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,8 +48,8 @@ export function Navbar({ initialSession }: NavbarProps) {
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'border-b border-beige-100 dark:border-gray-800 bg-white/75 dark:bg-gray-950/75 backdrop-blur-sm' 
-        : 'border-b border-beige-100 dark:border-gray-800/15 bg-transparent'
+        ? 'border-b border-beige-100 dark:border-gray-800 bg-white dark:bg-gray-900' 
+        : `border-b border-beige-100 ${isHomePage ? 'dark:border-gray-800/15 bg-transparent' : 'dark:border-gray-800/50 bg-white dark:bg-gray-900'}`
     }`}>
       <div className="max-w-7xl mx-auto px-5 md:px-10 h-16">
         <nav className="flex h-full items-center justify-between">
@@ -101,7 +103,7 @@ export function Navbar({ initialSession }: NavbarProps) {
                     </Button>
                   </Link>
                   <Link href="/auth/login/register">
-                    <Button variant="primary" className="text-sm font-normal bg-[#3474DB] hover:bg-[#3474DB]/90 dark:bg-[#3474DB] dark:hover:bg-[#3474DB]/90">
+                    <Button variant="primary" className="text-sm font-normal bg-blue-primary hover:bg-blue-primary/90 dark:bg-blue-primary dark:hover:bg-blue-primary/90">
                       Sign Up
                     </Button>
                   </Link>

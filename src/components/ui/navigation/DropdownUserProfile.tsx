@@ -57,7 +57,7 @@ export function DropdownUserProfile({
         <DropdownMenuTrigger asChild onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} suppressHydrationWarning>{children}</DropdownMenuTrigger>
         <DropdownMenuContent
           className={cx(
-            "z-50 min-w-[10rem] overflow-hidden rounded-md border bg-white p-1 text-gray-900 shadow-md dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50",
+            "z-50 min-w-[11rem] overflow-hidden rounded-md border bg-white p-1 text-gray-900 shadow-md dark:border-gray-700/50 dark:bg-gray-850 dark:text-gray-50",
             "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           )}
           sideOffset={5}
@@ -105,21 +105,21 @@ export function DropdownUserProfile({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => handleNavigation("/user/profile")} className="gap-x-2.5">
+            <DropdownMenuItem onClick={() => handleNavigation("/user/profile")} className="gap-x-3.5">
               <UserCircle className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleNavigation("/user/account")} className="gap-x-2.5">
+            <DropdownMenuItem onClick={() => handleNavigation("/user/account")} className="gap-x-3.5">
               <Settings className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
               Account
             </DropdownMenuItem>
             {profile?.is_admin ? (
-              <DropdownMenuItem onClick={() => handleNavigation("/admin/portfolios")} className="gap-x-2.5">
+              <DropdownMenuItem onClick={() => handleNavigation("/admin/portfolios")} className="gap-x-3.5">
                 <Shield className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 Admin
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem onClick={() => handleNavigation("/portfolio/overview")} className="gap-x-2.5">
+              <DropdownMenuItem onClick={() => handleNavigation("/portfolio/overview")} className="gap-x-3.5">
                 <Briefcase className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 My Portfolio
               </DropdownMenuItem>
@@ -127,7 +127,7 @@ export function DropdownUserProfile({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={onSignOut} className="gap-x-2.5">
+            <DropdownMenuItem onClick={onSignOut} className="gap-x-3.5">
               <LogOut className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
               Logout
             </DropdownMenuItem>

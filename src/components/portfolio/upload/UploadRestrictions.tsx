@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/Button'
 import { usePortfolioStatus } from '@/hooks/portfolio/usePortfolioStatus'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { AlertCircle, Edit, Eye, RotateCcw, Send, Trash2, Upload } from 'lucide-react'
+import { AlertCircle, Eye, RotateCcw, Save, Send, Trash2, Upload } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { SaveConfirmModal } from './SaveConfirmModal'
 
 interface UploadRestrictionsProps {
     user: User | null
@@ -31,6 +32,7 @@ interface UploadRestrictionsProps {
         canClearAll: boolean
         canEdit: boolean
         showEditButton: boolean
+        showWithdrawButton: boolean
         statusMessage: string
         isLoading: boolean
     }
@@ -53,15 +55,21 @@ export default function UploadRestrictions({
     const [feedbackCount, setFeedbackCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
     const [isLoadingRestrictions, setIsLoadingRestrictions] = useState(true)
+    const [showSaveModal, setShowSaveModal] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
 
     // Use passed portfolio status or fallback to hook
     const fallbackStatus = usePortfolioStatus()
     const {
         status,
+        approved: _approved,
+        published,
+        is_visible,
         canSubmit,
         canPreview,
         canClearAll,
-        canEdit,
+        canEdit: _canEdit,
+        showWithdrawButton,
         isLoading: isStatusLoading,
         error: statusError,
         withdrawPortfolio,
@@ -69,11 +77,28 @@ export default function UploadRestrictions({
         refetch: refetchStatus
     } = portfolioStatus ? {
         ...portfolioStatus,
+        approved: fallbackStatus.approved,
+        published: fallbackStatus.published,
+        is_visible: fallbackStatus.is_visible,
         error: null,
         withdrawPortfolio: fallbackStatus.withdrawPortfolio,
         resubmitPortfolio: fallbackStatus.resubmitPortfolio,
         refetch: fallbackStatus.refetch
     } : fallbackStatus
+
+    // 🔍 DEBUG: Log portfolio status capabilities
+    console.log('🎯 UploadRestrictions - Status Capabilities:', {
+        status,
+        canSubmit,
+        canPreview,
+        canClearAll,
+        showWithdrawButton,
+        hasCallbacks: {
+            onSubmit: !!onSubmit,
+            onPreview: !!onPreview,
+            onClearAll: !!onClearAll
+        }
+    })
 
     const supabase = useMemo(() => createClient(), [])
 
@@ -152,11 +177,23 @@ export default function UploadRestrictions({
         const hasValidImages = formData.images.length > 0 &&
             formData.images.some(img => img && (img.url || img.uploaded))
 
-        return (
+        const isValid = (
             formData.title.trim().length > 0 &&
             formData.websiteUrl.trim().length > 0 &&
             hasValidImages
         )
+
+        // 🔍 DEBUG: Log form validation
+        console.log('📝 UploadRestrictions - Form Validation:', {
+            hasFormData: !!formData,
+            title: formData?.title || '',
+            websiteUrl: formData?.websiteUrl || '',
+            imageCount: formData?.images.length || 0,
+            hasValidImages,
+            isValid
+        })
+
+        return isValid
     }, [formData])
 
     // Final canUpload determination
@@ -187,6 +224,33 @@ export default function UploadRestrictions({
             }
         } catch (error) {
             toast.error('Failed to resubmit portfolio')
+        }
+    }
+
+    // Handle save & publish (for published offline portfolios)
+    const handleSaveAndPublish = async () => {
+        setIsSaving(true)
+        try {
+            const response = await fetch('/api/portfolios/publish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+
+            const result = await response.json()
+
+            if (response.ok && result.success) {
+                toast.success('Portfolio published successfully!')
+                setShowSaveModal(false)
+                await refetchStatus()
+                onStatusChange?.()
+            } else {
+                toast.error(result.error || 'Failed to publish portfolio')
+            }
+        } catch (error) {
+            console.error('Error publishing portfolio:', error)
+            toast.error('Failed to publish portfolio')
+        } finally {
+            setIsSaving(false)
         }
     }
 
@@ -243,14 +307,14 @@ export default function UploadRestrictions({
     return (
         <section aria-labelledby="actions-heading">
             <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
-                <div>
-                    <h2
-                        id="actions-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
-                    >
-                        Portfolio Actions
-                    </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <div>
+                        <h2
+                            id="actions-heading"
+                            className="heading-section"
+                        >
+                            Portfolio Actions
+                        </h2>
+                        <p className="text-small mt-2">
                         {isAdmin
                             ? "As an admin, you can upload portfolios without restrictions."
                             : "Manage your portfolio submission with the available actions below."
@@ -259,6 +323,17 @@ export default function UploadRestrictions({
                 </div>
                 <div className="md:col-span-2 md:pl-16">
                     <div id="portfolio-actions" className="space-y-6 scroll-mt-20">
+                        {/* 🔍 DEBUG: Log render conditions */}
+                        {(() => {
+                            console.log('🎨 UploadRestrictions - Render Check:', {
+                                willRenderClearAll: canClearAll && !!onClearAll,
+                                willRenderPreview: canPreview && !!onPreview,
+                                willRenderSubmit: (canSubmit || isAdmin) && !!onSubmit,
+                                willRenderWithdraw: showWithdrawButton
+                            });
+                            return null;
+                        })()}
+                        
                         {/* Admin Badge */}
                         {isAdmin && (
                             <div className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
@@ -305,17 +380,20 @@ export default function UploadRestrictions({
                             </div>
                         )}
 
-                        {/* Edit Card - Only in Read-Only Mode */}
-                        {!canEdit && status === 'pending' && (
+                        {/* Withdraw Card - For pending, approved (in queue), and published */}
+                        {showWithdrawButton && (
                             <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-800">
                                 <div className="flex items-center gap-5">
-                                    <Edit size={17} className="flex-shrink-0 text-gray-400" />
+                                    <RotateCcw size={17} className="flex-shrink-0 text-gray-400" />
                                     <div>
                                         <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                                            Edit Portfolio
+                                            Withdraw Portfolio
                                         </h3>
                                         <p className="mt-1 text-sm text-gray-500">
-                                            Withdraw your portfolio from review to make changes.
+                                            {status === 'pending' 
+                                                ? 'Withdraw your portfolio from review to make changes.'
+                                                : 'Withdraw your portfolio from public view to make changes.'
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -365,6 +443,31 @@ export default function UploadRestrictions({
                                     variant="secondary"
                                 >
                                     Preview
+                                </Button>
+                            </div>
+                        )}
+
+                        {/* Save & Publish Card - For published (offline) portfolios */}
+                        {status === 'approved' && published && !is_visible && (
+                            <div className="flex items-center justify-between rounded-lg border border-blue-200 p-4 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+                                <div className="flex items-center gap-5">
+                                    <Save size={17} className="flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                                    <div>
+                                        <h3 className="text-sm font-medium text-blue-900 dark:text-blue-50">
+                                            Save & Publish
+                                        </h3>
+                                        <p className="mt-1 text-sm text-blue-700 dark:text-blue-300">
+                                            Your portfolio is currently offline. Save your changes to publish it live.
+                                        </p>
+                                    </div>
+                                </div>
+                                <Button
+                                    type="button"
+                                    onClick={() => setShowSaveModal(true)}
+                                    disabled={isSubmitting || isSaving}
+                                    variant="primary"
+                                >
+                                    {isSaving ? 'Publishing...' : 'Save & Publish'}
                                 </Button>
                             </div>
                         )}
@@ -442,6 +545,14 @@ export default function UploadRestrictions({
                     </div>
                 </div>
             </div>
+
+            {/* Save Confirmation Modal */}
+            <SaveConfirmModal
+                isOpen={showSaveModal}
+                onClose={() => setShowSaveModal(false)}
+                onConfirm={handleSaveAndPublish}
+                isLoading={isSaving}
+            />
         </section>
     )
 }

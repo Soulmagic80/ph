@@ -41,10 +41,10 @@ const DropdownMenuSubMenuTrigger = React.forwardRef<
       "text-gray-900 dark:text-gray-50",
       // disabled
       "data-[disabled]:pointer-events-none data-[disabled]:text-gray-400 data-[disabled]:hover:bg-none dark:data-[disabled]:text-gray-600",
-      // focus
-      "focus-visible:bg-gray-100 data-[state=open]:bg-gray-100 focus-visible:dark:bg-gray-900 data-[state=open]:dark:bg-gray-900",
       // hover
-      "hover:bg-gray-100 hover:dark:bg-gray-900",
+      "hover:bg-gray-100 hover:dark:bg-gray-800",
+      // focus (removed - was overriding hover)
+      // "focus-visible:bg-gray-100 data-[state=open]:bg-gray-100 focus-visible:dark:bg-gray-900 data-[state=open]:dark:bg-gray-900",
       //
       className,
     )}
@@ -71,15 +71,15 @@ const DropdownMenuSubMenuContent = React.forwardRef<
         // base
         "relative z-50 overflow-hidden rounded-md border p-1 shadow-xl shadow-black/[2.5%]",
         // widths
-        "min-w-40",
+        "min-w-48",
         // heights
         "max-h-[var(--radix-popper-available-height)]",
         // background color
-        "bg-white dark:bg-gray-950",
+        "bg-white dark:bg-gray-850",
         // text color
         "text-gray-900 dark:text-gray-50",
         // border color
-        "border-gray-200 dark:border-gray-800",
+        "border-gray-200 dark:border-gray-700/50",
         // transition
         "will-change-[transform,opacity]",
         // "data-[state=open]:animate-slideDownAndFade",
@@ -115,15 +115,15 @@ const DropdownMenuContent = React.forwardRef<
           // base
           "relative z-50 overflow-hidden rounded-md border p-1 shadow-xl shadow-black/[2.5%]",
           // widths
-          "min-w-48",
+          "min-w-56",
           // heights
           "max-h-[var(--radix-popper-available-height)]",
           // background color
-          "bg-white dark:bg-gray-950",
+          "bg-white dark:bg-gray-850",
           // text color
           "text-gray-900 dark:text-gray-50",
           // border color
-          "border-gray-200 dark:border-gray-800",
+          "border-gray-200 dark:border-gray-700/50",
           // transition
           "will-change-[transform,opacity]",
           "data-[state=closed]:animate-hide",
@@ -153,15 +153,15 @@ const DropdownMenuItem = React.forwardRef<
     ref={forwardedRef}
     className={cx(
       // base
-      "group/DropdownMenuItem relative flex cursor-pointer select-none items-center rounded py-2 pl-2.5 pr-2 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
+      "group/DropdownMenuItem relative flex cursor-pointer select-none items-center rounded py-2.5 pl-3 pr-3 outline-none transition-colors data-[state=checked]:font-semibold sm:text-sm font-normal",
       // text color
       "text-gray-900 dark:text-gray-50",
       // disabled
       "data-[disabled]:pointer-events-none data-[disabled]:text-gray-400 data-[disabled]:hover:bg-none dark:data-[disabled]:text-gray-600",
-      // focus
-      "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
       // hover
-      "hover:bg-gray-100 hover:dark:bg-gray-900",
+      "hover:bg-gray-100 hover:dark:bg-gray-800",
+      // focus (removed - was overriding hover)
+      // "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
       className,
     )}
     tremor-id="tremor-raw"
@@ -206,10 +206,10 @@ const DropdownMenuCheckboxItem = React.forwardRef<
         "text-gray-900 dark:text-gray-50",
         // disabled
         "data-[disabled]:pointer-events-none data-[disabled]:text-gray-400 data-[disabled]:hover:bg-none dark:data-[disabled]:text-gray-600",
-        // focus
-        "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
         // hover
-        "hover:bg-gray-100 hover:dark:bg-gray-900",
+        "hover:bg-gray-100 hover:dark:bg-gray-800",
+        // focus (removed - was overriding hover)
+        // "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
         className,
       )}
       checked={checked}
@@ -268,10 +268,10 @@ const DropdownMenuRadioItem = React.forwardRef<
         "text-gray-900 dark:text-gray-50",
         // disabled
         "data-[disabled]:pointer-events-none data-[disabled]:text-gray-400 data-[disabled]:hover:bg-none dark:data-[disabled]:text-gray-600",
-        // focus
-        "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
         // hover
-        "hover:bg-gray-100 hover:dark:bg-gray-900",
+        "hover:bg-gray-100 hover:dark:bg-gray-800",
+        // focus (removed - was overriding hover)
+        // "focus-visible:bg-gray-100 focus-visible:dark:bg-gray-900",
         className,
       )}
       {...props}
@@ -344,7 +344,7 @@ const DropdownMenuSeparator = React.forwardRef<
   <DropdownMenuPrimitives.Separator
     ref={forwardedRef}
     className={cx(
-      "-mx-1 my-1 h-px border-t border-gray-200 dark:border-gray-800",
+      "-mx-1 my-1 h-px border-t border-gray-200 dark:border-gray-700/50",
       className,
     )}
     {...props}

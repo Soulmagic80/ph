@@ -1,3 +1,4 @@
+import { PreviewBanner } from "@/components/portfolio/detail/PreviewBanner";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
@@ -45,11 +46,11 @@ export default async function PortfolioDetailPage({ params }: PortfolioDetailPag
         .eq("id", id)
         .is("deleted_at", null);  // Exclude soft-deleted portfolios
 
-    // Only filter by published status for non-admins, but allow users to see their own drafts
+    // Only filter by published status for non-admins, but allow users to see their own portfolios
     if (!isAdmin) {
         if (user) {
-            // Allow published portfolios OR own drafts
-            query = query.or(`published.eq.true,and(user_id.eq.${user.id},status.eq.draft)`);
+            // Allow published portfolios OR own portfolios (draft/pending/approved)
+            query = query.or(`published.eq.true,user_id.eq.${user.id}`);
         } else {
             // Non-authenticated users can only see published portfolios
             query = query.eq("published", true);
@@ -58,8 +59,17 @@ export default async function PortfolioDetailPage({ params }: PortfolioDetailPag
 
     const { data: portfolio, error } = await query.single();
 
+    // 🔍 DEBUG: Log query result
+    console.log('🔍 Portfolio Detail Query:', {
+        id,
+        userId: user?.id,
+        isAdmin,
+        hasPortfolio: !!portfolio,
+        error: error?.message
+    });
 
     if (error || !portfolio) {
+        console.error('❌ Portfolio not found or error:', error);
         notFound();
     }
 
@@ -124,5 +134,14 @@ export default async function PortfolioDetailPage({ params }: PortfolioDetailPag
         } : null
     };
 
-    return <PortfolioDetailClient portfolio={portfolioWithRanking as any} user={user} />;
+    // Determine if preview banner should be shown
+    const isOwner = user && portfolio.user_id === user.id;
+    const showPreviewBanner = !portfolio.published && (isOwner || isAdmin);
+
+    return (
+        <>
+            <PreviewBanner isVisible={showPreviewBanner} />
+            <PortfolioDetailClient portfolio={portfolioWithRanking as any} user={user} />
+        </>
+    );
 }

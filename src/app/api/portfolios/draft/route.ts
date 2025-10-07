@@ -30,7 +30,7 @@ interface DraftPortfolioRequest {
     title?: string
     websiteUrl?: string
     description?: string
-    images?: string[] // Array of image URLs from storage
+    images?: string[] // Array of image URLs or storage paths
     tools?: Array<{
         id: string
         name: string
@@ -43,6 +43,18 @@ interface DraftPortfolioRequest {
         display_name: string
         category: string
     }>
+}
+
+// Helper: Extract storage path from URL
+function extractStoragePathFromUrl(urlOrPath: string): string {
+    // If already a path (not URL), return as-is
+    if (!urlOrPath.startsWith('http')) {
+        return urlOrPath
+    }
+    
+    // Extract path from URL: https://.../storage/v1/object/public/portfolio-images/{path}
+    const match = urlOrPath.match(/\/portfolio-images\/(.+)$/)
+    return match ? match[1] : urlOrPath
 }
 
 export async function POST(_request: NextRequest) {
@@ -62,12 +74,14 @@ export async function POST(_request: NextRequest) {
         const body: DraftPortfolioRequest = await _request.json()
         
         
-        // Check if user already has a draft
+        // Check if user already has a draft or pending portfolio
         const { data: existingDraft, error: draftCheckError } = await supabase
             .from('portfolios')
-            .select('id')
+            .select('id, status')
             .eq('user_id', user.id)
-            .eq('status', 'draft')
+            .in('status', ['draft', 'pending'])
+            .order('updated_at', { ascending: false })
+            .limit(1)
             .maybeSingle()
 
         if (draftCheckError) {
@@ -82,6 +96,9 @@ export async function POST(_request: NextRequest) {
 
         if (existingDraft) {
             // Update existing draft
+            
+            // Convert image URLs to storage paths
+            const imagePaths = body.images ? body.images.map(extractStoragePathFromUrl) : undefined
 
             const { data: updatedDraft, error: updateError } = await supabase
                 .from('portfolios')
@@ -91,9 +108,9 @@ export async function POST(_request: NextRequest) {
                         website_url: body.websiteUrl?.trim() ? normalizeWebsiteUrl(body.websiteUrl.trim()) : null 
                     }),
                     ...(body.description !== undefined && { description: body.description }),
-                    images: body.images || [],
-                    tags: body.tags || [],
-                    style: body.styles ? body.styles.map(s => s.name) : [],
+                    ...(imagePaths !== undefined && { images: imagePaths }),
+                    ...(body.tags !== undefined && { tags: body.tags }),
+                    ...(body.styles !== undefined && { style: body.styles.map(s => s.name) }),
                     updated_at: now
                 })
                 .eq('id', existingDraft.id)
@@ -146,10 +163,14 @@ export async function POST(_request: NextRequest) {
 
         } else {
             // Create new draft
+            
+            // Convert image URLs to storage paths
+            const imagePaths = body.images ? body.images.map(extractStoragePathFromUrl) : []
+            
             // Build insert object with only defined values
             const insertData: any = {
                 user_id: user.id,
-                images: body.images || [],
+                images: imagePaths,
                 tags: body.tags || [],
                 style: body.styles ? body.styles.map(s => s.name) : [],
                 status: 'draft',
@@ -227,13 +248,15 @@ export async function GET() {
             )
         }
 
-        // Get user's draft
+        // Get user's draft or pending portfolio (for editing)
         const { data: draft, error: draftError } = await supabase
             .from('portfolios')
             .select('*')
             .eq('user_id', user.id)
-            .eq('status', 'draft')
+            .in('status', ['draft', 'pending'])
             .is('deleted_at', null)  // Exclude soft-deleted drafts
+            .order('updated_at', { ascending: false })
+            .limit(1)
             .maybeSingle()
             
             
@@ -276,6 +299,17 @@ export async function GET() {
             category: null
         }));
 
+        // Convert storage paths to full URLs
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const imageUrls = (draft.images || []).map((path: string) => {
+            // If already a full URL, return as-is
+            if (path.startsWith('http')) {
+                return path
+            }
+            // Convert path to URL
+            return `${SUPABASE_URL}/storage/v1/object/public/portfolio-images/${path}`
+        })
+
         return NextResponse.json({
             success: true,
             draft: {
@@ -283,7 +317,7 @@ export async function GET() {
                 title: draft.title,
                 website_url: draft.website_url,
                 description: draft.description,
-                images: draft.images || [],
+                images: imageUrls,
                 tags: draft.tags || [],
                 tools: formattedTools,
                 styles: formattedStyles,

@@ -108,11 +108,11 @@ export default function PortfolioDetails({ portfolio }: PortfolioDetailsProps) {
                 <div>
                     <h2
                         id="portfolio-details-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section scroll-mt-10"
                     >
                         Portfolio Details
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small">
                         View detailed information about this portfolio including upload date, upvotes, and tags.
                     </p>
                 </div>

@@ -101,7 +101,7 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
 
   return (
     <>
-      <Link href={portfolioLink} className="block w-full h-fit bg-white dark:bg-gray-900 outline outline-1 outline-beige-300 dark:outline-gray-800 rounded-lg hover:scale-[1.03] hover:shadow-lg transition-all duration-200 relative group">
+      <Link href={portfolioLink} className="block w-full h-fit bg-white dark:bg-gray-800 outline outline-1 outline-beige-300 dark:outline-gray-800 rounded-lg hover:scale-[1.03] hover:shadow-lg transition-all duration-200 relative group">
         {/* Plus symbols at corners - COMMENTED OUT FOR NOW */}
         {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="absolute h-6 w-6 -top-3 -left-3 text-black/[0.2] dark:text-white/[0.2] transition-colors duration-200">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"></path>
@@ -165,10 +165,10 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
                 handleUpvote(e);
               }}
               disabled={isUpvoting}
-              className={`w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-925 border-[2px] border-[#000000] dark:border-gray-800 rounded-md flex flex-col items-center justify-center gap-0 hover:border-[#3474DB] dark:hover:border-[#3474DB] group/upvote ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-11 h-11 min-w-11 min-h-11 bg-white dark:bg-gray-800 border-[2px] border-[#000000] dark:border-gray-700/50 rounded-md flex flex-col items-center justify-center gap-0 hover:border-blue-primary dark:hover:border-gray-700/50 dark:hover:bg-gray-800 group/upvote ${isUpvoting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <OptimizedImage src="/upvote.svg" alt="Upvote" width={12} height={12} className={`dark:invert group-hover/upvote:brightness-0 group-hover/upvote:saturate-100 group-hover/upvote:[filter:invert(47%)_sepia(96%)_saturate(1588%)_hue-rotate(195deg)_brightness(94%)_contrast(91%)] ${isUpvoting ? 'animate-pulse' : ''}`} />
-              <span className="text-xs font-geist font-semibold text-black dark:text-white group-hover/upvote:text-[#3474DB]">{upvoteCount}</span>
+              <OptimizedImage src="/upvote.svg" alt="Upvote" width={12} height={12} className={`dark:invert ${isUpvoting ? 'animate-pulse' : ''}`} />
+              <span className="text-xs font-geist font-semibold text-black dark:text-white">{upvoteCount}</span>
             </button>
           </div>
         </div>

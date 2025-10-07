@@ -6,10 +6,10 @@ import { usePortfolioStatus } from "@/hooks/portfolio/usePortfolioStatus";
 import { useAuth } from "@/hooks/shared/useAuth";
 import { getPortfolioImageUrl } from '@/lib/imageUtils';
 import { createClient } from "@/lib/supabase/client";
-import { Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { StatusBadge } from "./StatusBadge";
 import BasicInfoSection from "./BasicInfoSection";
 import ImageUploadSection from "./ImageUploadSection";
 import StyleSection from "./StyleSection";
@@ -86,27 +86,40 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
         refetch,
         isLoading: statusLoading,
         status,
+        approved: _approved,
+        published,
+        is_visible,
         canSubmit,
         canPreview,
         canClearAll,
         showEditButton,
+        showWithdrawButton,
         statusMessage
     } = isAdmin ? {
         canEdit: true,
         portfolio: null, // Always null for admin
         refetch: async () => { },
         isLoading: false,
-        status: 'none' as const,
+        status: 'draft' as const,
+        approved: false,
+        published: false,
+        is_visible: true,
         canSubmit: true,
         canPreview: true,
         canClearAll: true,
         showEditButton: false,
+        showWithdrawButton: false,
         statusMessage: 'Admin can upload unlimited portfolios'
     } : portfolioStatusHook;
 
     // Determine if form should be read-only
-    // Only show read-only mode if we have a portfolio AND can't edit (prevents flash)
-    const isReadOnly = !canEdit && !isAdmin && portfolio && !statusLoading;
+    // Read-only if: pending, approved (in queue), or published (online)
+    // Editable if: draft, declined, or published (offline)
+    const isReadOnly = !isAdmin && portfolio && !statusLoading && (
+        status === 'pending' || 
+        (status === 'approved' && !published) || 
+        (status === 'approved' && published && is_visible)
+    );
 
     // Handle anchor scrolling on component mount
     useEffect(() => {
@@ -207,18 +220,15 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                 if (response.ok) {
                     const result = await response.json();
                     if (result.draft) {
-
                         // Process websiteUrl - remove https:// prefix if present
                         let processedWebsiteUrl = result.draft.website_url || '';
                         if (processedWebsiteUrl.startsWith('https://')) {
                             processedWebsiteUrl = processedWebsiteUrl.replace('https://', '');
                         }
 
-                        setFormData(prev => {
-                            // Don't overwrite images if they're already set (e.g., from onStatusChange)
-                            const shouldUpdateImages = prev.images.length === 0;
-
-                            const draftImages = shouldUpdateImages && result.draft.images ? result.draft.images
+                        setFormData(() => {
+                            // Always load images from draft if available
+                            const draftImages = result.draft.images ? result.draft.images
                                 .filter((url: string | null) => url !== null && url !== '') // Filter out null/empty values
                                 .map((imagePath: string, index: number) => {
                                     const fullImageUrl = getPortfolioImageUrl(result.draft.id, imagePath);
@@ -229,7 +239,7 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                                         uploaded: true,
                                         url: fullImageUrl
                                     };
-                                }) : prev.images; // Keep existing images if not updating
+                                }) : [];
 
                             return {
                                 title: result.draft.title || '',
@@ -361,6 +371,9 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                 router.push('/portfolio/overview');
             } else {
                 // Default submission logic
+                const imagesToSubmit = formData.images.map(img => img.url || img.preview);
+                console.log('📤 Submitting images:', imagesToSubmit);
+                
                 const response = await fetch('/api/portfolios/upload', {
                     method: 'POST',
                     headers: {
@@ -370,7 +383,7 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                         title: formData.title,
                         websiteUrl: formData.websiteUrl,
                         description: formData.description,
-                        images: formData.images.map(img => img.url || img.preview),
+                        images: imagesToSubmit,
                         tools: formData.tools,
                         tags: formData.tags,
                         styles: formData.styles
@@ -415,24 +428,8 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                     return;
                 }
 
-                // Create preview URL with submitted portfolio data
-                const previewData = {
-                    title: portfolio.title,
-                    websiteUrl: portfolio.website_url,
-                    description: portfolio.description || '',
-                    images: portfolio.images || [], // Send original image paths
-                    portfolioId: portfolio.id, // Send portfolio ID for URL conversion
-                    tools: portfolio.tools || [],
-                    tags: portfolio.tags || [],
-                    styles: portfolio.style || []
-                };
-
-                const queryParams = new URLSearchParams({
-                    preview: 'true',
-                    data: JSON.stringify(previewData)
-                });
-
-                const previewUrl = `/portfolio/preview?${queryParams.toString()}`;
+                // Open the actual portfolio detail page (which will show the preview banner)
+                const previewUrl = `/portfolios/${portfolio.id}`;
                 window.open(previewUrl, '_blank');
                 return;
 
@@ -612,24 +609,18 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                     <div>
                         <h2
                             id="images-heading"
-                            className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                            className="heading-section"
                         >
                             Portfolio Images
                         </h2>
-                        <p className="mt-2 text-sm leading-6 text-gray-500">
+                        <p className="text-small mt-2">
                             Upload up to 4 high-quality images that showcase your work. The first image will be used as the main thumbnail.
                         </p>
                         {isReadOnly && (
-                            <div className="inline-flex items-center px-2 py-1 mt-3 rounded text-xs font-medium bg-orange-50 text-orange-900 ring-1 ring-orange-500/30 dark:bg-orange-400/10 dark:text-orange-400 dark:ring-orange-400/30">
-                                <Clock className="w-3 h-3 mr-1.5" />
-                                PENDING APPROVAL
-                            </div>
+                            <StatusBadge status={status} published={published} isVisible={is_visible} />
                         )}
                     </div>
-                    <div className="md:col-span-2 md:pl-16 relative">
-                        {isReadOnly && (
-                            <div className="absolute inset-0 bg-white/90 dark:bg-gray-950/70 z-10 rounded-lg"></div>
-                        )}
+                    <div className={`md:col-span-2 md:pl-16 relative ${isReadOnly ? 'opacity-50 pointer-events-none' : ''}`}>
                         <ImageUploadSection
                             images={formData.images}
                             onImagesChange={handleImagesChange}
@@ -666,6 +657,9 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                 }}
                 titleInputRef={titleInputRef}
                 isReadOnly={isReadOnly || false}
+                status={status}
+                published={published}
+                isVisible={is_visible}
             />
 
             <Divider />
@@ -681,6 +675,9 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                 }}
                 isLoading={isLoadingTools}
                 isReadOnly={isReadOnly || false}
+                status={status}
+                published={published}
+                isVisible={is_visible}
             />
 
             <Divider />
@@ -696,6 +693,9 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                 }}
                 isLoading={isLoadingStyles}
                 isReadOnly={isReadOnly || false}
+                status={status}
+                published={published}
+                isVisible={is_visible}
             />
 
             <Divider />
@@ -709,6 +709,9 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                     safeTriggerSave({ tags });
                 }}
                 isReadOnly={isReadOnly || false}
+                status={status}
+                published={published}
+                isVisible={is_visible}
             />
 
             <Divider />
@@ -730,6 +733,7 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                     canClearAll,
                     canEdit,
                     showEditButton,
+                    showWithdrawButton,
                     statusMessage,
                     isLoading: statusLoading
                 }}

@@ -97,10 +97,10 @@ export default function NegativeRatingPage() {
         <main className="mx-auto p-4">
             <div className="motion-safe:animate-revealBottom" style={{ animationDuration: "500ms" }}>
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
+                    <h1 className="heading-page">
                         What could be improved?
                     </h1>
-                    <p className="mt-2 text-gray-700 sm:text-sm dark:text-gray-300">
+                    <p className="text-body mt-2">
                         Select up to 3 aspects that could be improved.
                     </p>
                 </div>

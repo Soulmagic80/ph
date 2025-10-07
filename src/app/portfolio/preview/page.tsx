@@ -26,10 +26,29 @@ export default function PortfolioPreview() {
     const [previewData, setPreviewData] = useState<PreviewData | null>(null);
 
     useEffect(() => {
-        // Load preview data from sessionStorage
+        // Try to load from URL query parameters first (for submitted portfolios)
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        
+        if (dataParam) {
+            try {
+                // URLSearchParams already decodes the parameter, so just parse it
+                console.log('📋 Preview data from URL:', dataParam);
+                const parsedData = JSON.parse(dataParam);
+                console.log('✅ Parsed preview data:', parsedData);
+                setPreviewData(parsedData);
+                return;
+            } catch (error) {
+                console.error('❌ Error parsing URL preview data:', error);
+                console.error('Raw data param:', dataParam);
+            }
+        }
+
+        // Fallback to sessionStorage (for draft portfolios)
         const data = sessionStorage.getItem('portfolio-preview');
         if (data) {
             try {
+                console.log('📋 Preview data from sessionStorage');
                 setPreviewData(JSON.parse(data));
             } catch (error) {
                 console.error('Error parsing preview data:', error);
@@ -39,7 +58,7 @@ export default function PortfolioPreview() {
 
     if (!previewData) {
         return (
-            <div className="min-h-screen bg-lightbeige-100 dark:bg-gray-950 flex items-center justify-center">
+            <div className="min-h-screen bg-lightbeige-100 dark:bg-gray-900 flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                         No Preview Data
@@ -56,7 +75,7 @@ export default function PortfolioPreview() {
     }
 
     return (
-        <div className="min-h-screen bg-lightbeige-100 dark:bg-gray-950">
+        <div className="min-h-screen bg-lightbeige-100 dark:bg-gray-900">
             {/* Header */}
             <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

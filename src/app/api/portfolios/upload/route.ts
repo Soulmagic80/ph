@@ -1,4 +1,4 @@
-import { cleanupTempFolder, moveImagesToPortfolioFolder } from '@/lib/imageUtils';
+import { cleanupTempFolder } from '@/lib/imageUtils';
 import { getSupabaseServer } from '@/lib/supabase-server';
 import { NextRequest, NextResponse } from 'next/server';
 // Fix for Supabase + Next.js 15 Edge Runtime conflict
@@ -36,7 +36,7 @@ interface UploadPortfolioRequest {
         fileName: string
         contentType: string
         isNew?: boolean
-    }>
+    }> | string[] // Can also be array of URLs for already uploaded images
     existingImages?: string[] // Existing image filenames to keep
     tools: Array<{
         id: string
@@ -154,6 +154,7 @@ export async function POST(_request: NextRequest) {
         // Upload images to Supabase Storage using service role
         const uploadedImagePaths: string[] = []
         const imageFilenames: string[] = []
+        const existingImagePaths: string[] = [] // Track already uploaded images
         
         // Generate single temp folder for this upload session
         const tempFolder = `temp/${user.id}_${Date.now()}`
@@ -165,60 +166,89 @@ export async function POST(_request: NextRequest) {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         )
         
-        for (let i = 0; i < body.images.length; i++) {
-            const image = body.images[i]
-            
-            try {
-                // Convert base64 to buffer
-                const base64Data = image.file.split(',')[1] // Remove data:image/jpeg;base64, prefix
-                const buffer = Buffer.from(base64Data, 'base64')
-                
-                // Generate temp folder path (HYBRID SYSTEM)
-                const fileExt = image.fileName.split('.').pop()
-                const fileName = i === 0 ? `main.${fileExt}` : `${i}.${fileExt}`
-                // Use shared temp folder for this upload session
-                const storagePath = `${tempFolder}/${fileName}`
-                
-                // Upload to portfolio-images bucket using service role
-                const { error: uploadError } = await serviceRoleClient.storage
-                    .from('portfolio-images')
-                    .upload(storagePath, buffer, {
-                        contentType: image.contentType,
-                        cacheControl: '3600',
-                        upsert: false
-                    })
-
-                if (uploadError) {
-                    console.error('Error uploading image:', uploadError)
-                    throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message}`)
+        // Check if images are URLs (already uploaded) or base64 data (new uploads)
+        const isUrlArray = typeof body.images[0] === 'string'
+        
+        if (isUrlArray) {
+            // Images are already uploaded URLs - extract storage paths
+            for (const imageUrl of body.images as string[]) {
+                try {
+                    // Extract storage path from URL
+                    // Format: https://.../storage/v1/object/public/portfolio-images/{path}
+                    const urlMatch = imageUrl.match(/\/portfolio-images\/(.+)$/)
+                    if (!urlMatch) {
+                        console.error('Invalid image URL format:', imageUrl)
+                        continue
+                    }
+                    
+                    const storagePath = urlMatch[1] // e.g., "temp/user_123/image.jpg" or "user_id/image.jpg"
+                    existingImagePaths.push(storagePath)
+                    
+                    // Extract filename from path
+                    const filename = storagePath.split('/').pop() || ''
+                    imageFilenames.push(filename)
+                    
+                } catch (error) {
+                    console.error('Error processing image URL:', imageUrl, error)
                 }
-
-                uploadedImagePaths.push(storagePath)
-                // Store only filename in database (not full path)
-                imageFilenames.push(fileName)
+            }
+        } else {
+            // Images are base64 data - upload them
+            for (let i = 0; i < body.images.length; i++) {
+                const image = body.images[i] as { id: string; file: string; fileName: string; contentType: string; isNew?: boolean }
                 
-            } catch (error) {
-                console.error(`Error processing image ${i + 1}:`, error)
-                
-                // Cleanup already uploaded images
-                for (const path of uploadedImagePaths) {
-                    await serviceRoleClient.storage
+                try {
+                    // Convert base64 to buffer
+                    const base64Data = image.file.split(',')[1] // Remove data:image/jpeg;base64, prefix
+                    const buffer = Buffer.from(base64Data, 'base64')
+                    
+                    // Generate temp folder path (HYBRID SYSTEM)
+                    const fileExt = image.fileName.split('.').pop()
+                    const fileName = i === 0 ? `main.${fileExt}` : `${i}.${fileExt}`
+                    // Use shared temp folder for this upload session
+                    const storagePath = `${tempFolder}/${fileName}`
+                    
+                    // Upload to portfolio-images bucket using service role
+                    const { error: uploadError } = await serviceRoleClient.storage
                         .from('portfolio-images')
-                        .remove([path])
+                        .upload(storagePath, buffer, {
+                            contentType: image.contentType,
+                            cacheControl: '3600',
+                            upsert: false
+                        })
+
+                    if (uploadError) {
+                        console.error('Error uploading image:', uploadError)
+                        throw new Error(`Failed to upload image ${i + 1}: ${uploadError.message}`)
+                    }
+
+                    uploadedImagePaths.push(storagePath)
+                    // Store only filename in database (not full path)
+                    imageFilenames.push(fileName)
+                    
+                } catch (error) {
+                    console.error(`Error processing image ${i + 1}:`, error)
+                    
+                    // Cleanup already uploaded images
+                    for (const path of uploadedImagePaths) {
+                        await serviceRoleClient.storage
+                            .from('portfolio-images')
+                            .remove([path])
+                    }
+                    
+                    return NextResponse.json(
+                        { error: `Failed to upload image ${i + 1}` },
+                        { status: 500 }
+                    )
                 }
-                
-                return NextResponse.json(
-                    { error: `Failed to upload image ${i + 1}` },
-                    { status: 500 }
-                )
             }
         }
 
-        // Combine existing images with new images
+        // Combine existing images with new images (remove duplicates)
         const allImageFilenames = [
             ...(body.existingImages || []), // Keep existing images
             ...imageFilenames // Add new images
-        ];
+        ].filter((filename, index, self) => self.indexOf(filename) === index); // Remove duplicates
         
 
         // Create or update portfolio in database
@@ -288,38 +318,88 @@ export async function POST(_request: NextRequest) {
             )
         }
 
-        // STEP 4: Move NEW images from temp folder to final portfolio folder
-        // Only move images if we have new images to move
-        if (imageFilenames.length > 0) {
-            const moveResult = await moveImagesToPortfolioFolder(
-                serviceRoleClient,
-                tempFolder,
-                portfolio?.id || '',
-                imageFilenames
-            )
-            
-            if (!moveResult.success) {
-                console.error('❌ Failed to move images to portfolio folder:', moveResult.error)
-                
-                // Cleanup: Delete the portfolio we just created since images failed to move
-                if (portfolio?.id && !existingPortfolio) { // Only delete if it's a new portfolio
-                    await supabase
-                        .from('portfolios')
-                        .delete()
-                        .eq('id', portfolio.id)
-                }
-                
-                return NextResponse.json(
-                    { error: `Failed to organize images: ${moveResult.error}` },
-                    { status: 500 }
-                )
-            }
-            
+        // STEP 4: Move images to final portfolio folder
+        // Handle both newly uploaded images and existing images that need to be moved
+        const imagesToMove: string[] = []
+        
+        // Add newly uploaded images from temp folder
+        if (uploadedImagePaths.length > 0) {
+            imagesToMove.push(...uploadedImagePaths)
         }
         
-        // Cleanup temp folder (only if we had new images)
-        if (imageFilenames.length > 0) {
+        // Add existing images that are in temp or user folders (need to be moved to portfolio folder)
+        console.log('📦 Existing image paths:', existingImagePaths)
+        console.log('📦 Portfolio ID:', portfolio?.id)
+        
+        for (const existingPath of existingImagePaths) {
+            // Check if image is NOT already in the portfolio folder
+            if (!existingPath.startsWith(`${portfolio?.id}/`)) {
+                console.log(`📦 Will move: ${existingPath} (doesn't start with ${portfolio?.id}/)`)
+                imagesToMove.push(existingPath)
+            } else {
+                console.log(`📦 Skip move: ${existingPath} (already in portfolio folder)`)
+            }
+        }
+        
+        console.log('📦 Images to move:', imagesToMove)
+        
+        // Move images if needed
+        if (imagesToMove.length > 0 && portfolio?.id) {
+            for (const sourcePath of imagesToMove) {
+                try {
+                    // Extract filename
+                    const filename = sourcePath.split('/').pop() || ''
+                    const targetPath = `${portfolio.id}/${filename}`
+                    
+                    // Check if source and target are the same
+                    if (sourcePath === targetPath) {
+                        console.log(`✅ Image already in correct location: ${sourcePath}`)
+                        continue
+                    }
+                    
+                    // Move file
+                    const { error: moveError } = await serviceRoleClient.storage
+                        .from('portfolio-images')
+                        .move(sourcePath, targetPath)
+                    
+                    if (moveError) {
+                        console.error(`❌ Failed to move ${sourcePath} to ${targetPath}:`, moveError)
+                        throw new Error(`Failed to move image: ${moveError.message}`)
+                    }
+                    
+                    console.log(`✅ Moved ${sourcePath} → ${targetPath}`)
+                    
+                } catch (error) {
+                    console.error('Error moving image:', error)
+                    
+                    // Cleanup: Delete the portfolio we just created since images failed to move
+                    if (portfolio?.id && !existingPortfolio) {
+                        await supabase
+                            .from('portfolios')
+                            .delete()
+                            .eq('id', portfolio.id)
+                    }
+                    
+                    return NextResponse.json(
+                        { error: `Failed to organize images: ${error instanceof Error ? error.message : 'Unknown error'}` },
+                        { status: 500 }
+                    )
+                }
+            }
+        }
+        
+        // Cleanup temp folders
+        // Clean up the temp folder from this upload session
+        if (uploadedImagePaths.length > 0) {
             await cleanupTempFolder(serviceRoleClient, tempFolder)
+        }
+        
+        // Clean up any old temp folders from existing images
+        for (const existingPath of existingImagePaths) {
+            if (existingPath.startsWith('temp/')) {
+                const tempFolderPath = existingPath.split('/').slice(0, 2).join('/')
+                await cleanupTempFolder(serviceRoleClient, tempFolderPath)
+            }
         }
 
         // Link selected tools to portfolio

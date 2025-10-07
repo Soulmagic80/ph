@@ -30,7 +30,7 @@ export default async function PublicLayout({
     }
 
     return (
-        <div className="bg-white dark:bg-gray-950 min-h-screen">
+        <div className="bg-white dark:bg-gray-900 min-h-screen">
             <Navbar initialSession={initialSession} />
             <PageTransition>{children}</PageTransition>
             <Footer />

@@ -165,11 +165,11 @@ export default function PortfolioComments({ portfolio_id, user }: PortfolioComme
                 <div>
                     <h2
                         id="comments-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section scroll-mt-10"
                     >
                         Portfolio Comments
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small">
                         Share your thoughts and feedback about this portfolio
                     </p>
                 </div>

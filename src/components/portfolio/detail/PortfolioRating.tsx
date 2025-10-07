@@ -24,8 +24,8 @@ export default function PortfolioRating({ portfolio }: PortfolioRatingProps) {
                 <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3">
                     {/* Left side - Title and subtitle */}
                     <div>
-                        <h2 className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50">Portfolio Rating</h2>
-                        <p className="mt-2 text-sm leading-6 text-gray-500">
+                        <h2 className="heading-section scroll-mt-10">Portfolio Rating</h2>
+                        <p className="text-small mt-2">
                             Rate this portfolio and help others evaluate its quality and features.
                         </p>
                     </div>

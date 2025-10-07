@@ -18,6 +18,7 @@ interface AdminPortfolio {
     deleted_by: string | null;
     published: boolean;
     approved: boolean;
+    is_visible: boolean;
     images: string[];
     user: {
         id: string;
@@ -188,8 +189,11 @@ export const createPortfolioColumns = ({
                 if (portfolio.status === 'declined') {
                     return <Badge variant="error">Declined</Badge>;
                 }
-                if (portfolio.approved && portfolio.published) {
+                if (portfolio.approved && portfolio.published && portfolio.is_visible) {
                     return <Badge variant="success">Published</Badge>;
+                }
+                if (portfolio.approved && portfolio.published && !portfolio.is_visible) {
+                    return <Badge variant="warning">Offline</Badge>;
                 }
                 if (portfolio.approved && !portfolio.published) {
                     return <Badge variant="default">Approved</Badge>;

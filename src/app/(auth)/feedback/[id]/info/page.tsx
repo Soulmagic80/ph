@@ -74,7 +74,7 @@ export default function Info() {
         className="motion-safe:animate-revealBottom"
         style={{ animationDuration: "500ms" }}
       >
-        <h1 className="text-2xl font-semibold text-gray-900 sm:text-xl dark:text-gray-50">
+        <h1 className="heading-page">
           Give Feedback
         </h1>
         <div className="mt-6 space-y-4 text-gray-700 sm:text-sm dark:text-gray-300">

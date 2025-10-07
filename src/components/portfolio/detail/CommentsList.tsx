@@ -120,7 +120,7 @@ export default function CommentsList({
                                     onChange={e => onReplyContentChange(e.target.value)}
                                     placeholder="Write a reply..."
                                     rows={3}
-                                    className="w-full border-gray-300 dark:border-gray-600 bg-transparent focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 resize-none"
+                                    className="w-full border-gray-300 dark:border-gray-800 bg-transparent focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 resize-none"
                                     disabled={isSubmitting}
                                 />
                                 <div className="flex items-center justify-end gap-2">

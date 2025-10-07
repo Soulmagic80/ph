@@ -114,14 +114,14 @@ export default function AccountDeletion() {
         <section aria-labelledby="account-deletion-heading">
             <div>
                 <div className="space-y-6">
-                    <div className="flex items-center justify-between rounded-lg border border-red-200 p-4 dark:border-red-800">
+                    <div className="flex items-center justify-between rounded-lg border border-red-200 p-4 dark:border-[rgb(246,115,115)]">
                         <div className="flex items-center gap-5">
-                            <Trash2 size={19} className="flex-shrink-0 text-red-400" />
+                            <Trash2 size={19} className="flex-shrink-0 text-red-400 dark:text-[rgb(246,115,115)]" />
                             <div>
                                 <h3 className="text-sm font-medium text-red-900 dark:text-red-50">
                                     Delete Account
                                 </h3>
-                                <p className="mt-1 text-sm text-red-500 pr-4">
+                                <p className="mt-1 text-sm text-red-500 dark:text-[rgb(246,115,115)] pr-4">
                                     All your data will be permanently deleted.
                                 </p>
                             </div>

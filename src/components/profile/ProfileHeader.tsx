@@ -158,11 +158,11 @@ export default function ProfileHeader({
                 <div>
                     <h2
                         id="profile-header-heading"
-                        className="scroll-mt-10 font-semibold text-gray-900 dark:text-gray-50"
+                        className="heading-section"
                     >
                         Profile Information
                     </h2>
-                    <p className="mt-2 text-sm leading-6 text-gray-500">
+                    <p className="text-small mt-2">
                         Update your profile picture and basic information.
                     </p>
                 </div>

@@ -24,11 +24,13 @@
         --input: 240 5.9% 90%;
         --ring: 240 5.9% 10%;
         --radius: 0.5rem;
+        --blue-primary: #3474DB;
     }
 
     .dark {
         --background: 240 10% 3.9%;
         --foreground: 0 0% 98%;
+        --blue-primary: #3B82F6;
         --card: 240 10% 3.9%;
         --card-foreground: 0 0% 98%;
         --popover: 240 10% 3.9%;
@@ -53,4 +55,54 @@
 /* Smooth Scrolling */
 html {
     scroll-behavior: smooth;
+}
+
+/* Typography System */
+@layer components {
+  /* Hero Titles - Large, responsive */
+  .heading-hero-lg {
+    @apply text-[56px] sm:text-[64px] md:text-[72px] lg:text-[80px] xl:text-[88px] 
+           font-semibold tracking-[-0.06em] leading-[0.95] 
+           text-supergrey-100 dark:text-gray-50;
+  }
+  
+  /* Hero Titles - Medium, responsive */
+  .heading-hero-md {
+    @apply text-[48px] sm:text-[56px] md:text-[64px] lg:text-[72px] xl:text-[80px] 
+           font-semibold tracking-[-0.06em] leading-[0.95] 
+           text-supergrey-100 dark:text-gray-50;
+  }
+  
+  /* Page Titles (h1) - Main page heading */
+  .heading-page {
+    @apply text-3xl font-semibold 
+           text-gray-900 dark:text-gray-50
+           mb-2 mt-2;
+  }
+  
+  /* Section Titles (h2) - Section headings in 3-column layout */
+  .heading-section {
+    @apply text-xl font-semibold 
+           text-gray-900 dark:text-gray-50
+           mb-2;
+  }
+  
+  /* Subsection Titles (h3) - Smaller section headings */
+  .heading-subsection {
+    @apply text-lg font-semibold 
+           text-gray-900 dark:text-gray-50
+           mb-2;
+  }
+  
+  /* Body Text - Standard paragraph text */
+  .text-body {
+    @apply text-base leading-6 
+           text-gray-600 dark:text-gray-400;
+  }
+  
+  /* Small Text - Descriptions, captions */
+  .text-small {
+    @apply text-sm leading-6 
+           text-gray-500 dark:text-gray-400;
+  }
 }

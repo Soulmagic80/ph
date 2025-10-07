@@ -35,6 +35,7 @@ interface AdminPortfolio {
     deleted_by: string | null;
     published: boolean;
     approved: boolean;
+    is_visible: boolean;
     images: string[];
     user: {
         id: string;
