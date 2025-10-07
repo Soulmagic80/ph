@@ -128,12 +128,6 @@ export async function GET(_request: NextRequest) {
             ...capabilities
         }
 
-        // 🔍 DEBUG: Log API response
-        console.log('📡 Status API Response:', {
-            status: portfolio.status,
-            capabilities
-        })
-
         return NextResponse.json(response)
 
     } catch (error) {

@@ -59,15 +59,6 @@ export default async function PortfolioDetailPage({ params }: PortfolioDetailPag
 
     const { data: portfolio, error } = await query.single();
 
-    // 🔍 DEBUG: Log query result
-    console.log('🔍 Portfolio Detail Query:', {
-        id,
-        userId: user?.id,
-        isAdmin,
-        hasPortfolio: !!portfolio,
-        error: error?.message
-    });
-
     if (error || !portfolio) {
         console.error('❌ Portfolio not found or error:', error);
         notFound();

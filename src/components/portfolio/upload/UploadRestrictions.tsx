@@ -86,20 +86,6 @@ export default function UploadRestrictions({
         refetch: fallbackStatus.refetch
     } : fallbackStatus
 
-    // 🔍 DEBUG: Log portfolio status capabilities
-    console.log('🎯 UploadRestrictions - Status Capabilities:', {
-        status,
-        canSubmit,
-        canPreview,
-        canClearAll,
-        showWithdrawButton,
-        hasCallbacks: {
-            onSubmit: !!onSubmit,
-            onPreview: !!onPreview,
-            onClearAll: !!onClearAll
-        }
-    })
-
     const supabase = useMemo(() => createClient(), [])
 
     const REQUIRED_FEEDBACK = 5
@@ -182,16 +168,6 @@ export default function UploadRestrictions({
             formData.websiteUrl.trim().length > 0 &&
             hasValidImages
         )
-
-        // 🔍 DEBUG: Log form validation
-        console.log('📝 UploadRestrictions - Form Validation:', {
-            hasFormData: !!formData,
-            title: formData?.title || '',
-            websiteUrl: formData?.websiteUrl || '',
-            imageCount: formData?.images.length || 0,
-            hasValidImages,
-            isValid
-        })
 
         return isValid
     }, [formData])
@@ -323,17 +299,6 @@ export default function UploadRestrictions({
                 </div>
                 <div className="md:col-span-2 md:pl-16">
                     <div id="portfolio-actions" className="space-y-6 scroll-mt-20">
-                        {/* 🔍 DEBUG: Log render conditions */}
-                        {(() => {
-                            console.log('🎨 UploadRestrictions - Render Check:', {
-                                willRenderClearAll: canClearAll && !!onClearAll,
-                                willRenderPreview: canPreview && !!onPreview,
-                                willRenderSubmit: (canSubmit || isAdmin) && !!onSubmit,
-                                willRenderWithdraw: showWithdrawButton
-                            });
-                            return null;
-                        })()}
-                        
                         {/* Admin Badge */}
                         {isAdmin && (
                             <div className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
