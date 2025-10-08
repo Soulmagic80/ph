@@ -16,6 +16,7 @@ import StyleSection from "./StyleSection";
 import TagsSection from "./TagsSection";
 import ToolsSection from "./ToolsSection";
 import UploadRestrictions from "./UploadRestrictions";
+import { AutoSaveInfo } from "./AutoSaveInfo";
 
 // Types
 interface PortfolioImage {
@@ -616,7 +617,7 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                         <p className="text-small mt-2">
                             Upload up to 4 high-quality images that showcase your work. The first image will be used as the main thumbnail.
                         </p>
-                        {isReadOnly && (
+                        {!isAdmin && portfolio && status !== 'draft' && (
                             <StatusBadge status={status} published={published} isVisible={is_visible} />
                         )}
                     </div>
@@ -764,6 +765,11 @@ export default function PortfolioUploadForm({ onSubmit, isAdmin = false }: Portf
                     }, 100);
                 }}
             />
+
+            <Divider />
+
+            {/* Auto-save info at the bottom */}
+            <AutoSaveInfo />
         </form>
     );
 }

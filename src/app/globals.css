@@ -24,13 +24,11 @@
         --input: 240 5.9% 90%;
         --ring: 240 5.9% 10%;
         --radius: 0.5rem;
-        --blue-primary: #3474DB;
     }
 
     .dark {
         --background: 240 10% 3.9%;
         --foreground: 0 0% 98%;
-        --blue-primary: #3B82F6;
         --card: 240 10% 3.9%;
         --card-foreground: 0 0% 98%;
         --popover: 240 10% 3.9%;
@@ -75,7 +73,7 @@ html {
   
   /* Page Titles (h1) - Main page heading */
   .heading-page {
-    @apply text-3xl font-semibold 
+    @apply text-3xl font-semibold tracking-[-0.02em]
            text-gray-900 dark:text-gray-50
            mb-2 mt-2;
   }

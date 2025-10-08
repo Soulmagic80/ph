@@ -1,7 +1,6 @@
 "use client";
 
 import Footer from "@/components/ui/Footer";
-import { Navbar } from "@/components/ui/navigation/Navbar";
 import { SectionLayout } from "@/components/layouts/SectionLayout";
 import { useAuth } from "@/hooks/shared/useAuth";
 import { cx } from "@/lib/utils";
@@ -31,7 +30,6 @@ export default function PortfolioLayout({
 
     return (
         <div className="mx-auto w-full bg-lightbeige-100 dark:bg-gray-900">
-            <Navbar />
             <div
                 className={cx(
                     "w-full",

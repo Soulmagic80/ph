@@ -34,7 +34,7 @@ export default function TagsSection({
                     <p className="text-small mt-2">
                         Add relevant tags to help others discover your portfolio. Use keywords that describe your project, industry, or skills.
                     </p>
-                    {isReadOnly && (
+                    {status !== 'draft' && (
                         <StatusBadge status={status} published={published} isVisible={isVisible} />
                     )}
                 </div>

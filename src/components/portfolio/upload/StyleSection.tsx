@@ -45,7 +45,7 @@ export default function StyleSection({
                     <p className="text-small mt-2">
                         Choose styles that best describe the visual and functional characteristics of your portfolio.
                     </p>
-                    {isReadOnly && (
+                    {status !== 'draft' && (
                         <StatusBadge status={status} published={published} isVisible={isVisible} />
                     )}
                 </div>

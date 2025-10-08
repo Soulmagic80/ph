@@ -412,17 +412,17 @@ export default function UploadRestrictions({
                             </div>
                         )}
 
-                        {/* Save & Publish Card - For published (offline) portfolios */}
+                        {/* Publish Card - For published (offline) portfolios */}
                         {status === 'approved' && published && !is_visible && (
                             <div className="flex items-center justify-between rounded-lg border border-blue-200 p-4 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
                                 <div className="flex items-center gap-5">
                                     <Save size={17} className="flex-shrink-0 text-blue-600 dark:text-blue-400" />
                                     <div>
                                         <h3 className="text-sm font-medium text-blue-900 dark:text-blue-50">
-                                            Save & Publish
+                                            Publish Changes
                                         </h3>
                                         <p className="mt-1 text-sm text-blue-700 dark:text-blue-300">
-                                            Your portfolio is currently offline. Save your changes to publish it live.
+                                            Your portfolio is offline. Click to publish your changes.
                                         </p>
                                     </div>
                                 </div>
@@ -432,13 +432,13 @@ export default function UploadRestrictions({
                                     disabled={isSubmitting || isSaving}
                                     variant="primary"
                                 >
-                                    {isSaving ? 'Publishing...' : 'Save & Publish'}
+                                    {isSaving ? 'Publishing...' : 'Publish'}
                                 </Button>
                             </div>
                         )}
 
-                        {/* Submit Card */}
-                        {(canSubmit || isAdmin) && onSubmit && (
+                        {/* Submit Card - Hide when Save & Publish is shown */}
+                        {(canSubmit || isAdmin) && onSubmit && !(status === 'approved' && published && !is_visible) && (
                             <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-800">
                                 <div className="flex items-center gap-5">
                                     <Send size={17} className="flex-shrink-0 text-gray-400" />

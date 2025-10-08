@@ -46,7 +46,7 @@ export default function BasicInfoSection({
                     <p className="text-small mt-2">
                         Provide basic information about your portfolio project.
                     </p>
-                    {isReadOnly && (
+                    {status !== 'draft' && (
                         <StatusBadge status={status} published={published} isVisible={isVisible} />
                     )}
                 </div>

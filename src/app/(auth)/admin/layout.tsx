@@ -1,6 +1,5 @@
 "use client"
 import Footer from "@/components/ui/Footer";
-import { Navbar } from "@/components/ui/navigation/Navbar";
 import { SectionLayout } from "@/components/layouts/SectionLayout";
 import { cx } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
@@ -26,7 +25,6 @@ export default function AdminLayout({
 
     return (
         <div className="mx-auto w-full bg-lightbeige-100 dark:bg-gray-900">
-            <Navbar />
             <div
                 className={cx(
                     "w-full",

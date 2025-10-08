@@ -74,12 +74,13 @@ export async function POST(_request: NextRequest) {
         const body: DraftPortfolioRequest = await _request.json()
         
         
-        // Check if user already has a draft or pending portfolio
+        // Check if user already has an editable portfolio
+        // This includes: draft, pending, or approved+published+!is_visible (published offline)
         const { data: existingDraft, error: draftCheckError } = await supabase
             .from('portfolios')
-            .select('id, status')
+            .select('id, status, published, is_visible')
             .eq('user_id', user.id)
-            .in('status', ['draft', 'pending'])
+            .is('deleted_at', null)
             .order('updated_at', { ascending: false })
             .limit(1)
             .maybeSingle()
@@ -94,8 +95,16 @@ export async function POST(_request: NextRequest) {
 
         const now = new Date().toISOString()
 
-        if (existingDraft) {
-            // Update existing draft
+        // Determine if the existing portfolio is editable
+        // Editable states: draft, pending, or approved+published+!is_visible (published offline)
+        const isEditable = existingDraft && (
+            existingDraft.status === 'draft' ||
+            existingDraft.status === 'pending' ||
+            (existingDraft.status === 'approved' && existingDraft.published && !existingDraft.is_visible)
+        )
+
+        if (isEditable) {
+            // Update existing editable portfolio
             
             // Convert image URLs to storage paths
             const imagePaths = body.images ? body.images.map(extractStoragePathFromUrl) : undefined
@@ -161,8 +170,14 @@ export async function POST(_request: NextRequest) {
                 }
             })
 
+        } else if (existingDraft) {
+            // Portfolio exists but is not editable (e.g., approved in queue, or published online)
+            return NextResponse.json(
+                { error: 'Portfolio is not editable in current state' },
+                { status: 400 }
+            )
         } else {
-            // Create new draft
+            // Create new draft (no existing portfolio)
             
             // Convert image URLs to storage paths
             const imagePaths = body.images ? body.images.map(extractStoragePathFromUrl) : []
@@ -248,13 +263,12 @@ export async function GET() {
             )
         }
 
-        // Get user's draft or pending portfolio (for editing)
+        // Get user's editable portfolio (draft, pending, or published offline)
         const { data: draft, error: draftError } = await supabase
             .from('portfolios')
             .select('*')
             .eq('user_id', user.id)
-            .in('status', ['draft', 'pending'])
-            .is('deleted_at', null)  // Exclude soft-deleted drafts
+            .is('deleted_at', null)  // Exclude soft-deleted portfolios
             .order('updated_at', { ascending: false })
             .limit(1)
             .maybeSingle()
@@ -282,6 +296,21 @@ export async function GET() {
         }
 
         if (!draft) {
+            return NextResponse.json({
+                success: true,
+                draft: null
+            })
+        }
+
+        // Check if portfolio is editable
+        // Only return draft if it's in an editable state
+        const isEditable = 
+            draft.status === 'draft' ||
+            draft.status === 'pending' ||
+            (draft.status === 'approved' && draft.published && !draft.is_visible)
+
+        if (!isEditable) {
+            // Portfolio exists but is not editable (e.g., published and visible)
             return NextResponse.json({
                 success: true,
                 draft: null

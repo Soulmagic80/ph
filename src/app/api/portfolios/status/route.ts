@@ -97,11 +97,12 @@ export async function GET(_request: NextRequest) {
         
         portfolioTools = toolsData?.map((pt: any) => pt.tool) || []
 
-        // Determine UI capabilities based on status, approved, and published
+        // Determine UI capabilities based on status, approved, published, and is_visible
         const capabilities = getStatusCapabilities(
             portfolio.status || 'none',
             portfolio.approved || false,
-            portfolio.published || false
+            portfolio.published || false,
+            portfolio.is_visible !== false // Default to true if null
         )
 
         // Format response
@@ -142,7 +143,7 @@ export async function GET(_request: NextRequest) {
 /**
  * Determines what UI actions are available based on portfolio status
  */
-function getStatusCapabilities(status: string, _approved: boolean, published: boolean) {
+function getStatusCapabilities(status: string, _approved: boolean, published: boolean, is_visible: boolean) {
     switch (status) {
         case 'draft':
             return {
@@ -171,10 +172,24 @@ function getStatusCapabilities(status: string, _approved: boolean, published: bo
             }
         
         case 'approved':
-            // Unterscheidung: Approved aber noch nicht published vs. Published
-            if (published) {
+            // Special case: Published but withdrawn (offline)
+            if (published && !is_visible) {
                 return {
                     canEdit: true,
+                    canSubmit: true,
+                    canPreview: true,
+                    canClearAll: false,
+                    showEditButton: false,
+                    showWithdrawButton: false,
+                    statusBadge: 'OFFLINE FOR CHANGES',
+                    statusMessage: 'Your portfolio is offline. Make changes and resubmit when ready.',
+                    statusType: 'warning' as const
+                }
+            }
+            // Unterscheidung: Approved aber noch nicht published vs. Published
+            else if (published) {
+                return {
+                    canEdit: false,
                     canSubmit: false,
                     canPreview: true,
                     canClearAll: false,

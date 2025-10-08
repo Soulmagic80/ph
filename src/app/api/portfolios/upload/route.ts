@@ -113,6 +113,8 @@ export async function POST(_request: NextRequest) {
                 .select('id, status')
                 .eq('user_id', user.id)
                 .is('deleted_at', null)
+                .order('updated_at', { ascending: false })
+                .limit(1)
                 .maybeSingle()
 
             if (portfolioCheckError) {
@@ -269,6 +271,7 @@ export async function POST(_request: NextRequest) {
                     status: 'pending', // Set to pending when submitted
                     approved: false,
                     published: false,
+                    is_visible: true, // Reset to visible when resubmitting
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', existingPortfolio.id)
@@ -292,6 +295,7 @@ export async function POST(_request: NextRequest) {
                     status: 'pending', // Pending admin approval
                     approved: false,
                     published: false,
+                    is_visible: true, // New portfolios are visible by default
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 })

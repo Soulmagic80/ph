@@ -14,7 +14,7 @@ export function DotGrid({
   dotSize = 2,
   gap = 30,
   color = '#000000',
-  hoverColor = '#3474DB', // blue-primary
+  hoverColor = '#3b82f6', // blue-primary
   hoverRadius = 100
 }: DotGridProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);

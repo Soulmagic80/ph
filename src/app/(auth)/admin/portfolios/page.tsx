@@ -143,13 +143,24 @@ export default function AdminPortfoliosPage() {
 
         fetchPortfolios();
 
-        // Set up polling for live updates (every 5 seconds)
+        // Set up polling for live updates (every 30 seconds, only when tab is visible)
         const interval = setInterval(() => {
-            fetchPortfolios();
-        }, 5000);
+            if (!document.hidden) {
+                fetchPortfolios();
+            }
+        }, 30000);
+
+        // Refresh when tab becomes visible again
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                fetchPortfolios();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
             clearInterval(interval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [user, profile]);
 

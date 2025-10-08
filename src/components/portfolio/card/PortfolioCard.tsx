@@ -75,6 +75,13 @@ export default function PortfolioCard({ portfolio, onUpvote }: PortfolioCardProp
       return;
     }
 
+    // Prevent owner from upvoting their own portfolio
+    const isOwner = user && portfolio.user_id === user.id;
+    if (isOwner) {
+      toast.info("You cannot upvote your own portfolio");
+      return;
+    }
+
     if (!isAdmin && isUpvoted) {
       toast.info("You have already upvoted this portfolio");
       return;

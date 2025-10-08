@@ -18,6 +18,7 @@ export default function PortfolioOverview() {
         portfolio,
         status,
         published,
+        is_visible,
         feedbackCount: portfolioFeedbackCount,
         canEdit,
         canPreview,
@@ -103,7 +104,9 @@ export default function PortfolioOverview() {
             case 'pending':
                 return { text: 'Pending Review', variant: 'warning' as const, icon: Clock };
             case 'approved':
-                if (published) {
+                if (published && !is_visible) {
+                    return { text: 'Offline for Changes', variant: 'warning' as const, icon: AlertCircle };
+                } else if (published) {
                     return { text: 'Published', variant: 'success' as const, icon: CheckCircle2 };
                 } else {
                     return { text: 'In Queue', variant: 'success' as const, icon: Clock };
@@ -127,7 +130,9 @@ export default function PortfolioOverview() {
             case 'pending':
                 return 'Your portfolio is pending admin approval.';
             case 'approved':
-                if (published) {
+                if (published && !is_visible) {
+                    return 'Your portfolio is offline for changes. Publish when ready to make it live again.';
+                } else if (published) {
                     return 'Your portfolio has been approved and is now live!';
                 } else {
                     return 'Your portfolio has been approved and is waiting to be published.';
@@ -178,8 +183,20 @@ export default function PortfolioOverview() {
             );
         }
 
-        // If portfolio is published, show "See Portfolio" (link to live version)
-        if (status === 'approved' && published && portfolio) {
+        // If portfolio is published but offline, show "Edit Portfolio"
+        if (status === 'approved' && published && !is_visible && portfolio) {
+            return (
+                <Button asChild>
+                    <Link href="/portfolio/upload#portfolio-actions">
+                        <Edit size={16} className="mr-2" />
+                        Edit Portfolio
+                    </Link>
+                </Button>
+            );
+        }
+
+        // If portfolio is published and live, show "See Portfolio" (link to live version)
+        if (status === 'approved' && published && is_visible && portfolio) {
             return (
                 <Button asChild variant="secondary">
                     <Link href={`/portfolios/${portfolio.id}`}>
@@ -268,7 +285,12 @@ export default function PortfolioOverview() {
         {
             id: 4,
             title: 'Approval Status',
-            description: statusMessage || 'Wait for admin approval to make your portfolio publicly visible.',
+            description: (() => {
+                if (status === 'approved' && published && !is_visible) {
+                    return 'Your portfolio is currently offline. You can make changes and republish when ready.';
+                }
+                return statusMessage || 'Wait for admin approval to make your portfolio publicly visible.';
+            })(),
             status: getStepStatus(4),
             badge: step4Badge ? (
                 <Badge variant={step4Badge.variant} className="text-[10px] font-medium">

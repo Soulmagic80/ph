@@ -28,7 +28,7 @@ export function StatusBadge({ status, published = false, isVisible = true }: Sta
                     }
                 } else if (published && !isVisible) {
                     return {
-                        text: 'PUBLISHED - OFFLINE',
+                        text: 'OFFLINE FOR CHANGES',
                         icon: EyeOff,
                         className: 'bg-orange-50 text-orange-900 ring-orange-500/30 dark:bg-orange-400/10 dark:text-orange-400 dark:ring-orange-400/30'
                     }

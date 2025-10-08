@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 /*import { DotGrid } from "@/components/ui/DotGrid";*/
 
 export function HeroTwo() {
@@ -108,18 +109,24 @@ export function HeroTwo() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-3 mt-4">
-                <Link
-                    href="/getting-started"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 text-white bg-blue-primary hover:bg-blue-primary/90 dark:bg-blue-primary dark:hover:bg-blue-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-primary focus-visible:ring-offset-2 relative z-10"
+                <Button
+                    asChild
+                    variant="primary"
+                    className="relative z-10"
                 >
-                    Get Started
-                </Link>
-                <a
-                    href="#portfolios"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 border border-gray-300 bg-transparent text-gray-900 hover:bg-gray-50 dark:border-gray-800 dark:bg-transparent dark:text-gray-50 dark:hover:bg-gray-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 relative z-10"
+                    <Link href="/getting-started">
+                        Get Started
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                    variant="secondary"
+                    className="relative z-10"
                 >
-                    Browse Portfolios
-                </a>
+                    <a href="#portfolios">
+                        Browse Portfolios
+                    </a>
+                </Button>
             </div>
         </div>
     );

@@ -25,8 +25,7 @@ const config: Config = {
           950: "#0a0f1a"   // Custom override (heller als Standard #030712)
         },
         blue: {
-          primary: "#0084FF",  // Primary blue for CTAs, links, accents
-          /*primary: "#3474DB",  // Primary blue for CTAs, links, accents*/
+          primary: "#3b82f6",  // Primary blue - matches Tailwind's blue-500
         },
         warmgrey: { 100: "#9C9C9C" },
         warmwhite: { 100: "#FCFCF9" },  // Phantom-style warm off-white
