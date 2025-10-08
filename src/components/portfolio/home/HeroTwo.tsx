@@ -41,7 +41,7 @@ export function HeroTwo() {
                 <br />
                 Get upvotes.
                 <br />
-                Get <span className="relative inline-block text-[#FF006A]/90">
+                Get <span className="relative inline-block text-[#F42683]/100">
                     {/* bg-gradient-to-r from-[#FF006A] to-blue-primary dark:from-from-[#FF006A] dark:to-blue-primary bg-clip-text text-transparent */}
                     noticed.
                     

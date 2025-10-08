@@ -109,7 +109,6 @@ export default function ToolsPage() {
             {selectedCategory !== "all" ? (
                 // Single category view
                 <>
-                    <Divider />
                     <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-16">
                     {/* Left: Category Info (1 column) */}
                     <div>
@@ -149,13 +148,13 @@ export default function ToolsPage() {
             ) : (
                 // All categories view
                 <div>
-                    {categories.map((category) => {
+                    {categories.map((category, index) => {
                         const categoryTools = toolsByCategory[category.id] || [];
                         if (categoryTools.length === 0) return null;
 
                         return (
                             <React.Fragment key={category.id}>
-                                <Divider />
+                                {index > 0 && <Divider />}
                                 <div className="grid grid-cols-1 gap-x-14 gap-y-8 md:grid-cols-3 pb-16">
                                     {/* Left: Category Info (1 column) */}
                                     <div>
